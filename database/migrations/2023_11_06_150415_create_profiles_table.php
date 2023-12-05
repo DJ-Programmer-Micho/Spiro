@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
+            $table->string('job_title');
+            $table->string('national_id');
+            $table->string('phone_number_1');
+            $table->string('phone_number_2');
+            $table->string('email_address');
             $table->timestamps();
         });
     }

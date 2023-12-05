@@ -10,16 +10,11 @@ class Client extends Model
     use HasFactory;
     protected $table = 'clients';
     protected $fillable = [
-        'company_name',
         'client_name',
-        'email',
-        'address',
-        'city',
-        'country',
-        'zipcode',
-        'website',
-        'phone_one',
-        'phone_two',  
+        'event_address',
+        'event_type',
+        'event_date',
+ 
     ];
 
     public function quotation()

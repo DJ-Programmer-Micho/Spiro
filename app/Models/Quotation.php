@@ -13,7 +13,6 @@ class Quotation extends Model
     use HasFactory;
     protected $table = 'quotation';
     protected $fillable = [
-        'branch_id', 
         'client_id', 
         'payment_id',
         'services',
@@ -26,11 +25,6 @@ class Quotation extends Model
         'notes',
         'quotation_status',
     ];
-
-    public function branch()
-    {
-        return $this->belongsTo(Branch::class);
-    }
 
     public function client()
     {

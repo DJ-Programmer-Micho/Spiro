@@ -10,16 +10,16 @@ class Service extends Model
     use HasFactory;
     protected $table = 'services';
     protected $fillable = [
-        'branch_id',
+        // 'branch_id',
         'service_code',
         'service_name',
         'service_description',
         'cost'
     ];
 
-    public function branch()
-    {
-        return $this->belongsTo(Branch::class);
-    }
+    // public function branch()
+    // {
+    //     return $this->belongsTo(Branch::class);
+    // }
 
 }
