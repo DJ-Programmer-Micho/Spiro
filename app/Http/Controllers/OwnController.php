@@ -10,8 +10,11 @@ class OwnController extends Controller
         return view('dashboard.own.dashboard.index');
     } // END FUNCTION (DASHBOARD)
 
-    // CLIENT SECTIONB
-    public function addClient(){
-        return view('dashboard.own.addClient.index');
+    public function client(){
+        return view('dashboard.own.client.index');
+    } // END FUNCTION (DASHBOARD)
+
+    public function service(){
+        return view('dashboard.own.service.index');
     } // END FUNCTION (DASHBOARD)
 }

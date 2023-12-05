@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Notifications\Dashboard;
+namespace App\Notifications\Own;
 
-
-use App\Models\Branch;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Telegram\TelegramChannel;
 use NotificationChannels\Telegram\TelegramMessage;
@@ -11,30 +9,25 @@ use NotificationChannels\Telegram\TelegramMessage;
 class TelegramServiceUpdate extends Notification
 {
     protected $s_id;
-    protected $branch_id;
-    protected $branch_name;
-    protected $branch_name_old;
     protected $serviceCode;
     protected $serviceName;
     protected $serviceDescription;
-    protected $serviceCost;
+    protected $priceDollar;
+    protected $priceIraqi;
 
     protected $old_service_data;
     protected $tele_id;
 
-    public function __construct($s_id, $branch_id, $serviceCode, $serviceName, $serviceDescription, $serviceCost, $old_service_data, $tele_id)
+    public function __construct($s_id, $serviceCode, $serviceName, $serviceDescription, $priceDollar, $priceIraqi, $old_service_data, $tele_id)
     {
         $this->s_id = $s_id;
-        $this->branch_id = $branch_id;
         $this->serviceCode = $serviceCode;
         $this->serviceName = $serviceName;
         $this->serviceDescription = $serviceDescription;
-        $this->serviceCost = $serviceCost;
+        $this->priceDollar = $priceDollar;
+        $this->priceIraqi = $priceIraqi;
         $this->old_service_data = $old_service_data;
         $this->tele_id = $tele_id;
-
-        $this->branch_name_old = Branch::where('id', $old_service_data['branch_id'])->first()->branchName;
-        $this->branch_name = Branch::where('id', $this->branch_id)->first()->branchName;
     }
 
     public function via($notifiable)
@@ -52,10 +45,6 @@ class TelegramServiceUpdate extends Notification
         . "*" .'SERVICE-ID: '. $registrationId . '-'. $this->s_id .'-' . $registration3Id . "*\n"
         . "*" .'-----------------'."*\n";
 
-        
-        if ($this->branch_id !== $this->old_service_data['branch_id']) {
-            $content .= "*" . 'Branch Changed: '. $this->branch_name_old . ' ➡️ ' . $this->branch_name . "*\n";
-        }
 
         if ($this->serviceCode !== $this->old_service_data['serviceCode']) {
             $content .= "*" . 'Code Changed: '. $this->old_service_data['serviceCode'] . ' ➡️ ' . $this->serviceCode . "*\n";
@@ -65,8 +54,12 @@ class TelegramServiceUpdate extends Notification
             $content .= "*" . 'Name Changed: '. $this->old_service_data['serviceName'] . ' ➡️ ' . $this->serviceName . "*\n";
         }
 
-        if ($this->serviceCost !== $this->old_service_data['cost']) {
-            $content .= "*" . 'Cost Changed: $'. $this->old_service_data['cost'] . ' ➡️ $' . $this->serviceCost . "*\n";
+        if ($this->priceDollar !== $this->old_service_data['priceDollar']) {
+            $content .= "*" . 'Cost Changed: $'. $this->old_service_data['priceDollar'] . ' ➡️ $' . $this->priceDollar . "*\n";
+        }
+
+        if ($this->priceIraqi !== $this->old_service_data['priceIraqi']) {
+            $content .= "*" . 'Cost Changed: '. $this->old_service_data['priceIraqi'] . 'IQD ➡️ ' . $this->priceIraqi . 'IQD' . "*\n";
         }
         
         if ($this->serviceDescription !== $this->old_service_data['serviceDescription']) {

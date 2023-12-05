@@ -44,7 +44,8 @@ Route::middleware([Localization::class])->group(function () {
 */  
     Route::prefix('/own')->group(function () {
     Route::get('/', [OwnController::class, 'dashboardOwn'])->name('dashboardOwn');
-    Route::get('/addclient', [OwnController::class, 'addclient'])->name('addclient');
+    Route::get('/client', [OwnController::class, 'client'])->name('own.client');
+    Route::get('/service', [OwnController::class, 'service'])->name('own.service');
     Route::get('/userinformation', [OwnController::class, 'userInformation'])->name('userInformation');
     Route::get('/usersdata', [OwnController::class, 'userData'])->name('userData');
     Route::get('/plan/userplanview', [OwnController::class, 'userPlanView'])->name('userPlanView');

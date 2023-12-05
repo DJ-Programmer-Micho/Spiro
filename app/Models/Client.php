@@ -9,13 +9,22 @@ class Client extends Model
 {
     use HasFactory;
     protected $table = 'clients';
-    protected $fillable = [
+        protected $fillable = [
         'client_name',
-        'event_address',
-        'event_type',
-        'event_date',
- 
+        'country',
+        'city',
+        'address', 
+        'email', 
+        'phone_one', 
+        'phone_two', 
     ];
+    // protected $fillable = [
+    //     'client_name',
+    //     'event_address',
+    //     'event_type',
+    //     'event_date',
+ 
+    // ];
 
     public function quotation()
     {

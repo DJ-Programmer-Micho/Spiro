@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Dashboard;
+namespace App\Notifications\Own;
 
 
 use Illuminate\Notifications\Notification;
@@ -10,31 +10,25 @@ use NotificationChannels\Telegram\TelegramMessage;
 class TelegramClientUpdate extends Notification
 {
     protected $c_id;
-    protected $companyName;
     protected $clientName;
     protected $email;
     protected $address;
     protected $city;
     protected $country;
-    protected $zipcode;
-    protected $website;
     protected $phoneOne;
     protected $phoneTwo;
 
     protected $old_client_data;
     protected $tele_id;
 
-    public function __construct($c_id, $companyName, $clientName, $email, $address, $city, $country, $zipcode, $website, $phoneOne, $phoneTwo, $old_client_data, $tele_id)
+    public function __construct($c_id, $clientName, $email, $address, $city, $country, $phoneOne, $phoneTwo, $old_client_data, $tele_id)
     {
         $this->c_id = $c_id;
-        $this->companyName = $companyName;
         $this->clientName = $clientName;
         $this->email = $email;
         $this->address = $address;
         $this->city = $city;
         $this->country = $country;
-        $this->zipcode = $zipcode;
-        $this->website = $website;
         $this->phoneOne = $phoneOne;
         $this->phoneTwo = $phoneTwo;
 
@@ -54,13 +48,8 @@ class TelegramClientUpdate extends Notification
 
         $content = "*" . 'CLIENT UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'COMPANY-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
+        . "*" .'CLIENT-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
         . "*" .'-----------------'."*\n";
-
-        
-        if ($this->companyName !== $this->old_client_data['companyName']) {
-            $content .= "*" . 'Company Name Changed: '. $this->old_client_data['companyName'] . ' ➡️ ' . $this->companyName . "*\n";
-        }
         
         if ($this->clientName !== $this->old_client_data['clientName']) {
             $content .= "*" . 'Client Name Changed: '. $this->old_client_data['clientName'] . ' ➡️ ' . $this->clientName . "*\n";
@@ -78,20 +67,12 @@ class TelegramClientUpdate extends Notification
             $content .= "*" . 'Address Changed: '. $this->old_client_data['address'] . ' ➡️ ' . $this->address . "*\n";
         }
 
-        if ($this->zipcode !== $this->old_client_data['zipcode']) {
-            $content .= "*" . 'Zip Code Changed: '. $this->old_client_data['zipcode'] . ' ➡️ ' . $this->zipcode . "*\n";
-        }
-
         if ($this->phoneOne !== $this->old_client_data['phoneOne']) {
             $content .= "*" . 'Phone no.1 Changed: '. $this->old_client_data['phoneOne'] . ' ➡️ ' . $this->phoneOne . "*\n";
         }
 
         if ($this->phoneTwo !== $this->old_client_data['phoneTwo']) {
             $content .= "*" . 'Phone no.2 Changed: '. $this->old_client_data['phoneTwo'] . ' ➡️ ' . $this->phoneTwo . "*\n";
-        }
-
-        if ($this->website !== $this->old_client_data['website']) {
-            $content .= "*" . 'website Changed: '. $this->old_client_data['website'] . ' ➡️ ' . $this->website . "*\n";
         }
 
        return TelegramMessage::create()

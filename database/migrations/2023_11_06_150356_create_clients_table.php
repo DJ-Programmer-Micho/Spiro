@@ -14,11 +14,22 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('client_name')->nullable();
-            $table->string('event_address')->nullable();
-            $table->string('event_type')->nullable();
-            $table->string('event_date')->nullable();
+            $table->string('country')->nullable();
+            $table->string('city')->nullable();
+            $table->string('address')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone_one')->nullable();
+            $table->string('phone_two')->nullable();
             $table->timestamps();
         });
+        // Schema::create('clients', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('client_name')->nullable();
+        //     $table->string('event_address')->nullable();
+        //     $table->string('event_type')->nullable();
+        //     $table->string('event_date')->nullable();
+        //     $table->timestamps();
+        // });
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Dashboard;
+namespace App\Notifications\Own;
 
 
 use Illuminate\Notifications\Notification;
@@ -10,17 +10,15 @@ use NotificationChannels\Telegram\TelegramMessage;
 class TelegramClientNew extends Notification
 {
     protected $c_id;
-    protected $companyName;
     protected $clientName;
     protected $email;
     protected $address;
     protected $phoneOne;
     protected $tele_id;
 
-    public function __construct($c_id, $companyName, $clientName, $email, $address, $phoneOne, $tele_id)
+    public function __construct($c_id, $clientName, $email, $address, $phoneOne, $tele_id)
     {
         $this->c_id = $c_id;
-        $this->companyName = $companyName;
         $this->clientName = $clientName;
         $this->email = $email;
         $this->address = $address;
@@ -42,12 +40,11 @@ class TelegramClientNew extends Notification
        ->to($this->tele_id)
        ->content("*" . 'CLIENT ADDED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'COMPANY-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
+       . "*" .'CLIENT-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
        . "*" .'-----------------'."*\n"
-       . "*" .'Company Name: '. $this->companyName . "*\n"
-       . "*" .'Client Name: '. $this->clientName . "*\n"
-       . "*" .'Email Address: '. $this->email . "*\n"
-       . "*" .'Phone Number: '. $this->phoneOne . "*\n"
+       . "*" .'Name: '. $this->clientName . "*\n"
+       . "*" .'Email: '. $this->email . "*\n"
+       . "*" .'Phone: '. $this->phoneOne . "*\n"
        . "*" .'Address: '. $this->address . "*\n"
         );
     }

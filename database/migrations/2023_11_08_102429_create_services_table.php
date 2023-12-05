@@ -16,8 +16,9 @@ return new class extends Migration
             // $table->foreignId('branch_id')->references('id')->on('branches')->onDelete('cascade')->onUpdate('cascade');
             $table->string('service_code');
             $table->string('service_name');
-            $table->string('service_description');
-            $table->integer('cost');
+            $table->string('service_description')->nullable();
+            $table->integer('price_dollar');
+            $table->integer('price_iraqi');
             $table->timestamps();
         });
     }

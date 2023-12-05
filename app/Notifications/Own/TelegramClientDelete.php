@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Dashboard;
+namespace App\Notifications\Own;
 
 
 use Illuminate\Notifications\Notification;
@@ -14,10 +14,9 @@ class TelegramClientDelete extends Notification
     protected $clientName;
     protected $tele_id;
 
-    public function __construct($c_id, $companyName, $clientName, $tele_id)
+    public function __construct($c_id, $clientName, $tele_id)
     {
         $this->c_id = $c_id;
-        $this->companyName = $companyName;
         $this->clientName = $clientName;
         $this->tele_id = $tele_id;
     }
@@ -36,9 +35,8 @@ class TelegramClientDelete extends Notification
        ->to($this->tele_id)
        ->content("*" . 'CLIENT DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'COMPANY-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
+       . "*" .'CLIENT-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
        . "*" .'-----------------'."*\n"
-       . "*" .'Company Name: '. $this->companyName . "*\n"
        . "*" .'Client Name: '. $this->clientName . "*\n"
         );
     }

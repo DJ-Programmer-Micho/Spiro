@@ -118,8 +118,8 @@
                     <span>{{__('Users')}}</span></a>
             </li>
             <!-- Nav Item - }مهثىفس -->
-            <li class="nav-item {{(request()->path() == 'client') ? 'active' : ''}}">
-                <a class="nav-link"  href="{{route('client')}}">
+            <li class="nav-item {{(request()->path() == 'own/client') ? 'active' : ''}}">
+                <a class="nav-link"  href="{{route('own.client')}}">
                     <lord-icon
                     src="https://cdn.lordicon.com/kndkiwmf.json"
                     trigger="hover"
@@ -128,21 +128,9 @@
                     </lord-icon>
                     <span>{{__('Clients')}}</span></a>
             </li>
-            <!-- Nav Item - Branch -->
-            <li class="nav-item  {{(request()->path() == 'branch') ? 'active' : ''}}">
-                <a class="nav-link" href="{{route('branch')}}">
-                    <lord-icon
-                    src="https://cdn.lordicon.com/dnrurqiv.json"
-                    trigger="loop"
-                    delay="2000"
-                    colors="primary:#eeeeee,secondary:#cc0022"
-                    style="width:48px;height:48px">
-                </lord-icon>
-                    <span>{{__('Branches')}}</span></a>
-            </li>
             <!-- Nav Item - Service -->
-            <li class="nav-item  {{(request()->path() == 'service') ? 'active' : ''}}">
-                <a class="nav-link" href="{{route('service')}}">
+            <li class="nav-item  {{(request()->path() == 'own/service') ? 'active' : ''}}">
+                <a class="nav-link" href="{{route('own.service')}}">
                     <lord-icon
                     src="https://cdn.lordicon.com/wzwygmng.json"
                     trigger="loop"
@@ -736,7 +724,6 @@
                     @yield('dash_content')
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
 
@@ -744,7 +731,7 @@
             <footer class="sticky-footer bg-gradient-dark-r">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                        <span>Copyright &copy; MET IRAQ</span>
                     </div>
                 </div>
             </footer>
@@ -804,6 +791,7 @@
     @stack('cropper')
     @stack('drag')
     @stack('color');
+    @yield('form_script')
     @stack('dash_script')
     @yield('dash_script')
     <form id="languageForm" action="#" method="post">

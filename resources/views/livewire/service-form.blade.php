@@ -61,8 +61,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" wire:click="closeModal"
-                        data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary submitJs">Save</button>
+                        data-dismiss="modal">{{__('Close')}}</button>
+                    <button type="submit" class="btn btn-primary submitJs">{{__('Save')}}</button>
                 </div>
             </form>
         </div>
