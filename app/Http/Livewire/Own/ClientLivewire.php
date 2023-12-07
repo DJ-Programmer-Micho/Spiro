@@ -12,7 +12,7 @@ use App\Notifications\Own\TelegramClientDelete;
 
 class ClientLivewire extends Component
 {
-    use WithPagination; 
+    use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
     //FORM

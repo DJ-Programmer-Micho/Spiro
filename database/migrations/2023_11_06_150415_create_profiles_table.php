@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->string('job_title');
-            $table->string('national_id');
+            $table->string('national_id')->unique();
+            $table->string('avatar')->nullable();
             $table->string('phone_number_1');
-            $table->string('phone_number_2');
-            $table->string('email_address');
+            $table->string('phone_number_2')->nullable();
+            $table->string('email_address')->nullable();
+            $table->string('salary_dollar');
+            $table->string('salary_iraqi');
             $table->timestamps();
         });
     }

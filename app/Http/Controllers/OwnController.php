@@ -10,6 +10,10 @@ class OwnController extends Controller
         return view('dashboard.own.dashboard.index');
     } // END FUNCTION (DASHBOARD)
 
+    public function user(){
+        return view('dashboard.own.user.index');
+    } // END FUNCTION (DASHBOARD)
+
     public function client(){
         return view('dashboard.own.client.index');
     } // END FUNCTION (DASHBOARD)
