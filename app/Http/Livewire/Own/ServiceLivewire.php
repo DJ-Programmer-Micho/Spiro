@@ -149,7 +149,7 @@ class ServiceLivewire extends Component
                     $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
                 }
             }
-            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Added Successfully')]);
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Service Updated Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
         } catch (\Exception $e){

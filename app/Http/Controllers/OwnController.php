@@ -21,4 +21,12 @@ class OwnController extends Controller
     public function service(){
         return view('dashboard.own.service.index');
     } // END FUNCTION (DASHBOARD)
+
+    public function expense(){
+        return view('dashboard.own.expense.index');
+    } // END FUNCTION (DASHBOARD)
+
+    public function expenseBill(){
+        return view('dashboard.own.expenseBill.index');
+    } // END FUNCTION (DASHBOARD)
 }

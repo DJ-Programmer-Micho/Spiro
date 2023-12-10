@@ -47,7 +47,8 @@ Route::middleware([Localization::class])->group(function () {
     Route::get('/user', [OwnController::class, 'user'])->name('own.user');
     Route::get('/client', [OwnController::class, 'client'])->name('own.client');
     Route::get('/service', [OwnController::class, 'service'])->name('own.service');
-    Route::get('/userinformation', [OwnController::class, 'userInformation'])->name('userInformation');
+    Route::get('/expense', [OwnController::class, 'expense'])->name('own.expense');
+    Route::get('/expense/bill', [OwnController::class, 'expenseBill'])->name('own.expense.bill');
     Route::get('/usersdata', [OwnController::class, 'userData'])->name('userData');
     Route::get('/plan/userplanview', [OwnController::class, 'userPlanView'])->name('userPlanView');
     Route::get('/plan/guestplanview', [OwnController::class, 'guestPlanView'])->name('guestPlanView');
