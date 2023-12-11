@@ -10,9 +10,9 @@
     window.addEventListener('close-modal', event => {
         $('#selectExpenseModal').modal('hide');
         $('#createExpenseBillModal').modal('hide');
-
-        $('#createExpenseModal').modal('hide');
-        $('#updateExpenseModal').modal('hide');
+        $('#createEmployeeModal').modal('hide');
+        $('#createExpenseOtherModal').modal('hide');
+        $('#editExpenseModal').modal('hide');
         $('#deleteExpenseModal').modal('hide');
     })
 </script>

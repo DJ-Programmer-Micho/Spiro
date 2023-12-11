@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('cost_iraqi');
             $table->string('description')->nullable();
             $table->date('payed_date');
+            $table->integer('status');
             $table->timestamps();
         });
     }

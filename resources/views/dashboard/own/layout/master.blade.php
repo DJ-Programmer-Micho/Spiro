@@ -892,6 +892,8 @@
     @yield('form_script')
     @stack('dash_script')
     @yield('dash_script')
+    @stack('datePicker')
+    @yield('datePicker')
     <form id="languageForm" action="#" method="post">
         @csrf
         <input type="hidden" name="locale" id="selectedLocale" value="{{ app()->getLocale() }}">

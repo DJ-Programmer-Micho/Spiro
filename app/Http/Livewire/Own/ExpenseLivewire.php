@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\Own\TelegramExpenseNew;
-use App\Notifications\Own\TelegramUserDelete;
-use App\Notifications\Own\TelegramUserUpdate;
+use App\Notifications\Own\TelegramExpenseUpdate;
+use App\Notifications\Own\TelegramExpenseShort;
+use App\Notifications\Own\TelegramExpenseDelete;
 
 class ExpenseLivewire extends Component
 {
@@ -26,75 +27,48 @@ class ExpenseLivewire extends Component
     public $bill_data;
     public $select_bill_data;
     public $billName;
-
     // FORM emp TYPE
     public $user_data;
     public $select_user_data;
     public $empName;
-
     // FORM emp TYPE
     public $expenseOtherName;
-
     // GENERAL INFORMATION
     public $cost_dollar;
     public $cost_iraqi;
     public $description;
     public $billDate;
-
-
-
-
-    //FORM
-    public $name;
-    public $email;
-    public $password;
-    public $role;
-    public $jobTitle;
-    public $nationalId;
-    public $actualEmail;
-    public $phoneNumberOne;
-    public $phoneNumberTwo;
-    public $salaryDollar;
-    public $salaryIraqi;
-    //FORM IMG
-    public $imgFlag = false; 
-    public $default_avatarImg;
-    public $temp_avatarImg;
-    public $old_avatarImg;
+    public $status;
     //FILTERS
     public $search;
+    public $dateRange = null;
+    public $rangeViewValue = null;
     //TELEGRAM
     public $tele_id;
     public $telegram_channel_status;
     //TEMP VARIABLES
     public $userUpdate;
     public $old_user_data;
-    public $del_user_id;
-    public $del_user_data;
-    public $del_user_name;
-    public $user_name_to_selete;
+    public $del_expense_id;
+    public $del_expense_data;
+    public $del_expense_name;
+    public $expense_name_to_selete;
     public $confirmDelete = false;
+
+    protected $listeners = ['dateRangeSelected' => 'applyDateRangeFilter'];
 
 
     public function mount(){
         $this->telegram_channel_status = 1;
         $this->tele_id = env('TELEGRAM_GROUP_ID');
-        $this->default_avatarImg = asset('avatars/user.png');
+        $this->confirmDelete = false;
     } // END FUNCTION OF PAGE LOAD
 
-    protected function rules()
-    {
-        $rules = [];
-        $rules['name'] = ['required'];
-        $rules['email'] = ['required'];
-        $rules['password'] = ['required'];
-        $rules['status'] = ['required'];
-        $rules['nationalId'] = ['required'];
-        $rules['phoneNumberOne'] = ['required'];
-        $rules['salaryDollar'] = ['required'];
-        $rules['salaryIraqi'] = ['required'];
-        return $rules;
-    } // END FUNCTION OF Rules
+    // protected function rules()
+    // {
+    //     $rules = [];
+    //     return $rules;
+    // } // END FUNCTION OF Rules
 
     // *********************
     // START - FOR THE BILLS PROCESS
@@ -113,6 +87,7 @@ class ExpenseLivewire extends Component
         $this->cost_dollar = $selected_by_user_bill_data->cost_dollar;
         $this->cost_iraqi = $selected_by_user_bill_data->cost_iraqi;
         $this->description = $selected_by_user_bill_data->description;
+        $this->status = $selected_by_user_bill_data->status;
     }
     public function addBillExpense(){
         try {
@@ -122,7 +97,8 @@ class ExpenseLivewire extends Component
                 'description' => $this->description,
                 'cost_dollar' => $this->cost_dollar,
                 'cost_iraqi' => $this->cost_iraqi,
-                'payed_date' => $this->billDate
+                'payed_date' => $this->billDate,
+                'status' => $this->status
             ]);
 
             if($this->telegram_channel_status == 1){
@@ -150,14 +126,6 @@ class ExpenseLivewire extends Component
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
         }
     }
-
-    // Edit Section
-    public function editExpenseBillModalStartup(){
-        $this->resetModal();
-        $this->bill_data = BillsExpense::get();
-    }
-    // Delete Section
-
     // *********************
     // END - FOR THE BILLS PROCESS
     // *********************
@@ -178,6 +146,7 @@ class ExpenseLivewire extends Component
         $this->cost_dollar = $selected_by_user_user_data->profile->salary_dollar;
         $this->cost_iraqi = $selected_by_user_user_data->profile->salary_iraqi;
         $this->description = $selected_by_user_user_data->profile->job_title;
+        $this->status = $selected_by_user_user_data->profile->status;
     }
     public function addEmpExpense(){
         try {
@@ -187,7 +156,8 @@ class ExpenseLivewire extends Component
                 'description' => $this->description,
                 'cost_dollar' => $this->cost_dollar,
                 'cost_iraqi' => $this->cost_iraqi,
-                'payed_date' => $this->billDate
+                'payed_date' => $this->billDate,
+                'status' => $this->status
             ]);
 
             if($this->telegram_channel_status == 1){
@@ -233,7 +203,8 @@ class ExpenseLivewire extends Component
                 'description' => $this->description,
                 'cost_dollar' => $this->cost_dollar,
                 'cost_iraqi' => $this->cost_iraqi,
-                'payed_date' => $this->billDate
+                'payed_date' => $this->billDate,
+                'status' => $this->status
             ]);
 
             if($this->telegram_channel_status == 1){
@@ -266,206 +237,95 @@ class ExpenseLivewire extends Component
     // *********************
 
 
-    public function addUser(){
+
+
+    public $gName;
+    public $type;
+    public $expenseUpdate;
+    public $old_expense_data;
+    // Edit Section
+    public function editExpenseBillModalStartup(int $expenseId){
+        $this->resetModal();
         try {
-            $validatedData = $this->validate();
-            if ($this->img_public) {
-                $this->img_public = preg_replace('/^data:image\/\w+;base64,/', '', $this->img_public);
-                $this->decodedImage = base64_decode($this->img_public);
-                if ($this->decodedImage === false) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Imade did not Encoded, please check the file or file format!')]);
+            $expenseEdit = Expense::find($expenseId);
+            // dd($expenseEdit);
+            $this->expenseUpdate = $expenseId;
+            $this->old_expense_data = [];
+            if ($expenseEdit) {
+                if($expenseEdit->type == "Bill") {
+                    $this->old_expense_data = null;
+                    $this->gName = $expenseEdit->item;
+                    $this->type = $expenseEdit->type;
+                    $this->cost_dollar = $expenseEdit->cost_dollar;
+                    $this->cost_iraqi = $expenseEdit->cost_iraqi;
+                    $this->description = $expenseEdit->description;
+                    $this->billDate = $expenseEdit->payed_date;
+                    $this->status = $expenseEdit->status;
+                } else if ($expenseEdit->type == "Salary") {
+                    $this->old_expense_data = null;
+                    $this->gName = $expenseEdit->item;
+                    $this->type = $expenseEdit->type;
+                    $this->cost_dollar = $expenseEdit->cost_dollar;
+                    $this->cost_iraqi = $expenseEdit->cost_iraqi;
+                    $this->description = $expenseEdit->description;
+                    $this->billDate = $expenseEdit->payed_date;
+                    $this->status = $expenseEdit->status;
+                } else {
+                    $this->old_expense_data = null;
+                    $this->gName = $expenseEdit->item;
+                    $this->type = $expenseEdit->type;
+                    $this->cost_dollar = $expenseEdit->cost_dollar;
+                    $this->cost_iraqi = $expenseEdit->cost_iraqi;
+                    $this->description = $expenseEdit->description;
+                    $this->billDate = $expenseEdit->payed_date;
+                    $this->status = $expenseEdit->status;
                 }
-            } else {
-                $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => __('No Image Found!')]);
-            }
-
-            $filename = 'user_' . now()->format('YmdHis') . '.jpg';
-            $success = File::put(public_path('avatars/' . $filename), $this->decodedImage);
-            if ($success) {
-                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Avatar Uploaded Successfully')]);
-            } else {
-                $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => __('Avatar did not upload')]);
-            }
-
-            $user = User::create([
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'password' => $validatedData['password'],
-                'role' => $validatedData['role'],
-                'status' => $validatedData['status']
-            ]);
-
-            Profile::Create([
-                'user_id' => $user->id,
-                'job_title' => $this->jobTitle,
-                'national_id' => $validatedData['nationalId'],
-                'avatar' => $filename ?? null,
-                'phone_number_1' => $validatedData['phoneNumberOne'],
-                'phone_number_2' => $this->phoneNumberTwo ?? null,
-                'email_address' => $this->actualEmail ?? null,
-                'salary_dollar' => $validatedData['salaryDollar'],
-                'salary_iraqi' => $validatedData['salaryIraqi'],
-            ]);
-
-
-
-            if($validatedData['role'] == 1) {
-                $roleName = 'Admin';
-            } else if ($validatedData['role'] == 2){
-                $roleName = 'Editor';
-            } else if ($validatedData['role'] == 3) {
-                $roleName = 'Finance';
-            } else {
-                $roleName = 'Employee';
-            }
-             
-            if($this->telegram_channel_status == 1){
-                try{
-                    Notification::route('toTelegram', null)
-                    ->notify(new TelegramUserNew(
-                        $user->id,
-                        $validatedData['name'],
-                        $roleName,
-                        $this->jobTitle,
-                        $filename,
-                        $this->tele_id
-                    ));
-                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                }  catch (\Exception $e) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
-                }
-            }
-    
-            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Added Successfully')]);
-            $this->resetModal();
-            $this->dispatchBrowserEvent('close-modal');
-        } catch (\Exception $e){
-            $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        }
-    } // END FUNCTION OF ADD CLIENT
-
-    public function editUser(int $userId){
-        try {
-            $userEdit = User::find($userId);
-            $this->userUpdate = $userId;
-            $this->old_user_data = [];
-
-            if ($userEdit) {
-                $this->old_user_data = null;
-                $this->name = $userEdit->name;
-                $this->email = $userEdit->email;
-                $this->password = $userEdit->password;
-                $this->role = $userEdit->role;
-                $this->status = $userEdit->status;
-                $this->jobTitle = $userEdit->profile->job_title;
-                $this->nationalId = $userEdit->profile->national_id;
-                $this->actualEmail = $userEdit->profile->email_address;
-                $this->phoneNumberOne = $userEdit->profile->phone_number_1;
-                $this->phoneNumberTwo = $userEdit->profile->phone_number_2;
-                $this->salaryDollar = $userEdit->profile->salary_dollar;
-                $this->salaryIraqi = $userEdit->profile->salary_iraqi;
-
-                if($userEdit->profile->avatar){
-                    $this->temp_avatarImg = asset('avatars/'.$userEdit->profile->avatar);
-                }
-
-                $this->old_user_data = [
-                    'id' => $userEdit->id,
-                    'name' => $userEdit->name,
-                    'email' => $userEdit->email,
-                    'password' => $userEdit->password,
-                    'role' => $userEdit->role,
-                    'status' => $userEdit->status,
-                    'jobTitle' => $userEdit->profile->job_title,
-                    'nationalId' => $userEdit->profile->national_id,
-                    'avatar' => $userEdit->profile->avatar,
-                    'actualEmail' => $userEdit->profile->email_address,
-                    'phoneNumberOne' => $userEdit->profile->phone_number_1,
-                    'phoneNumberTwo' => $userEdit->profile->phone_number_2,
-                    'salaryDollar' => $userEdit->profile->salary_dollar,
-                    'salaryIraqi' => $userEdit->profile->salary_iraqi
+                $this->old_expense_data = [
+                    'id' => $expenseEdit->id,
+                    'item' => $expenseEdit->item,
+                    'type' => $expenseEdit->type,
+                    'cost_dollar' => $expenseEdit->cost_dollar,
+                    'cost_iraqi' => $expenseEdit->cost_iraqi,
+                    'description' => $expenseEdit->description,
+                    'billDate' => $expenseEdit->payed_date,
+                    'status' => $expenseEdit->status
                 ];
             } else {
-                return redirect()->to('own/user');
+                return redirect()->to('own/expense');
             }
         } catch (\Exception $e){
-            $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Could Not Load The Data')]);
+
         }
-    } // END FUNCTION OF EDIT CLIENT
+    }
+    public function updateExpenseBillModalStartup(){
+        $this->resetModal();
+        $this->select_bill_data = $this->expenseUpdate;
 
-    public function updateUser(){
         try {
-            $validatedData = $this->validate();
-
-            if ($this->img_public) {
-                $this->img_public = preg_replace('/^data:image\/\w+;base64,/', '', $this->img_public);
-                $this->decodedImage = base64_decode($this->img_public);
-    
-                if ($this->decodedImage === false) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Image did not encode correctly, please check the file or file format!')]);
-                } else {
-                    $oldAvatarFilename = Profile::where('user_id', $this->userUpdate)->value('avatar');
-                    // Delete the old avatar file
-                    if ($oldAvatarFilename) {
-                        // Use public_path() for files in the public directory
-                        $filePath = public_path('avatars/' . $oldAvatarFilename);
-                    
-                        // Delete the old avatar file
-                        if (file_exists($filePath)) {
-                            unlink($filePath);
-                        }
-                    }
-                    // Generate a new filename for the avatar
-                    $filename = 'user_' . now()->format('YmdHis') . '.jpg';
-                    // Save the new avatar file
-                    File::put(public_path('avatars/' . $filename), $this->decodedImage);
-
-                    Profile::where('user_id', $this->userUpdate)->update([
-                        'avatar' => $filename ?? null,
-                    ]);
-                }
-            } else {
-                $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('Image Did not Update')]);
-            }
-
-            User::where('id', $this->userUpdate)->update([
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'password' => $validatedData['password'],
-                'role' => $validatedData['role'],
-                'status' => $validatedData['status']
-            ]);
-
-            Profile::where('user_id', $this->userUpdate)->update([
-                'job_title' => $this->jobTitle,
-                'national_id' => $validatedData['nationalId'],
-                'phone_number_1' => $validatedData['phoneNumberOne'],
-                'phone_number_2' => $this->phoneNumberTwo ?? null,
-                'email_address' => $this->actualEmail ?? null,
-                'salary_dollar' => $validatedData['salaryDollar'],
-                'salary_iraqi' => $validatedData['salaryIraqi'],
-            ]);
-
+            // if( $this->type == "Bill" ) {
+                Expense::where('id', $this->select_bill_data)->update([
+                    'item' => $this->gName,
+                    'type' => $this->type,
+                    'description' => $this->description,
+                    'cost_dollar' => $this->cost_dollar,
+                    'cost_iraqi' => $this->cost_iraqi,
+                    'payed_date' => $this->billDate,
+                    'status' => $this->status
+                ]);
             if($this->telegram_channel_status == 1){
                 try{
                     Notification::route('toTelegram', null)
-                    ->notify(new TelegramUserUpdate(
-                        $this->userUpdate,
-                        $this->name,
-                        $this->email,
-                        $this->password,
-                        $this->role,
+                    ->notify(new TelegramExpenseUpdate(
+                        $this->select_bill_data,
+                        $this->gName,
+                        $this->type,
+                        $this->description,
+                        $this->cost_dollar,
+                        $this->cost_iraqi,
+                        $this->billDate,
                         $this->status,
-                        $this->jobTitle,
-                        $this->nationalId,
-                        $this->actualEmail,
-                        $this->phoneNumberOne,
-                        $this->phoneNumberTwo,
-                        $this->salaryDollar,
-                        $this->salaryIraqi,
-                        $filename ?? $this->old_user_data['avatar'],
 
-                        $this->old_user_data,
+                        $this->old_expense_data,
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
@@ -473,35 +333,66 @@ class ExpenseLivewire extends Component
                     $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
                 }
             }
-            
-            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Added Successfully')]);
+
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Service Updated Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
         } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
         }
-    } // END FUNCTION OF UPDATE CLIENT
+    }
+    // Delete Section
 
-    public function deleteUser(int $selected_user_id){
-        $this->del_user_id = $selected_user_id;
-        $this->del_user_data = User::find($this->del_user_id);
-        if($this->del_user_data->name){
-            $this->del_user_name = $this->del_user_data->name ?? "DELETE";
+    public function updateStatus(int $expense_Id) {
+        $itemState = Expense::find($expense_Id);
+        // Toggle the status (0 to 1 and 1 to 0)
+        $this->old_expense_data = [
+            'status' => $itemState->status
+        ];
+
+        $itemState->status = $itemState->status == 0 ? 1 : 0;
+
+        if($this->telegram_channel_status == 1){
+            try{
+                Notification::route('toTelegram', null)
+                ->notify(new TelegramExpenseShort(
+                    $expense_Id,
+                    $itemState->item,
+                    $itemState->status,
+
+                    $this->old_expense_data,
+                    $this->tele_id,
+                ));
+                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+            }  catch (\Exception $e) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
+            }
+        }
+
+        $itemState->save();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Expense Status Updated Successfully')]);
+    } // END FUNCTION OF UPDATING PRIOEITY
+
+    public function deleteExpense(int $selected_expense_id){
+        $this->del_expense_id = $selected_expense_id;
+        $this->del_expense_data = Expense::find($this->del_expense_id);
+        if($this->del_expense_data->item){
+            $this->del_expense_name = $this->del_expense_data->item ?? "Delete";
             $this->confirmDelete = true;
         } else {
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Record Not Found')]);
         }
     } // END FUNCTION OF DELETE CLIENT
 
-    public function destroyUser(){
-        if ($this->confirmDelete && $this->user_name_to_selete === $this->del_user_name) {
-            User::find($this->del_user_id)->delete();
+    public function destroyExpense(){
+        if ($this->confirmDelete && $this->expense_name_to_selete === $this->del_expense_name) {
+            Expense::find($this->del_expense_id)->delete();
             if($this->telegram_channel_status == 1){
                 try{
                     Notification::route('toTelegram', null)
-                    ->notify(new TelegramUserDelete(
-                        $this->del_user_id,
-                        $this->del_user_data->name,
+                    ->notify(new TelegramExpenseDelete(
+                        $this->del_expense_id,
+                        $this->del_expense_data->item,
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
@@ -509,61 +400,83 @@ class ExpenseLivewire extends Component
                     $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
                 }
             }
-            $this->del_user_id = null;
-            $this->del_user_data = null;
-            $this->del_user_name = null;
-            $this->user_name_to_selete = null;
+            $this->del_expense_id = null;
+            $this->del_expense_data = null;
+            $this->del_expense_name = null;
+            $this->expense_name_to_selete = null;
             $this->confirmDelete = false;
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('User Deleted Successfully')]);
         } else {
-            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Operation Failed, Make sure of the name CODE...DEL-NAME, The name:') . ' ' . $this->del_client_name]);
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Operation Failed, Make sure of the name CODE...DEL-NAME, The name:') . ' ' . $this->del_expense_name]);
         }
     } // END FUNCTION OF DESTROY CLIENT
 
     // PRIVATE & PUBLIC FUNCTIONS
     private function resetModal(){
-        $this->name = '';
-        $this->email = '';
-        $this->password = '';
-        $this->role = '';
-        $this->status = '';
-        $this->jobTitle = '';
-        $this->nationalId = '';
-        $this->actualEmail = '';
-        $this->phoneNumberOne = '';
-        $this->phoneNumberTwo = '';
-        $this->salaryDollar = '';
-        $this->salaryIraqi = '';
-        $this->del_user_id = null;
-        $this->del_user_data = null;
-        $this->del_user_name = null;
-        $this->imgFlag = false; 
-        $this->img_public = null;
-        $this->temp_avatarImg = null;
+        $this->bill_data = '';
+        $this->select_bill_data = '';
+        $this->billName = '';
+        $this->user_data = '';
+        $this->select_user_data = '';
+        $this->empName = '';
+        $this->expenseOtherName = '';
+        $this->status = 1;
+        $this->cost_dollar = '';
+        $this->cost_iraqi = '';
+        $this->description = '';
+        $this->billDate = '';
+        $this->del_expense_id = null;
+        $this->del_expense_data = null;
+        $this->del_expense_name = null;
     } // END FUNCTION OF RESET VARIABLES
+
+    public function resetFilter(){
+        $this->search = null;
+        $this->dateRange = null;
+        $this->rangeViewValue = null;
+    }
+
 
     public function closeModal()
     {
         $this->resetModal();
     } // END FUNCTION OF CLOSE MODAL
 
+    public $startDate ;
+    public $endDate ;    
+
+    public function applyDateRangeFilter()
+    {
+        // return $this->dateRange;
+    }
+
 
     public function render()
     {
+        if ($this->dateRange) {
+            list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
+        }
+
+        $this->rangeViewValue = $this->startDate . ' - ' . $this->endDate . ' ';
+
         $colspan = 6;
-        $cols_th = ['#','Item','Type Expense', 'Price in ($)','Price in (IQD)', 'Note', 'Date', 'Actions'];
-        $cols_td = ['id','item','type','cost_dollar','cost_iraqi','description','payed_date'];
+        $cols_th = ['#','Item','Type Expense', 'Price in ($)','Price in (IQD)', 'Note', 'Date','Status','Actions'];
+        $cols_td = ['id','item','type','cost_dollar','cost_iraqi','description','payed_date','status'];
 
         $data = Expense::query()
         ->where(function ($query) {
             $query->where('item', 'like', '%' . $this->search . '%')
+                ->orWhere('type', 'like', '%' . $this->search . '%')
                 ->orWhere('description', 'like', '%' . $this->search . '%')
                 ->orWhere('cost_dollar', 'like', '%' . $this->search . '%')
                 ->orWhere('cost_iraqi', 'like', '%' . $this->search . '%');
         })
-        // ->orderBy('priority', 'ASC')
+        ->when($this->startDate && $this->endDate, function ($query) {
+            $query->whereBetween('payed_date', [$this->startDate, $this->endDate]);
+        })
+        ->orderBy('payed_date', 'DESC')
         ->paginate(15);
         
         return view('livewire.own.expense-table',[
@@ -571,6 +484,7 @@ class ExpenseLivewire extends Component
             'cols_th' => $cols_th,
             'cols_td' => $cols_td,
             'colspan' => $colspan,
+            'rangeViewValue' => $this->rangeViewValue,
         ]);
     } // END FUNCTION OF RENDER
 }

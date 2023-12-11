@@ -16,5 +16,6 @@ class Expense extends Model
         'cost_iraqi',
         'description',
         'payed_date',
+        'status',
     ];
 }
