@@ -147,7 +147,7 @@
                 {{__('Expenses')}}
             </div>
             <li class="nav-item {{(str_contains(request()->path(), 'own/expense')) ? 'active' : ''}}">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseQuotation" aria-expanded="true" aria-controls="collapseQuotation">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseExpense" aria-expanded="true" aria-controls="collapseExpense">
                     <lord-icon
                     src="https://cdn.lordicon.com/ofklvwkr.json"
                     trigger="loop"
@@ -157,7 +157,7 @@
                     </lord-icon>
                     <span>{{__('Expense')}}</span>
                 </a>
-                <div id="collapseQuotation" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div id="collapseExpense" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="py-2 collapse-inner rounded" style="background-color: #1f2535">
                         {{-- <h6 class="collapse-header">{{__('Setting')}}</h6> --}}
                         <a class="collapse-item" href="{{route('own.expense')}}">
@@ -184,81 +184,13 @@
                     </div>
                 </div>
             </li>
-            <li class="nav-item {{(str_contains(request()->path(), 'rest/setting/')) ? 'active' : ''}}">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInvoice" aria-expanded="true" aria-controls="collapseInvoice">
-                    <lord-icon
-                    src="https://cdn.lordicon.com/wzwygmng.json"
-                    trigger="loop"
-                    delay="1500"
-                    state="in-reveal"
-                    colors="primary:#ffffff,secondary:#cc0022"
-                    style="width:48px;height:48px">
-                </lord-icon>
-                    <span>{{__('Invoice')}}</span>
-                </a>
-                <div id="collapseInvoice" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="py-2 collapse-inner rounded" style="background-color: #1f2535">
-                        {{-- <h6 class="collapse-header">{{__('Setting')}}</h6> --}}
-                        <a class="collapse-item" href="#">
-                            <lord-icon
-                            src="https://cdn.lordicon.com/pghuyunt.json"
-                            trigger="loop"
-                            delay="2000"
-                            colors="primary:#cc0022,secondary:#ffffff"
-                            style="width:36px;height:36px">
-                        </lord-icon>
-                            <span class="text-white">{{__('Invoices')}}</span>
-                        </a>
-                        <a class="collapse-item" href="#">
-                            <lord-icon src="https://cdn.lordicon.com/wloilxuq.json" trigger="loop" delay="2000"
-                                colors="primary:#cc0022,secondary:#eee" state="hover-1" style="width:36px;height:36px">
-                            </lord-icon>
-                            <span class="text-white">{{__('Create Invoice')}}</span>
-                        </a>
-                    </div>
-                </div>
-            </li>
-            <li class="nav-item {{(str_contains(request()->path(), 'rest/setting/')) ? 'active' : ''}}">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReceipt" aria-expanded="true" aria-controls="collapseReceipt">
-                    <lord-icon
-                    src="https://cdn.lordicon.com/wzwygmng.json"
-                    trigger="loop"
-                    delay="1500"
-                    state="in-unfold"
-                    colors="primary:#ffffff,secondary:#cc0022"
-                    style="width:48px;height:48px">
-                </lord-icon>
-                    <span>{{__('Cash Receipt')}}</span>
-                </a>
-                <div id="collapseReceipt" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="py-2 collapse-inner rounded" style="background-color: #1f2535">
-                        {{-- <h6 class="collapse-header">{{__('Setting')}}</h6> --}}
-                        <a class="collapse-item" href="#">
-                            <lord-icon
-                            src="https://cdn.lordicon.com/pghuyunt.json"
-                            trigger="loop"
-                            delay="2000"
-                            colors="primary:#cc0022,secondary:#ffffff"
-                            style="width:36px;height:36px">
-                        </lord-icon>
-                            <span class="text-white">{{__('Cash Receipts')}}</span>
-                        </a>
-                        <a class="collapse-item" href="#">
-                            <lord-icon src="https://cdn.lordicon.com/wloilxuq.json" trigger="loop" delay="2000"
-                                colors="primary:#cc0022,secondary:#eee" state="hover-1" style="width:36px;height:36px">
-                            </lord-icon>
-                            <span class="text-white">{{__('Create Cash Receipt')}}</span>
-                        </a>
-                    </div>
-                </div>
-            </li>
             <!-- Divider -->
             <hr class="sidebar-divider my-1">
             <!-- Heading -->
             <div class="sidebar-heading">
                 {{__('Q.I.R.D')}}
             </div>
-            <li class="nav-item {{(str_contains(request()->path(), 'rest/setting/')) ? 'active' : ''}}">
+            <li class="nav-item {{(str_contains(request()->path(), 'own/quotation')) ? 'active' : ''}}">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseQuotation" aria-expanded="true" aria-controls="collapseQuotation">
                     <lord-icon
                         src="https://cdn.lordicon.com/wzwygmng.json"
@@ -273,7 +205,7 @@
                 <div id="collapseQuotation" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="py-2 collapse-inner rounded" style="background-color: #1f2535">
                         {{-- <h6 class="collapse-header">{{__('Setting')}}</h6> --}}
-                        <a class="collapse-item" href="#">
+                        <a class="collapse-item" href="{{route('own.quotation')}}">
                             <lord-icon
                             src="https://cdn.lordicon.com/pghuyunt.json"
                             trigger="loop"

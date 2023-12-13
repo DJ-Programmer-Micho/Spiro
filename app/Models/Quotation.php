@@ -11,19 +11,35 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Quotation extends Model
 {
     use HasFactory;
-    protected $table = 'quotation';
+    protected $table = 'quotations';
     protected $fillable = [
         'client_id', 
         'payment_id',
+        'qoutation_date',
+
+        'status',
         'services',
-        'discount',
-        'tax',
-        'change_rate',
-        'total_amount', 
-        'fully_paid_date', 
-        'description', 
+
+        'description',
+        'services',
         'notes',
+
+        'total_amount_dollar',
+        'tax_dollar',
+        'discount_dollar',
+        'first_pay_dollar', 
+        'grand_total_dollar', 
+        'due_dollar', 
+
+        'total_amount_iraqi',
+        'tax_iraqi',
+        'discount_iraqi',
+        'first_pay_iraqi', 
+        'grand_total_iraqi', 
+        'due_iraqi', 
+
         'quotation_status',
+        'status',
     ];
 
     public function client()

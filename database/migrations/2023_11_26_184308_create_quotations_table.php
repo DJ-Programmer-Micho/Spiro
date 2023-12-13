@@ -15,15 +15,27 @@ return new class extends Migration
             $table->id();
             $table->foreignId('client_id')->references('id')->on('clients')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('payment_id')->references('id')->on('payments')->onDelete('cascade')->onUpdate('cascade');
-            $table->json('services')->nullable();
-            $table->decimal('discount', 10, 2)->nullable();
-            $table->decimal('tax', 10, 2)->nullable();
-            $table->decimal('change_rate', 10, 2)->nullable();
-            $table->decimal('total_amount', 10, 2)->nullable();
-            $table->date('fully_paid_date')->nullable();
+            $table->date('qoutation_date')->nullable();
             $table->string('description')->nullable();
-            $table->string('notes')->nullable();
-            $table->enum('quotation_status', ['draft', 'sent', 'approved', 'rejected'])->nullable();
+            $table->json('services')->nullable();
+            $table->json('notes')->nullable();
+
+            $table->string('total_amount_dollar')->nullable();
+            $table->string('tax_dollar')->nullable();
+            $table->string('discount_dollar')->nullable();
+            $table->string('first_pay_dollar')->nullable();
+            $table->string('grand_total_dollar')->nullable();
+            $table->string('due_dollar')->nullable();
+            
+            $table->string('total_amount_iraqi')->nullable();
+            $table->string('tax_iraqi')->nullable();
+            $table->string('discount_iraqi')->nullable();
+            $table->string('first_pay_iraqi')->nullable();
+            $table->string('grand_total_iraqi')->nullable();
+            $table->string('due_iraqi')->nullable();
+
+            $table->string('quotation_status')->nullable();
+            $table->integer('status');
             $table->timestamps();
         });
     }

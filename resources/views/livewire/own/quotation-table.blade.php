@@ -1,10 +1,10 @@
 <div>
-    @include('livewire.own.expense-form')
+    @include('livewire.own.quotation-form')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <div class="m-4">
         <h2 class="text-lg font-medium mr-auto">
-            <b style="color: #31fbe2">{{__('EXPENSE TABLE')}}</b>
+            <b style="color: #31fbe2">{{__('QUOTATION TABLE')}}</b>
         </h2>
         <div class="row d-flex justify-content-between m-0">
             <div class="d-flex">
@@ -21,7 +21,7 @@
                 </h6>
             </div>
             <div>
-                <button class="btn btn-info" data-toggle="modal" data-target="#selectExpenseModal">{{__('Select Expense')}}</button>
+                <button class="btn btn-info" data-toggle="modal" data-target="#createQuotationModal">{{__('Select Expense')}}</button>
             </div>
         </div>
         @if (session()->has('message'))
@@ -50,22 +50,18 @@
                                 $ {{number_format($item->cost_dollar)}}
                             @elseif ($col === 'cost_iraqi')        
                                 {{number_format($item->cost_iraqi)}} IQD
-                            @elseif ($col === 'role')
-                                @if($item->role == 1) 
-                                    <span class="text-danger">
-                                        <b>{{__('Admin')}}</b>
+                            @elseif ($col === 'quotation_status')
+                                @if($item->quotation_status == 'Sent') 
+                                    <span class="text-info">
+                                        <b>{{__('Sent')}}</b>
                                     </span>
-                                @elseif ($item->role == 2)
-                                    <span class="text-warning">
-                                        <b>{{__('Editor')}}</b>
-                                    </span>
-                                @elseif ($item->role == 3) 
-                                    <span class="text-white">
-                                        <b>{{__('Finance')}}</b>
+                                @elseif ($item->quotation_status == 'Approved') 
+                                    <span class="text-success">
+                                        <b>{{__('Approved')}}</b>
                                     </span>
                                 @else 
-                                    <span class="text-info">
-                                        <b>{{__('Employee')}}</b>
+                                    <span class="text-danger">
+                                        <b>{{__('Rejected')}}</b>
                                     </span>
                                 @endif
                             @else

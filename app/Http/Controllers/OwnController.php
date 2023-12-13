@@ -29,4 +29,8 @@ class OwnController extends Controller
     public function expenseBill(){
         return view('dashboard.own.expenseBill.index');
     } // END FUNCTION (DASHBOARD)
+
+    public function quotation(){
+        return view('dashboard.own.quotation.index');
+    } // END FUNCTION (DASHBOARD)
 }
