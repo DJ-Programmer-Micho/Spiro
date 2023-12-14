@@ -140,6 +140,18 @@
                 </lord-icon>
                     <span>{{__('Services')}}</span></a>
             </li>
+            <!-- Nav Item - payment -->
+            <li class="nav-item  {{(request()->path() == 'own/payment') ? 'active' : ''}}">
+                <a class="nav-link" href="{{route('own.payment')}}">
+                    <lord-icon
+                    src="https://cdn.lordicon.com/wzwygmng.json"
+                    trigger="loop"
+                    delay="2000"
+                    colors="primary:#cc0022,secondary:#eee"
+                    style="width:48px;height:48px">
+                </lord-icon>
+                    <span>{{__('Payment')}}</span></a>
+            </li>
             <!-- Divider -->
             <hr class="sidebar-divider my-1">
             <!-- Heading -->

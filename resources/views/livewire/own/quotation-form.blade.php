@@ -140,7 +140,7 @@
                             <div class="col-12 col-sm-6">
                                 <div class="mb-3">
                                     <label>{{__('Exchange Rate:')}} <small>(it's a preview)</small></label>
-                                    <input type="number" name="exchange_rate" wire:model="exchange_rate" class="form-control" id="exchange_rate">
+                                    <input type="number" name="exchange_rate" wire:model="exchange_rate" class="form-control" id="exchange_rate" wire:change="exchangeUpdate">
                                 </div>
                             </div>
                         </div>
@@ -295,17 +295,17 @@
                             
                                 <div class="mb-3">
                                     <label>{{__('TAX:')}} (IQD)</label>
-                                    <input type="number" name="taxIraqi" wire:model="taxIraqi" class="form-control" id="taxIraqi" wire:change="calculateTotals">
+                                    <input type="number" name="taxIraqi" wire:model="taxIraqi" class="form-control" id="taxIraqi">
                                 </div>
 
                                 <div class="mb-3">
                                     <label>{{__('Discount:')}} (IQD)</label>
-                                    <input type="number" name="discountIraqi" wire:model="discountIraqi" class="form-control" id="discountIraqi" wire:change="calculateTotals">
+                                    <input type="number" name="discountIraqi" wire:model="discountIraqi" class="form-control" id="discountIraqi">
                                 </div>
                             
                                 <div class="mb-3">
                                     <label>{{__('First Pay:')}} (IQD)</label>
-                                    <input type="number" name="fisrtPayIraqi" wire:model="fisrtPayIraqi" class="form-control" id="fisrtPayIraqi" wire:change="calculateTotals">
+                                    <input type="number" name="fisrtPayIraqi" wire:model="fisrtPayIraqi" class="form-control" id="fisrtPayIraqi">
                                 </div>
                             
                                 <div class="mb-3">

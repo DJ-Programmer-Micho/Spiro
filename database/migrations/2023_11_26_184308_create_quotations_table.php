@@ -17,23 +17,24 @@ return new class extends Migration
             $table->foreignId('payment_id')->references('id')->on('payments')->onDelete('cascade')->onUpdate('cascade');
             $table->date('qoutation_date')->nullable();
             $table->string('description')->nullable();
-            $table->json('services')->nullable();
+            $table->json('services');
             $table->json('notes')->nullable();
 
-            $table->string('total_amount_dollar')->nullable();
-            $table->string('tax_dollar')->nullable();
-            $table->string('discount_dollar')->nullable();
-            $table->string('first_pay_dollar')->nullable();
-            $table->string('grand_total_dollar')->nullable();
-            $table->string('due_dollar')->nullable();
+            $table->unsignedDecimal('total_amount_dollar', 12, 0)->default(0);
+            $table->unsignedDecimal('tax_dollar', 12, 0)->default(0);
+            $table->unsignedDecimal('discount_dollar', 12, 0)->default(0);
+            $table->unsignedDecimal('first_pay_dollar', 12, 0)->default(0);
+            $table->unsignedDecimal('grand_total_dollar', 12, 0)->default(0);
+            $table->unsignedDecimal('due_dollar', 12, 0)->default(0);
             
-            $table->string('total_amount_iraqi')->nullable();
-            $table->string('tax_iraqi')->nullable();
-            $table->string('discount_iraqi')->nullable();
-            $table->string('first_pay_iraqi')->nullable();
-            $table->string('grand_total_iraqi')->nullable();
-            $table->string('due_iraqi')->nullable();
+            $table->unsignedDecimal('total_amount_iraqi', 18, 0)->default(0);
+            $table->unsignedDecimal('tax_iraqi', 18, 0)->default(0);
+            $table->unsignedDecimal('discount_iraqi', 18, 0)->default(0);
+            $table->unsignedDecimal('first_pay_iraqi', 18, 0)->default(0);
+            $table->unsignedDecimal('grand_total_iraqi', 18, 0)->default(0);
+            $table->unsignedDecimal('due_iraqi', 18, 0)->default(0);
 
+            $table->string('exchange_rate')->default(1500);
             $table->string('quotation_status')->nullable();
             $table->integer('status');
             $table->timestamps();

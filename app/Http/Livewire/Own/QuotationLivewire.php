@@ -38,7 +38,7 @@ class QuotationLivewire extends Component
     public $payment_data;
     public $select_payment_data;
     public $paymentType;
-    public $exchange_rate;
+    public $exchange_rate = 0;
     // Form service Section
     public $service_data;
     public $select_service_data;
@@ -111,12 +111,12 @@ class QuotationLivewire extends Component
             'serviceTotalDollar' => 0,
             'serviceTotalIraqi' => 0,
         ];
-    }
+    } // END FUNCTION OF ADD NEW SERVICE
 
     public function removeService($index) {
         unset($this->arr_service[$index]);
         $this->arr_service = array_values($this->arr_service); // Reset array keys
-    }
+    } // END FUNCTION OF ADD DELETE SERVICE
 
 
     public $showTextarea = 1;
@@ -124,6 +124,9 @@ class QuotationLivewire extends Component
     {
         $this->arr_service[$index]['serviceTotalDollar'] =
             $this->arr_service[$index]['serviceDefaultCostDollar'] * $this->arr_service[$index]['serviceQty'];
+
+
+        $this->arr_service[$index]['serviceDefaultCostIraqi'] = $this->arr_service[$index]['serviceDefaultCostDollar'] * $this->exchange_rate;
 
         $this->arr_service[$index]['serviceTotalIraqi'] =
             $this->arr_service[$index]['serviceDefaultCostIraqi'] * $this->arr_service[$index]['serviceQty'];
@@ -138,33 +141,13 @@ class QuotationLivewire extends Component
             $this->arr_service[$index]['serviceCode'] = $selectedService->service_code;
             $this->arr_service[$index]['serviceDescription'] = $selectedService->service_description;
             $this->arr_service[$index]['serviceDefaultCostDollar'] = $selectedService->price_dollar;
-            $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_iraqi;
+            
+            $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
+            // $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_iraqi;
 
             $this->calculateTotals();
         }
     }
-
-    // public function toggleTextarea()
-    // {
-    //     $this->showTextarea = !$this->showTextarea;
-    //     $this->updateDefaultCosts();
-    //     $this->calculateTotals();
-    // } // END FUNCTION OF SWITCHING BETWEEN SINGLE PRICE & MULTI PRICE
-
-    // public function updateDefaultCosts()
-    // {
-    //     $currencyField = $this->showTextarea ? 'price_dollar' : 'price_iraqi';
-
-    //     foreach ($this->arr_service as $index => $service) {
-    //         $selectedService = Service::find($service['select_service_data']);
-    //         if ($selectedService) {
-    //             $this->arr_service[$index]['serviceDefaultCost'] = $selectedService->{$currencyField};
-    //         }
-
-    //         $this->serviceQtyChange($index);
-    //         $this->calculateTotals();
-    //     }
-    // }
 
     public function updatedDiscount() {
         $this->calculateTotals();
@@ -188,13 +171,29 @@ class QuotationLivewire extends Component
         $this->grandTotalDollar = $totalDollar - $this->discountDollar + $this->taxDollar;
         $this->dueDollar = $this->grandTotalDollar - $this->fisrtPayDollar; 
 
-        foreach ($this->arr_service as $service) {
-            $totalIraqi += $service['serviceTotalIraqi'];
-        }
+        // foreach ($this->arr_service as $service) {
+        //     $totalIraqi += $service['serviceTotalIraqi'];
+        // }
 
-        $this->totalIraqi = $totalIraqi;
-        $this->grandTotalIraqi = $totalIraqi - $this->discountIraqi + $this->taxIraqi;
-        $this->dueIraqi = $this->grandTotalIraqi - $this->fisrtPayIraqi; 
+        // $this->totalIraqi = $totalIraqi;
+        $this->totalIraqi = $totalDollar * $this->exchange_rate;
+        $this->discountIraqi = $this->discountDollar * $this->exchange_rate;
+        $this->taxIraqi = $this->taxDollar * $this->exchange_rate;
+        $this->fisrtPayIraqi = $this->fisrtPayDollar * $this->exchange_rate;
+        
+        $this->grandTotalIraqi = $this->taxIraqi + ($this->totalIraqi - $this->discountIraqi);
+        $this->dueIraqi = $this->grandTotalIraqi - $this->fisrtPayIraqi;
+    }
+
+    public function exchangeUpdate(){
+        foreach ($this->arr_service as $index => $service) {
+            $selectedService = Service::find($service['select_service_data']);
+            if ($selectedService) {
+                $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
+            }
+            $this->serviceQtyChange($index);
+        }
+        $this->calculateTotals();
     }
 
     // public function updateAllDefaultCosts() {

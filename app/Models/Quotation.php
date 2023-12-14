@@ -38,6 +38,7 @@ class Quotation extends Model
         'grand_total_iraqi', 
         'due_iraqi', 
 
+        'exchange_rate',
         'quotation_status',
         'status',
     ];
