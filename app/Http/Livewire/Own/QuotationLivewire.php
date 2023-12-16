@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Own;
 
-use App\Models\User;
 use App\Models\Client;
 use App\Models\Payment;
 use App\Models\Service;
@@ -10,9 +9,9 @@ use Livewire\Component;
 use App\Models\Quotation;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\Own\TelegramServiceNew;
+use App\Notifications\Own\TelegramQuotationNew;
+use App\Notifications\Own\TelegramQuotationUpdate;
 use App\Notifications\Own\TelegramServiceDelete;
-use App\Notifications\Own\TelegramServiceUpdate;
 
 class QuotationLivewire extends Component
 {
@@ -66,15 +65,15 @@ class QuotationLivewire extends Component
     public $tele_id;
     public $telegram_channel_status;
     //TEMP VARIABLES
-    public $serviceUpdate;
-    public $old_service_data;
-    public $del_service_id;
-    public $del_service_data;
-    public $del_service_name;
-    public $service_name_to_selete;
+    public $quotationUpdate;
+    public $old_quotation_data;
+    public $del_quotation_id;
+    public $del_quotation_data;
+    public $del_quotation_name;
+    public $quotation_name_to_selete;
     public $confirmDelete = false;
 
-    public function mount(){
+    public function mount() {
         $this->telegram_channel_status = 1;
         $this->tele_id = env('TELEGRAM_GROUP_ID');
         $this->client_data = Client::get();
@@ -100,7 +99,7 @@ class QuotationLivewire extends Component
         }
     } //END FUNCTION OF INITIALIZE
 
-    public function newRecService(){
+    public function newRecService() {
         $this->arr_service[] = [
             'serviceCode' => '',
             'select_service_data' => null,
@@ -120,8 +119,7 @@ class QuotationLivewire extends Component
 
 
     public $showTextarea = 1;
-    public function serviceQtyChange($index)
-    {
+    public function serviceQtyChange($index) {
         $this->arr_service[$index]['serviceTotalDollar'] =
             $this->arr_service[$index]['serviceDefaultCostDollar'] * $this->arr_service[$index]['serviceQty'];
 
@@ -134,8 +132,7 @@ class QuotationLivewire extends Component
         $this->calculateTotals();
     }
 
-    public function selectServiceDataChange($index)
-    {
+    public function selectServiceDataChange($index) {
         $selectedService = Service::find($this->arr_service[$index]['select_service_data']);
         if ($selectedService) {
             $this->arr_service[$index]['serviceCode'] = $selectedService->service_code;
@@ -160,8 +157,6 @@ class QuotationLivewire extends Component
 
     public function calculateTotals() {
         $totalDollar = 0;
-        $totalIraqi = 0;
-
   
         foreach ($this->arr_service as $service) {
             $totalDollar += $service['serviceTotalDollar'];
@@ -247,6 +242,7 @@ class QuotationLivewire extends Component
             $quotation = Quotation::create([
                 'client_id' => $validatedData['select_client_data'],
                 'payment_id' => $validatedData['select_payment_data'],
+                'exchange_rate' => $this->exchange_rate,
                 'qoutation_date' => $validatedData['formDate'],
                 'status' => $validatedData['status'],
                 'quotation_status' => $validatedData['quotation_status'],
@@ -267,8 +263,38 @@ class QuotationLivewire extends Component
                 'description' => $this->description,
                 'notes' => json_encode($this->note),
             ]);
+
+            if($this->telegram_channel_status == 1){
+                try{
+                    Notification::route('toTelegram', null)
+                    ->notify(new TelegramQuotationNew(
+                        $quotation->id,
+                        $validatedData['formDate'],
+                        $validatedData['select_client_data'],
+                        $validatedData['select_payment_data'],
+                        $this->description ?? null,
+                        $this->exchange_rate,
+                        $validatedData['arr_service'],
+                        $validatedData['taxDollar'],
+                        $validatedData['discountDollar'],
+                        $validatedData['fisrtPayDollar'],
+                        $validatedData['dueDollar'],
+                        $validatedData['taxIraqi'],
+                        $validatedData['discountIraqi'],
+                        $validatedData['fisrtPayIraqi'],
+                        $validatedData['dueIraqi'],
+                        $validatedData['grandTotalDollar'],
+                        $validatedData['grandTotalIraqi'],
+
+                        $this->tele_id
+                    ));
+                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+                }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+                }
+            }
+
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Added Successfully')]);
-            $this->initializeServicesArray();
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
         } catch (\Exception $e){
@@ -276,121 +302,191 @@ class QuotationLivewire extends Component
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    public function addService(){
+    public function editQuotation(int $quotationId){
         try {
-            $validatedData = $this->validate();
+            $quotationEdit = Quotation::find($quotationId);
+            $this->quotationUpdate = $quotationId;
 
-            $service = Service::create([
-                'service_code' => $validatedData['serviceCode'],
-                'service_name' => $validatedData['serviceName'],
-                'service_description' => $this->serviceDescription,
-                'price_dollar' => $validatedData['priceDollar'],
-                'price_iraqi' => $validatedData['priceIraqi'],
-            ]);
+            $clientInfo = Client::find($quotationEdit->client_id);
+            $paymentInfo = Payment::find($quotationEdit->payment_id);
+            $this->old_quotation_data = [];
 
-            if($this->telegram_channel_status == 1){
-                try{
-                    Notification::route('toTelegram', null)
-                    ->notify(new TelegramServiceNew(
-                        $service->id,
-                        $validatedData['serviceCode'],
-                        $validatedData['serviceName'],
-                        $validatedData['priceDollar'],
-                        $validatedData['priceIraqi'],
-                        $this->tele_id
-                    ));
-                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                }  catch (\Exception $e) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
-                }
-            }
-    
-            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Service Added Successfully')]);
-            $this->resetModal();
-            $this->dispatchBrowserEvent('close-modal');
-        } catch (\Exception $e){
-            $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        }
-    } // END FUNCTION OF ADD CLIENT
+            if ($quotationEdit) {
+                $this->old_quotation_data = null;
+                // Quotation Date
+                $this->formDate = $quotationEdit->qoutation_date;
+                $this->status = $quotationEdit->status;
+                $this->quotation_status = $quotationEdit->quotation_status;
+                // Client Information
+                $this->select_client_data =  $quotationEdit->client_id;
+                $this->clientName = $clientInfo->client_name;
+                $this->clientEmail = $clientInfo->country;
+                $this->clientCountry = $clientInfo->city;
+                $this->clientCity = $clientInfo->address;
+                $this->clientAddress = $clientInfo->email;
+                $this->clientPhoneOne = $clientInfo->phone_one;
+                $this->clientPhoneTwo = $clientInfo->phone_two;
+                // Payment Method
+                $this->select_payment_data = $quotationEdit->payment_id;
+                $this->exchange_rate = $quotationEdit->exchange_rate;
+                // Service Section
+                $this->description = $quotationEdit->description;
+                $this->arr_service = json_decode($quotationEdit->services);
+                // final Section
+                $this->note = json_decode($quotationEdit->notes, true) ?? [];
+                $this->totalDollar = $quotationEdit->total_amount_dollar;
+                $this->taxDollar = $quotationEdit->tax_dollar;
+                $this->discountDollar = $quotationEdit->discount_dollar;
+                $this->fisrtPayDollar = $quotationEdit->first_pay_dollar;
+                $this->dueDollar = $quotationEdit->due_dollar;
+                $this->grandTotalDollar = $quotationEdit->grand_total_dollar;
+                $this->totalIraqi = $quotationEdit->total_amount_iraqi;
+                $this->taxIraqi = $quotationEdit->tax_iraqi;
+                $this->discountIraqi = $quotationEdit->discount_iraqi;
+                $this->fisrtPayIraqi = $quotationEdit->first_pay_iraqi;
+                $this->dueIraqi = $quotationEdit->due_iraqi;
+                $this->grandTotalIraqi = $quotationEdit->grand_total_iraqi;
 
-    public function editService(int $serviceId){
-        try {
-            $serviceEdit = Service::find($serviceId);
-            $this->serviceUpdate = $serviceId;
-            $this->old_service_data = [];
-
-            if ($serviceEdit) {
-                $this->old_service_data = null;
-                $this->serviceCode = $serviceEdit->service_code;
-                $this->serviceName = $serviceEdit->service_name;
-                $this->serviceDescription = $serviceEdit->service_description;
-                $this->priceDollar = $serviceEdit->price_dollar;
-                $this->priceIraqi = $serviceEdit->price_iraqi;
-
-                $this->old_service_data = [
-                    'id' => $serviceEdit->id,
-                    'serviceCode' => $serviceEdit->service_code,
-                    'serviceName' => $serviceEdit->service_name,
-                    'serviceDescription' => $serviceEdit->service_description,
-                    'priceDollar' => $serviceEdit->price_dollar,
-                    'priceIraqi' => $serviceEdit->price_iraqi,
+                $this->old_quotation_data = [
+                    // Quotation Date
+                    'formDate' => $quotationEdit->qoutation_date,
+                    'status' => $quotationEdit->status,
+                    'quotation_status' => $quotationEdit->quotation_status,
+                    // Client Information
+                    'select_client_data' =>  $quotationEdit->client_id,
+                    'clientName' => $clientInfo->client_name,
+                    'clientEmail' => $clientInfo->country,
+                    'clientCountry' => $clientInfo->city,
+                    'clientCity' => $clientInfo->address,
+                    'clientAddress' => $clientInfo->email,
+                    'clientPhoneOne' => $clientInfo->phone_one,
+                    'clientPhoneTwo' => $clientInfo->phone_two,
+                    // Payment Method
+                    'select_payment_data' => $quotationEdit->payment_id,
+                    'payment_type' => $paymentInfo->payment_type,
+                    'exchange_rate' => $quotationEdit->exchange_rate,
+                    // Service Section
+                    'description' => $quotationEdit->description,
+                    'arr_service' => json_encode($quotationEdit->services),
+                    // final Section
+                    'note' => json_decode($quotationEdit->notes, true) ?? [],
+                    'totalDollar' => $quotationEdit->total_amount_dollar,
+                    'taxDollar' => $quotationEdit->tax_dollar,
+                    'discountDollar' => $quotationEdit->discount_dollar,
+                    'fisrtPayDollar' => $quotationEdit->first_pay_dollar,
+                    'dueDollar' => $quotationEdit->due_dollar,
+                    'grandTotalDollar' => $quotationEdit->grand_total_dollar,
+                    'totalIraqi' => $quotationEdit->total_amount_iraqi,
+                    'taxIraqi' => $quotationEdit->tax_iraqi,
+                    'discountIraqi' => $quotationEdit->discount_iraqi,
+                    'fisrtPayIraqi' => $quotationEdit->first_pay_iraqi,
+                    'dueIraqi' => $quotationEdit->due_iraqi,
+                    'grandTotalIraqi' => $quotationEdit->grand_total_iraqi,
                 ];
             } else {
-                return redirect()->to('own/service');
+                return redirect()->to('own/quotation');
             }
         } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Could Not Load The Data')]);
         }
     } // END FUNCTION OF EDIT CLIENT
 
-    public function updateService(){
-        try {
+    public function updateQuotation(){
+        // try {
             $validatedData = $this->validate();
 
-            Service::where('id', $this->serviceUpdate)->update([
-                'service_code' => $validatedData['serviceCode'],
-                'service_name' => $validatedData['serviceName'],
-                'service_description' => $this->serviceDescription,
-                'price_dollar' => $validatedData['priceDollar'],
-                'price_iraqi' => $validatedData['priceIraqi'],
+            Quotation::where('id', $this->quotationUpdate)->update([
+                'client_id' => $validatedData['select_client_data'],
+                'payment_id' => $validatedData['select_payment_data'],
+                'exchange_rate' => $this->exchange_rate,
+                'qoutation_date' => $validatedData['formDate'],
+                'status' => $validatedData['status'],
+                'quotation_status' => $validatedData['quotation_status'],
+                'status' => $validatedData['status'],
+                'services' => json_encode($validatedData['arr_service']),
+                'total_amount_dollar' => $validatedData['totalDollar'],
+                'tax_dollar' => $validatedData['taxDollar'],
+                'discount_dollar' => $validatedData['discountDollar'],
+                'first_pay_dollar' => $validatedData['fisrtPayDollar'],
+                'due_dollar' => $validatedData['dueDollar'],
+                'grand_total_dollar' => $validatedData['grandTotalDollar'],
+                'total_amount_iraqi' => $validatedData['totalIraqi'],
+                'tax_iraqi' => $validatedData['taxIraqi'],
+                'discount_iraqi' => $validatedData['discountIraqi'],
+                'first_pay_iraqi' => $validatedData['fisrtPayIraqi'],
+                'due_iraqi' => $validatedData['dueIraqi'],
+                'grand_total_iraqi' => $validatedData['grandTotalIraqi'],
+                'description' => $this->description,
+                'notes' => json_encode($this->note),
             ]);
 
             if($this->telegram_channel_status == 1){
-                try{
-                    Notification::route('toTelegram', null)
-                    ->notify(new TelegramServiceUpdate(
-                        $this->serviceUpdate,
-                        $this->serviceCode,
-                        $this->serviceName,
-                        $this->serviceDescription,
-                        $this->priceDollar,
-                        $this->priceIraqi,
+                // try{
 
-                        $this->old_service_data,
+                    if ( $validatedData['select_client_data']) {
+                        $client = Client::find( $validatedData['select_client_data']);
+            
+                        if ($client) {
+                            $clientName = $client->client_name;
+                        } else {
+                            $clientName = 'Unknown Client';
+                        }
+                    } else {
+                        $clientName = 'Invalid Client ID';
+                    }
+            
+                    // Handling for $paymentId
+                    if ($validatedData['select_payment_data']) {
+                        $payment = Payment::find($validatedData['select_payment_data']);
+            
+                        if ($payment) {
+                            $paymentType = $payment->payment_type;
+                        } else {
+                            $paymentType = 'Unknown Payment Type';
+                        }
+                    } else {
+                        $paymentType = 'Invalid Payment ID';
+                    }
+
+
+                    Notification::route('toTelegram', null)
+                    ->notify(new TelegramQuotationUpdate(
+                        $this->quotationUpdate,
+                        $validatedData['formDate'],
+                        $clientName,
+                        $paymentType,
+                        $this->description ?? null,
+                        $this->exchange_rate,
+                        $validatedData['arr_service'],
+                        $validatedData['taxDollar'],
+                        $validatedData['discountDollar'],
+                        $validatedData['fisrtPayDollar'],
+                        $validatedData['dueDollar'],
+                        $validatedData['taxIraqi'],
+                        $validatedData['discountIraqi'],
+                        $validatedData['fisrtPayIraqi'],
+                        $validatedData['dueIraqi'],
+                        $validatedData['grandTotalDollar'],
+                        $validatedData['grandTotalIraqi'],
+
+                        json_encode($this->note),
+                        $validatedData['status'],
+                        $validatedData['quotation_status'],
+
+                        $this->old_quotation_data,
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                }  catch (\Exception $e) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
+                // }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
                 }
-            }
+            // }
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Service Updated Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        } catch (\Exception $e){
+        // } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        }
+        // }
     } // END FUNCTION OF UPDATE CLIENT
 
     public function deleteService(int $selected_service_id){
@@ -438,7 +534,7 @@ class QuotationLivewire extends Component
     private function resetModal(){
         $this->formDate = '';
         $this->status = '';
-        $this->quotation_status = '';
+        $this->quotation_status = 'Sent';
         $this->client_data = '';
         $this->select_client_data = '';
         $this->clientName = '';
@@ -468,6 +564,12 @@ class QuotationLivewire extends Component
         $this->fisrtPayIraqi = '';
         $this->dueIraqi = '';
         $this->grandTotalIraqi = '';
+
+        $this->client_data = Client::get();
+        $this->payment_data = Payment::get();
+        $this->service_data = Service::get();
+
+        $this->initializeServicesArray();
     } // END FUNCTION OF RESET VARIABLES
 
     public function closeModal()
