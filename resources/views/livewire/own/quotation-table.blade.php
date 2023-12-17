@@ -16,12 +16,21 @@
                     <input type="search" wire:model="search" class="form-control" placeholder="Search..." style="width: 250px; border: 1px solid var(--primary)" />
                 </h2>
 
+                <h2 class="text-lg font-medium mr-1">
+                    <select wire:model="quotationStatusFilter" name="quotationStatusFilter" id="quotationStatusFilter" class="form-control" style="width: 170px;">
+                        <option value="">{{__('Choose Status')}}</option>
+                            <option value="Sent">{{__('Sent')}}</option>
+                            <option value="Approved">{{__('Approved')}}</option>
+                            <option value="Rejected">{{__('Rejected')}}</option>
+                    </select>
+                </h2>
+
                 <h6 class=" font-medium mr-auto">
                     <button class="btn btn-dark form-control py-0" wire:click="resetFilter()">{{__('Reset')}}</button>
                 </h6>
             </div>
             <div>
-                <button class="btn btn-info" data-toggle="modal" data-target="#createQuotationModal">{{__('Select Expense')}}</button>
+                <button class="btn btn-info" data-toggle="modal" data-target="#createQuotationModal">{{__('Add New Quotation')}}</button>
             </div>
         </div>
         @if (session()->has('message'))
@@ -77,8 +86,8 @@
                             <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon">
                                 <i class="far {{ $item->status == 1 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
                                 </button>
-                            <button type="button" data-toggle="modal" data-target="#deleteExpenseModal"
-                                wire:click="deleteExpense({{ $item->id }})" class="btn btn-danger m-1">
+                            <button type="button" data-toggle="modal" data-target="#deleteQuotationModal"
+                                wire:click="deleteQuotation({{ $item->id }})" class="btn btn-danger m-1">
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </td>
@@ -96,22 +105,10 @@
         </div>
 
     </div>
-{{-- </div> --}}
-{{-- @if(session()->has('alert'))
-@php $alert = session()->get('alert'); @endphp
-<script>
-    toastr. {
-        {
-            $alert['type']
-        }
-    }('{{ $alert['
-        message '] }}');
 
-</script>
-@endif --}}
 @push('datePicker')
     
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+{{-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> --}}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script type="text/javascript">
@@ -137,7 +134,8 @@ $(function() {
            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
            'This Month': [moment().startOf('month'), moment().endOf('month')],
            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-           'This Year': [moment().startOf('year'), moment().endOf('year')]
+           'This Year': [moment().startOf('year'), moment().endOf('year')],
+           'All Time': [moment().subtract(10, 'years'), moment()]
         }
     }, cb);
     cb(start, end);

@@ -11,7 +11,9 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\Own\TelegramQuotationNew;
 use App\Notifications\Own\TelegramQuotationUpdate;
-use App\Notifications\Own\TelegramServiceDelete;
+use App\Notifications\Own\TelegramQuotationDelete;
+use App\Notifications\Own\TelegramClientNew;
+use App\Notifications\Own\TelegramQuotationShort;
 
 class QuotationLivewire extends Component
 {
@@ -59,6 +61,7 @@ class QuotationLivewire extends Component
     public $grandTotalIraqi;
     //FILTERS
     public $search;
+    public $quotationStatusFilter = '';
     public $dateRange = null;
     public $rangeViewValue = null;
     //TELEGRAM
@@ -72,6 +75,17 @@ class QuotationLivewire extends Component
     public $del_quotation_name;
     public $quotation_name_to_selete;
     public $confirmDelete = false;
+
+    // Direct Forms Variables
+    public $dClientName;
+    public $country;
+    public $city;
+    public $address;
+    public $email;
+    public $phoneOne;
+    public $phoneTwo;
+
+    protected $listeners = ['dateRangeSelected' => 'applyDateRangeFilter'];
 
     public function mount() {
         $this->telegram_channel_status = 1;
@@ -191,9 +205,6 @@ class QuotationLivewire extends Component
         $this->calculateTotals();
     }
 
-    // public function updateAllDefaultCosts() {
-    //     $this->updateDefaultCosts();
-    // }
 
     public function selectClientStartup(){
         $client_selected = Client::where('id', $this->select_client_data)->first();
@@ -235,6 +246,45 @@ class QuotationLivewire extends Component
         return $rules;
     } // END FUNCTION OF Rules
 
+    public function addClientDirect(){
+        try {
+            // $validatedData = $this->validate();
+
+            $client = Client::create([
+                'client_name' => $this->dClientName,
+                'email' => $this->email,
+                'address' => $this->address,
+                'city' => $this->city,
+                'country' => $this->country,
+                'phone_one' => $this->phoneOne,
+                'phone_two' => $this->phoneTwo,
+            ]);
+
+            if($this->telegram_channel_status == 1){
+                try{
+                    Notification::route('toTelegram', null)
+                    ->notify(new TelegramClientNew(
+                        $client->id,
+                        $this->dClientName,
+                        $this->email,
+                        $this->address,
+                        $this->phoneOne,
+                        $this->tele_id
+                    ));
+                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+                }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
+                }
+            }
+    
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Added Successfully')]);
+            $this->resetModal();
+            $this->dispatchBrowserEvent('close-modal-direct');
+        } catch (\Exception $e){
+            $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
+        }
+    }
+    
     public function addQuotation(){
         try {
             $validatedData = $this->validate();
@@ -392,7 +442,7 @@ class QuotationLivewire extends Component
     } // END FUNCTION OF EDIT CLIENT
 
     public function updateQuotation(){
-        // try {
+        try {
             $validatedData = $this->validate();
 
             Quotation::where('id', $this->quotationUpdate)->update([
@@ -421,7 +471,7 @@ class QuotationLivewire extends Component
             ]);
 
             if($this->telegram_channel_status == 1){
-                // try{
+                try{
 
                     if ( $validatedData['select_client_data']) {
                         $client = Client::find( $validatedData['select_client_data']);
@@ -477,39 +527,38 @@ class QuotationLivewire extends Component
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                // }  catch (\Exception $e) {
+                }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
                 }
-            // }
-            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Service Updated Successfully')]);
+            }
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Updated Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        // } catch (\Exception $e){
+        } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        // }
+        }
     } // END FUNCTION OF UPDATE CLIENT
 
-    public function deleteService(int $selected_service_id){
-        $this->del_service_id = $selected_service_id;
-        $this->del_service_data = Service::find($this->del_service_id);
-        if($this->del_service_data->service_name){
-            $this->del_service_name = $this->del_service_data->service_name;
+    public function deleteQuotation(int $selected_quotation_id){
+        $this->del_quotation_id = $selected_quotation_id;
+        $this->del_quotation_data = Quotation::find($this->del_quotation_id);
+        if($this->del_quotation_data){
+            // $this->del_quotation_name = $this->del_quotation_data->quotation_name;
+            $this->del_quotation_name = 'delete';
             $this->confirmDelete = true;
         } else {
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Record Not Found')]);
         }
     } // END FUNCTION OF DELETE CLIENT
 
-    public function destroyService(){
-        if ($this->confirmDelete && $this->service_name_to_selete === $this->del_service_name) {
-            Service::find($this->del_service_id)->delete();
+    public function destroyQuotation(){
+        if ($this->confirmDelete && $this->quotation_name_to_selete === $this->del_quotation_name) {
+            Quotation::find($this->del_quotation_id)->delete();
             if($this->telegram_channel_status == 1){
                 try{
                     Notification::route('toTelegram', null)
-                    ->notify(new TelegramServiceDelete(
-                        $this->del_service_id,
-                        $this->del_service_data->service_name,
-                        $this->del_service_data->service_code,
+                    ->notify(new TelegramQuotationDelete(
+                        $this->del_quotation_id,
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
@@ -517,16 +566,16 @@ class QuotationLivewire extends Component
                     $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
                 }
             }
-            $this->del_service_id = null;
-            $this->del_service_data = null;
-            $this->del_service_name = null;
-            $this->service_name_to_selete = null;
+            $this->del_quotation_id = null;
+            $this->del_quotation_data = null;
+            $this->del_quotation_name = null;
+            $this->quotation_name_to_selete = null;
             $this->confirmDelete = false;
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Deleted Successfully')]);
         } else {
-            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Operation Failed, Make sure of the name CODE...DEL-NAME, The name:') . ' ' . $this->del_service_name]);
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Operation Failed, Make sure of the name CODE...DEL-NAME, The name:') . ' ' . $this->del_quotation_name]);
         }
     } // END FUNCTION OF DESTROY CLIENT
 
@@ -572,14 +621,77 @@ class QuotationLivewire extends Component
         $this->initializeServicesArray();
     } // END FUNCTION OF RESET VARIABLES
 
-    public function closeModal()
-    {
+    public function closeModal() {
         $this->resetModal();
     } // END FUNCTION OF CLOSE MODAL
 
+    public function updateStatus(int $quotation_Id) {
+        $itemState = Quotation::find($quotation_Id);
+        // Toggle the status (0 to 1 and 1 to 0)
+        $this->old_quotation_data = [
+            'status' => $itemState->status
+        ];
 
-    public function render()
-    {
+        $itemState->status = $itemState->status == 0 ? 1 : 0;
+
+        if($this->telegram_channel_status == 1){
+            try{
+
+                if ( $itemState->client_id) {
+                    $client = Client::find($itemState->client_id);
+        
+                    if ($client) {
+                        $clientName = $client->client_name;
+                    } else {
+                        $clientName = 'Unknown Client';
+                    }
+                } else {
+                    $clientName = 'Invalid Client ID';
+                }
+
+
+                Notification::route('toTelegram', null)
+                ->notify(new TelegramQuotationShort(
+                    $quotation_Id,
+                    $clientName,
+                    $itemState->status,
+
+                    $this->old_quotation_data,
+                    $this->tele_id,
+                ));
+                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+            }  catch (\Exception $e) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+            }
+        }
+
+        $itemState->save();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Status Updated Successfully')]);
+    } // END FUNCTION OF UPDATING PRIOEITY
+
+    public function resetFilter(){
+        $this->search = null;
+        $this->quotationStatusFilter = '';
+        $this->dateRange = null;
+        $this->rangeViewValue = null;
+        $this->startDate = null;
+        $this->endDate = null;
+    }
+
+    public function applyDateRangeFilter() {
+        // return $this->dateRange;
+    }
+
+    public $startDate ;
+    public $endDate ; 
+    public function render() {
+        if ($this->dateRange) {
+            list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
+        }
+
+        $this->rangeViewValue = $this->startDate . ' - ' . $this->endDate . ' ';
+
+
         $colspan = 6;
         $cols_th = ['#','Client Name', 'Payment Type', 'Description', 'Total', 'Grand Total', 'Quotation', 'Status','Date', 'Actions'];
         $cols_td = ['id','client.client_name','payment.payment_type','description','total_amount_dollar','grand_total_dollar','quotation_status','status','qoutation_date'];
@@ -595,6 +707,18 @@ class QuotationLivewire extends Component
             ->orWhere('description', 'like', '%' . $this->search . '%')
             ->orWhere('status', 'like', '%' . $this->search . '%');
         })
+        ->when($this->startDate && $this->endDate, function ($query) {
+            $query->whereBetween('qoutation_date', [$this->startDate, $this->endDate]);
+        })
+        ->when($this->quotationStatusFilter !== '', function ($query) {
+            $query->where(function ($query) {
+                $query->where('quotation_status', $this->quotationStatusFilter)
+                    ->orWhereNull('quotation_status');
+            });
+        })
+        // ->when($this->quotationStatusFilter === '', function ($query) {
+        //     $query->orWhereNotNull('quotation_status');
+        // })
         ->orderBy('qoutation_date', 'DESC')
         ->paginate(15);
         
@@ -606,4 +730,3 @@ class QuotationLivewire extends Component
         ]);
     } // END FUNCTION OF RENDER
 }
-// 716204
