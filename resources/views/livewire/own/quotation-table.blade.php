@@ -18,10 +18,10 @@
 
                 <h2 class="text-lg font-medium mr-1">
                     <select wire:model="quotationStatusFilter" name="quotationStatusFilter" id="quotationStatusFilter" class="form-control" style="width: 170px;">
-                        <option value="">{{__('Choose Status')}}</option>
-                            <option value="Sent">{{__('Sent')}}</option>
-                            <option value="Approved">{{__('Approved')}}</option>
-                            <option value="Rejected">{{__('Rejected')}}</option>
+                        <option value="" default>{{__('All')}}</option>
+                        <option value="Sent">{{__('Sent')}}</option>
+                        <option value="Approved">{{__('Approved')}}</option>
+                        <option value="Rejected">{{__('Rejected')}}</option>
                     </select>
                 </h2>
 
@@ -63,10 +63,10 @@
                             <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                             </span>
-                            @elseif ($col === 'cost_dollar')        
-                                $ {{number_format($item->cost_dollar)}}
-                            @elseif ($col === 'cost_iraqi')        
-                                {{number_format($item->cost_iraqi)}} IQD
+                            @elseif ($col === 'grand_total_dollar')        
+                                $ {{number_format($item->grand_total_dollar)}}
+                            @elseif ($col === 'grand_total_iraqi')        
+                                {{number_format($item->grand_total_iraqi)}} IQD
                             @elseif ($col === 'quotation_status')
                                 @if($item->quotation_status == 'Sent') 
                                     <span class="text-info">
@@ -91,11 +91,16 @@
                                 wire:click="editQuotation({{ $item->id }})" class="btn btn-primary m-1">
                                 <i class="far fa-edit"></i>
                             </button>
-                            <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon">
+                            <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon m-1">
                                 <i class="far {{ $item->status == 1 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
-                                </button>
-                            <button type="button" data-toggle="modal" data-target="#deleteQuotationModal"
-                                wire:click="deleteQuotation({{ $item->id }})" class="btn btn-danger m-1">
+                            </button>
+                            <button type="button" wire:click="approved({{ $item->id }})" class="btn {{ $item->quotation_status == 'Approved' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
+                                <i class="{{ $item->quotation_status == 'Approved' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up' }}"></i>
+                            </button>
+                            <button type="button" wire:click="rejected({{ $item->id }})" class="btn {{ $item->quotation_status == 'Rejected' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
+                                <i class="{{ $item->quotation_status == 'Rejected' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down' }}"></i>
+                            </button>
+                            <button type="button" data-toggle="modal" data-target="#deleteQuotationModal" wire:click="deleteQuotation({{ $item->id }})" class="btn btn-danger m-1">
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </td>

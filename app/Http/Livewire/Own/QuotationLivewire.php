@@ -281,6 +281,7 @@ class QuotationLivewire extends Component
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Added Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal-direct');
+            $this->client_data = Client::get();
         } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
         }
@@ -656,7 +657,8 @@ class QuotationLivewire extends Component
                     $quotation_Id,
                     $clientName,
                     $itemState->status,
-
+                    null,
+                    
                     $this->old_quotation_data,
                     $this->tele_id,
                 ));
@@ -669,6 +671,92 @@ class QuotationLivewire extends Component
         $itemState->save();
         $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Status Updated Successfully')]);
     } // END FUNCTION OF UPDATING PRIOEITY
+
+    public function approved(int $quotation_Id) {
+        $itemState = Quotation::find($quotation_Id);
+        // Toggle the status (0 to 1 and 1 to 0)
+        $this->old_quotation_data = [
+            'quotation_status' => $itemState->quotation_status
+        ];
+        $itemState->quotation_status = 'Approved';
+
+        if($this->telegram_channel_status == 1){
+            // try{
+                if ( $itemState->client_id) {
+                    $client = Client::find($itemState->client_id);
+        
+                    if ($client) {
+                        $clientName = $client->client_name;
+                    } else {
+                        $clientName = 'Unknown Client';
+                    }
+                } else {
+                    $clientName = 'Invalid Client ID';
+                }
+
+
+                Notification::route('toTelegram', null)
+                ->notify(new TelegramQuotationShort(
+                    $quotation_Id,
+                    $clientName,
+                    null,
+                    $itemState->quotation_status,
+
+                    $this->old_quotation_data,
+                    $this->tele_id,
+                ));
+                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+            // }  catch (\Exception $e) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+            // }
+        }
+
+        $itemState->save();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Status Updated Successfully')]);
+    } // END FUNCTION OF UPDATING QUOTATION STATUS
+
+    public function rejected(int $quotation_Id) {
+        $itemState = Quotation::find($quotation_Id);
+        // Toggle the status (0 to 1 and 1 to 0)
+        $this->old_quotation_data = [
+            'quotation_status' => $itemState->quotation_status
+        ];
+        $itemState->quotation_status = 'Rejected';
+
+        if($this->telegram_channel_status == 1){
+            try{
+                if ( $itemState->client_id) {
+                    $client = Client::find($itemState->client_id);
+        
+                    if ($client) {
+                        $clientName = $client->client_name;
+                    } else {
+                        $clientName = 'Unknown Client';
+                    }
+                } else {
+                    $clientName = 'Invalid Client ID';
+                }
+
+
+                Notification::route('toTelegram', null)
+                ->notify(new TelegramQuotationShort(
+                    $quotation_Id,
+                    $clientName,
+                    null,
+                    $itemState->quotation_status,
+
+                    $this->old_quotation_data,
+                    $this->tele_id,
+                ));
+                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+            }  catch (\Exception $e) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+            }
+        }
+
+        $itemState->save();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Status Updated Successfully')]);
+    } // END FUNCTION OF UPDATING QUOTATION STATUS
 
     public function resetFilter(){
         $this->search = null;
@@ -695,8 +783,8 @@ class QuotationLivewire extends Component
 
 
         $colspan = 6;
-        $cols_th = ['#','Client Name', 'Payment Type', 'Description', 'Total', 'Grand Total', 'Quotation', 'Status','Date', 'Actions'];
-        $cols_td = ['id','client.client_name','payment.payment_type','description','total_amount_dollar','grand_total_dollar','quotation_status','status','qoutation_date'];
+        $cols_th = ['#','Client Name', 'Payment Type', 'Description', 'Total', 'Grand Total', 'Quotation', 'Status','Date','Created Date', 'Actions'];
+        $cols_td = ['id','client.client_name','payment.payment_type','description','grand_total_dollar','grand_total_iraqi','quotation_status','status','qoutation_date','created_at'];
 
         $data = Quotation::with(['client', 'payment'])
         ->where(function ($query) {
