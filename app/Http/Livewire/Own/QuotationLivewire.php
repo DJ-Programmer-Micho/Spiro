@@ -61,6 +61,7 @@ class QuotationLivewire extends Component
     public $grandTotalIraqi;
     //FILTERS
     public $search;
+    public $statusFilter = '';
     public $quotationStatusFilter = '';
     public $dateRange = null;
     public $rangeViewValue = null;
@@ -671,6 +672,7 @@ class QuotationLivewire extends Component
 
     public function resetFilter(){
         $this->search = null;
+        $this->statusFilter = '';
         $this->quotationStatusFilter = '';
         $this->dateRange = null;
         $this->rangeViewValue = null;
@@ -714,6 +716,12 @@ class QuotationLivewire extends Component
             $query->where(function ($query) {
                 $query->where('quotation_status', $this->quotationStatusFilter)
                     ->orWhereNull('quotation_status');
+            });
+        })
+        ->when($this->statusFilter !== '', function ($query) {
+            $query->where(function ($query) {
+                $query->where('status', $this->statusFilter)
+                    ->orWhereNull('status');
             });
         })
         // ->when($this->quotationStatusFilter === '', function ($query) {

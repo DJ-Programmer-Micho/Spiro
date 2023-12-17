@@ -25,6 +25,14 @@
                     </select>
                 </h2>
 
+                <h2 class="text-lg font-medium mr-1">
+                    <select wire:model="statusFilter" class="form-control" style="width: 170px;">
+                        <option value="" default>{{__('All')}}</option>
+                        <option value="1">{{__('Active')}}</option>
+                        <option value="0">{{__('Non-Active')}}</option>
+                    </select>
+                </h2>
+
                 <h6 class=" font-medium mr-auto">
                     <button class="btn btn-dark form-control py-0" wire:click="resetFilter()">{{__('Reset')}}</button>
                 </h6>
