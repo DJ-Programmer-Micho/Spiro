@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Own;
 
 use App\Models\Client;
+use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Service;
 use Livewire\Component;
@@ -12,8 +13,9 @@ use Illuminate\Support\Facades\Notification;
 use App\Notifications\Own\TelegramQuotationNew;
 use App\Notifications\Own\TelegramQuotationUpdate;
 use App\Notifications\Own\TelegramQuotationDelete;
-use App\Notifications\Own\TelegramClientNew;
 use App\Notifications\Own\TelegramQuotationShort;
+use App\Notifications\Own\TelegramInvoiceNew;
+use App\Notifications\Own\TelegramClientNew;
 
 class QuotationLivewire extends Component
 {
@@ -658,7 +660,7 @@ class QuotationLivewire extends Component
                     $clientName,
                     $itemState->status,
                     null,
-                    
+
                     $this->old_quotation_data,
                     $this->tele_id,
                 ));
@@ -673,50 +675,122 @@ class QuotationLivewire extends Component
     } // END FUNCTION OF UPDATING PRIOEITY
 
     public function approved(int $quotation_Id) {
-        $itemState = Quotation::find($quotation_Id);
-        // Toggle the status (0 to 1 and 1 to 0)
-        $this->old_quotation_data = [
-            'quotation_status' => $itemState->quotation_status
-        ];
-        $itemState->quotation_status = 'Approved';
+        //ADD NEW INVOICE
+        try {
+            $itemState = Quotation::find($quotation_Id);
 
-        if($this->telegram_channel_status == 1){
-            // try{
-                if ( $itemState->client_id) {
-                    $client = Client::find($itemState->client_id);
-        
-                    if ($client) {
-                        $clientName = $client->client_name;
+            $invoice = Invoice::create([
+                'quotation_id' => $itemState->id,
+                'client_id' => $itemState->client_id,
+                'payment_id' => $itemState->payment_id,
+                'exchange_rate' => $itemState->exchange_rate,
+                'invoice_date' => now()->format('Y-m-d'),
+                'status' => $itemState->status,
+                // 'services' => json_encode($itemState->arr_service),
+                'services' => $itemState->services,
+                'total_amount_dollar' => $itemState->total_amount_dollar,
+                'tax_dollar' => $itemState->tax_dollar,
+                'discoun_dollart' => $itemState->discount_dollar,
+                'first_pay_dollar' => $itemState->first_pay_dollar,
+                'due_dollar' => $itemState->due_dollar,
+                'grand_total_dollar' => $itemState->grand_total_dollar,
+                'total_amount_iraqi' => $itemState->total_amount_iraqi,
+                'tax_iraqi' => $itemState->tax_iraqi,
+                'discount_iraqi' => $itemState->discount_iraqi,
+                'first_pay_iraqi' => $itemState->first_pay_iraqi,
+                'due_iraqi' => $itemState->due_iraqi,
+                'grand_total_iraqi' => $itemState->grand_total_iraqi,
+                'description' => $itemState->description,
+                'notes' => $itemState->note,
+            ]);
+
+            // Toggle the quotation status (sent -> approved)
+            $this->old_quotation_data = [
+                'quotation_status' => $itemState->quotation_status
+            ];
+            $itemState->quotation_status = 'Approved';
+    
+            if($this->telegram_channel_status == 1){
+                try{
+                    if ( $itemState->client_id) {
+                        $client = Client::find($itemState->client_id);
+            
+                        if ($client) {
+                            $clientName = $client->client_name;
+                        } else {
+                            $clientName = 'Unknown Client';
+                        }
                     } else {
-                        $clientName = 'Unknown Client';
+                        $clientName = 'Invalid Client ID';
                     }
-                } else {
-                    $clientName = 'Invalid Client ID';
+    
+            
+                    Notification::route('toTelegram', null)
+                    ->notify(new TelegramQuotationShort(
+                        $quotation_Id,
+                        $clientName,
+                        null,
+                        $itemState->quotation_status,
+    
+                        $this->old_quotation_data,
+                        $this->tele_id,
+                    ));
+                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+                }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
                 }
+            }
+    
+            $itemState->save();
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Status Updated Successfully')]);
 
-
-                Notification::route('toTelegram', null)
-                ->notify(new TelegramQuotationShort(
-                    $quotation_Id,
-                    $clientName,
-                    null,
-                    $itemState->quotation_status,
-
-                    $this->old_quotation_data,
-                    $this->tele_id,
-                ));
-                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-            // }  catch (\Exception $e) {
-                $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
-            // }
+            if($this->telegram_channel_status == 1){
+                try{
+                    Notification::route('toTelegram', null)
+                    ->notify(new TelegramInvoiceNew(
+                        $invoice->id,
+                        now()->format('Y-m-d'),
+                        $itemState->id,
+                        $itemState->client_id,
+                        $itemState->payment_id,
+                        $itemState->description,
+                        $itemState->exchange_rate,
+                        json_decode($itemState->services, true),
+                        $itemState->tax_dollar,
+                        $itemState->discount_dollar,
+                        $itemState->first_pay_dollar,
+                        $itemState->due_dollar,
+                        $itemState->tax_iraqi,
+                        $itemState->discount_iraqi,
+                        $itemState->first_pay_iraqi,
+                        $itemState->due_iraqi,
+                        $itemState->grand_total_dollar,
+                        $itemState->grand_total_iraqi,
+                        
+                        $this->tele_id
+                    ));
+                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+                }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+                }
+            }
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Added To Invoice Successfully')]);
+            $this->resetModal();
+            $this->dispatchBrowserEvent('close-modal');
+        } catch (\Exception $e){
+            $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong OR Duplicated Quotation ID')]);
         }
-
-        $itemState->save();
-        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Status Updated Successfully')]);
     } // END FUNCTION OF UPDATING QUOTATION STATUS
 
     public function rejected(int $quotation_Id) {
         $itemState = Quotation::find($quotation_Id);
+
+        $invoice = Invoice::where('quotation_id', $quotation_Id)->first() ?? null;
+        if($invoice && $itemState->quotation_status == 'Approved') {
+            Invoice::find($invoice->id)->delete();
+        }
+
+
         // Toggle the status (0 to 1 and 1 to 0)
         $this->old_quotation_data = [
             'quotation_status' => $itemState->quotation_status

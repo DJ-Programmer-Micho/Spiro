@@ -18,4 +18,9 @@ class Payment extends Model
     {
         return $this->hasMany(Quotation::class,'payment_id');
     }
+
+    public function invoice()
+    {
+        return $this->hasMany(Invoice::class,'client_id');
+    }
 }

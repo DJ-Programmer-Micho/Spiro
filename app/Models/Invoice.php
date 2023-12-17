@@ -2,20 +2,18 @@
 
 namespace App\Models;
 
-// use App\Models\Branch;
-// use App\Models\Client;
-// use App\Models\Payment;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Quotation extends Model
+class Invoice extends Model
 {
     use HasFactory;
-    protected $table = 'quotations';
+    protected $table = 'invoices';
     protected $fillable = [
+        'quotation_id', 
         'client_id', 
         'payment_id',
-        'qoutation_date',
+        'invoice_date',
 
         'status',
         'services',
@@ -39,7 +37,6 @@ class Quotation extends Model
         'due_iraqi', 
 
         'exchange_rate',
-        'quotation_status',
         'status',
     ];
 
@@ -52,9 +49,9 @@ class Quotation extends Model
     {
         return $this->belongsTo(Payment::class);
     }
-    
-    public function invoice()
+
+    public function quotation()
     {
-        return $this->hasOne(Invoice::class,'quotation_id');
+        return $this->belongsTo(Quotation::class);
     }
 }

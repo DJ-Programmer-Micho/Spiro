@@ -55,6 +55,7 @@ class TelegramQuotationShort extends Notification
                 $content .= "*" . 'Status Changed: '. $this->old_quotation_data['status'] . ' ➡️ ' . $this->status . "*\n";
             }
         }
+        
         if(isset($this->old_quotation_data['quotation_status'])) {
             if ($this->quotation_status !== $this->old_quotation_data['quotation_status']) {
                 $content .= "*" . 'Quotation Status Changed: '. $this->old_quotation_data['quotation_status'] . ' ➡️ ' . $this->quotation_status . "*\n";

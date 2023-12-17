@@ -100,7 +100,7 @@
                             <button type="button" wire:click="rejected({{ $item->id }})" class="btn {{ $item->quotation_status == 'Rejected' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
                                 <i class="{{ $item->quotation_status == 'Rejected' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down' }}"></i>
                             </button>
-                            <button type="button" data-toggle="modal" data-target="#deleteQuotationModal" wire:click="deleteQuotation({{ $item->id }})" class="btn btn-danger m-1">
+                            <button type="button" data-toggle="modal" data-target="#deleteQuotationModal" wire:click="deleteQuotation({{ $item->id }})" class="btn btn-danger m-1" {{ $item->quotation_status == 'Approved' ? 'disabled' : '' }}>
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </td>
