@@ -37,4 +37,12 @@ class OwnController extends Controller
     public function quotation(){
         return view('dashboard.own.quotation.index');
     } // END FUNCTION (DASHBOARD)
+
+    public function invoice(){
+        return view('dashboard.own.invoice.index');
+    } // END FUNCTION (DASHBOARD)
+
+    public function cash(){
+        return view('dashboard.own.cash.index');
+    } // END FUNCTION (DASHBOARD)
 }

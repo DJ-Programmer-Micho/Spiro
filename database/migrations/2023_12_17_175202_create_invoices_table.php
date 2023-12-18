@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quotation_id')->unique()->references('id')->on('quotations')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('quotation_id')->unique()->references('id')->on('quotations')->onDelete('cascade')->onUpdate('cascade')->nullable();
             $table->foreignId('client_id')->references('id')->on('clients')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('payment_id')->references('id')->on('payments')->onDelete('cascade')->onUpdate('cascade');
             $table->date('invoice_date')->nullable();

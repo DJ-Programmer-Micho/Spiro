@@ -35,4 +35,9 @@ class Client extends Model
     {
         return $this->hasMany(Invoice::class,'client_id');
     }
+    
+    public function cash()
+    {
+        return $this->hasMany(Cash::class, 'client_id');
+    }
 }

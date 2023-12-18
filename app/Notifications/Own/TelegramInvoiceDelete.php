@@ -6,14 +6,14 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\Telegram\TelegramChannel;
 use NotificationChannels\Telegram\TelegramMessage;
 
-class TelegramQuotationDelete extends Notification
+class TelegramInvoiceDelete extends Notification
 {
-    protected $q_id;
+    protected $i_id;
     protected $tele_id;
 
-    public function __construct($q_id, $tele_id)
+    public function __construct($i_id, $tele_id)
     {
-        $this->q_id = $q_id;
+        $this->i_id = $i_id;
         $this->tele_id = $tele_id;
     }
 
@@ -24,14 +24,14 @@ class TelegramQuotationDelete extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#QUO-" . rand(10, 99);
+        $registrationId = "#INV-" . rand(10, 99);
         $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
-       ->content("*" . 'QUOTATION DELETED' . "*\n"
+       ->content("*" . 'INVOICE DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'QUOTATION-ID: '. $registrationId . '-'. $this->q_id .'-' . $registration3Id . "*\n"
+       . "*" .'INVOICE-ID: '. $registrationId . '-'. $this->i_id .'-' . $registration3Id . "*\n"
         );
     }
     
