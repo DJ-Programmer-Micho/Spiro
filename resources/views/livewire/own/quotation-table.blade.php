@@ -59,7 +59,9 @@
                     <tr>
                         @foreach ($cols_td as $col)
                         <td class="align-middle">
-                            @if ($col === 'status')
+                            @if ($col === 'id')
+                                <b>#QUI-{{ $item->id }}</b>
+                            @elseif ($col === 'grand_total_dollar')        
                             <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                             </span>

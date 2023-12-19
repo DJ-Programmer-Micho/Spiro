@@ -11,7 +11,7 @@
 <script>
     window.addEventListener('close-modal', event => {
         $('#createCashModal').modal('hide');
-        $('#editCashModal').modal('hide');
+        $('#updateCashModal').modal('hide');
         $('#deleteCashModal').modal('hide');
 
     })

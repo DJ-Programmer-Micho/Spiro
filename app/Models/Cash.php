@@ -29,9 +29,13 @@ class Cash extends Model
         return $this->belongsTo(Client::class, 'client_id');
     }
 
+    // public function invoice()
+    // {
+    //     return $this->hasOne(Invoice::class,'invoice_id');
+    // }
     public function invoice()
-    {
-        return $this->hasOne(Invoice::class,'invocie_id');
-    }
-    
+{
+    return $this->belongsTo(Invoice::class, 'invoice_id');
+}
+
 }

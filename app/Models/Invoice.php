@@ -55,8 +55,14 @@ class Invoice extends Model
         return $this->belongsTo(Quotation::class);
     }
 
-    public function cash()
-    {
-        return $this->belongsTo(Cash::class);
-    }
+    // public function cash()
+    // {
+    //     return $this->belongsTo(Cash::class);
+    // }
+
+    public function cashes()
+{
+    return $this->hasMany(Cash::class, 'invoice_id');
+}
+
 }

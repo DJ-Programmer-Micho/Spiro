@@ -2,20 +2,22 @@
 
 namespace App\Http\Livewire\Own;
 
+use App\Models\Cash;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Payment;
-use App\Models\Quotation;
 use App\Models\Service;
 use Livewire\Component;
+use App\Models\Quotation;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Notification;
 // use App\Notifications\Own\TelegramInvoiceNew;
-use App\Notifications\Own\TelegramInvoiceUpdate;
-use App\Notifications\Own\TelegramInvoiceDelete;
-use App\Notifications\Own\TelegramInvoiceShort;
-use App\Notifications\Own\TelegramInvoiceNew;
+use App\Notifications\Own\TelegramCashNew;
 use App\Notifications\Own\TelegramClientNew;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\Own\TelegramInvoiceNew;
+use App\Notifications\Own\TelegramInvoiceShort;
+use App\Notifications\Own\TelegramInvoiceDelete;
+use App\Notifications\Own\TelegramInvoiceUpdate;
 
 class InvoiceLivewire extends Component
 {
@@ -48,18 +50,18 @@ class InvoiceLivewire extends Component
     // Form Final Section
     public $description;
     public $note = [];
-    public $totalDollar;
-    public $taxDollar;
-    public $discountDollar;
-    public $fisrtPayDollar;
-    public $dueDollar;
-    public $grandTotalDollar;
-    public $totalIraqi;
-    public $taxIraqi;
-    public $discountIraqi;
-    public $fisrtPayIraqi;
-    public $dueIraqi;
-    public $grandTotalIraqi;
+    public $totalDollar = 0;
+    public $taxDollar = 0;
+    public $discountDollar = 0;
+    public $fisrtPayDollar = 0;
+    public $dueDollar = 0;
+    public $grandTotalDollar = 0;
+    public $totalIraqi = 0;
+    public $taxIraqi = 0;
+    public $discountIraqi = 0;
+    public $fisrtPayIraqi = 0;
+    public $dueIraqi = 0;
+    public $grandTotalIraqi = 0;
     //FILTERS
     public $search;
     public $statusFilter = '';
@@ -288,8 +290,7 @@ class InvoiceLivewire extends Component
     public function addInvoice(){
         try {
             $validatedData = $this->validate();
-
-            $quotation = Invoice::create([
+            $invoice = Invoice::create([
                 'quotation_id' => null,
                 'client_id' => $validatedData['select_client_data'],
                 'payment_id' => $validatedData['select_payment_data'],
@@ -313,11 +314,41 @@ class InvoiceLivewire extends Component
                 'notes' => json_encode($this->note),
             ]);
 
+            $fisrt_payment_arr = [];
+            if($validatedData['dueDollar'] == 0 ){
+                $cash_status = 'Complete';
+            } else {
+                $cash_status = 'Not Complete';
+            }
+
+            $fisrt_payment_arr = json_encode([[
+                'payment_date' => now()->format('Y-m-d') ?? '',
+                'paymentAmountDollar' => $validatedData['fisrtPayDollar'],
+                'paymentAmountIraqi' => $validatedData['fisrtPayIraqi'],
+            ]], false);
+            if(isset($validatedData['fisrtPayDollar']) && $validatedData['fisrtPayDollar'] > 0){
+                $cash = Cash::create([
+                    'invoice_id' => $invoice->id,
+                    'cash_date' => now()->format('Y-m-d'),
+                    // 'payments' => json_encode($validatedData['arr_payments']),
+                    'payments' => $fisrt_payment_arr,
+    
+                    'grand_total_dollar' => $validatedData['grandTotalDollar'],
+                    'due_dollar' => $validatedData['dueDollar'],
+    
+                    'grand_total_iraqi' => $validatedData['grandTotalIraqi'],
+                    'due_iraqi' => $validatedData['dueIraqi'],
+    
+                    'cash_status' => $cash_status,
+                ]);
+            }
+
+
             if($this->telegram_channel_status == 1){
                 try{
                     Notification::route('toTelegram', null)
                     ->notify(new TelegramInvoiceNew(
-                        $quotation->id,
+                        $invoice->id,
                         $validatedData['formDate'],
                         null,
                         $validatedData['select_client_data'],
@@ -340,7 +371,28 @@ class InvoiceLivewire extends Component
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
                 }  catch (\Exception $e) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending INV Notification.')]);
+                }
+            }
+
+            if($this->telegram_channel_status == 1){
+                try{
+                    Notification::route('toTelegram', null)
+                    ->notify(new TelegramCashNew(
+                        $cash->id,
+                        now()->format('Y-m-d'),
+                        $invoice->id,
+                        json_decode($fisrt_payment_arr, true),
+                        $validatedData['dueDollar'],
+                        $validatedData['dueIraqi'],
+                        $validatedData['grandTotalDollar'],
+                        $validatedData['grandTotalIraqi'],
+
+                        $this->tele_id
+                    ));
+                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+                }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending CR Notification.')]);
                 }
             }
 
@@ -616,18 +668,19 @@ class InvoiceLivewire extends Component
         $this->arr_service = [];
         $this->description = '';
         $this->note = [];
-        $this->totalDollar = '';
-        $this->taxDollar = '';
-        $this->discountDollar = '';
-        $this->fisrtPayDollar = '';
-        $this->dueDollar = '';
-        $this->grandTotalDollar = '';
-        $this->totalIraqi = '';
-        $this->taxIraqi = '';
-        $this->discountIraqi = '';
-        $this->fisrtPayIraqi = '';
-        $this->dueIraqi = '';
-        $this->grandTotalIraqi = '';
+        $this->exchange_rate = 0;
+        $this->totalDollar = 0;
+        $this->taxDollar = 0;
+        $this->discountDollar = 0;
+        $this->fisrtPayDollar = 0;
+        $this->dueDollar = 0;
+        $this->grandTotalDollar = 0;
+        $this->totalIraqi = 0;
+        $this->taxIraqi = 0;
+        $this->discountIraqi = 0;
+        $this->fisrtPayIraqi = 0;
+        $this->dueIraqi = 0;
+        $this->grandTotalIraqi = 0;
 
         $this->client_data = Client::get();
         $this->payment_data = Payment::get();

@@ -153,17 +153,17 @@
                                         <tr>
                                             <td class="align-middle" scope="row">{{$index + 1}}</td>
                                             <td class="align-middle" width="90px">
-                                                <input type="date" name="arr_payments.{{ $index }}.payment_date" wire:model="arr_payments.{{ $index }}.payment_date" class="form-control" id="arr_payments.{{ $index }}.payment_date" @if($index == 0 && $hasFirstPayment) disabled @endif>
+                                                <input type="date" name="arr_payments.{{ $index }}.payment_date" wire:model="arr_payments.{{ $index }}.payment_date" class="form-control" id="arr_payments.{{ $index }}.payment_date" @if($index == 0 && $hasFirstPayment) disabled @endif required>
                                             <td class="align-middle">
                                                 <div class="input-group flex-nowrap mb-1">
                                                     <span class="input-group-text" id="addon-wrapping">$</span>
-                                                    <input type="number" name="paymentAmountDollar" wire:model="arr_payments.{{ $index }}.paymentAmountDollar" class="form-control" @if($index == 0 && $hasFirstPayment) disabled @endif>
+                                                    <input type="number" name="paymentAmountDollar" wire:model="arr_payments.{{ $index }}.paymentAmountDollar" class="form-control" wire:change="enterNewPayment({{$index}})" @if($index == 0 && $hasFirstPayment) disabled @endif required>
                                                 </div>
                                             </td>
                                             <td class="align-middle">
                                                 <div class="input-group flex-nowrap">
                                                     <span class="input-group-text" id="addon-wrapping">IQD</span>
-                                                    <input type="number" name="serviceTotalIraqi" wire:model="arr_payments.{{ $index }}.paymentAmountIraqi" class="form-control" @if($index == 0 && $hasFirstPayment) disabled @endif>
+                                                    <input type="number" name="serviceTotalIraqi" wire:model="arr_payments.{{ $index }}.paymentAmountIraqi" class="form-control" @if($index == 0 && $hasFirstPayment) disabled @endif required>
                                                 </div>
                                             </td>
                                             <td class="align-middle">
@@ -238,7 +238,7 @@
     <div wire:ignore.self class="modal fade overflow-auto" id="updateCashModal" tabindex="-1" aria-labelledby="updateCashModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl text-white mx-1 mx-lg-auto" style="max-width: 1140px;">
             <div class="modal-content bg-dark">
-                <form wire:submit.prevent="addCash">
+                <form wire:submit.prevent="updateCash">
                     <div class="modal-body">
                         <div class="modal-header">
                             <h5 class="modal-title" id="updateCashModal" style="color: #31fbe2">{{__('Add New Cash')}}</h5>
@@ -261,12 +261,12 @@
                                     <input type="email" name="clientName" wire:model="clientName" class="form-control" id="clientName" disabled>
                                 </div>
                                 <div class="mb-1">
-                                    <label for="clientCity">{{__('City:')}}</label>
-                                    <input type="text" name="clientCity" wire:model="clientCity" class="form-control" id="clientCity" disabled>
-                                </div>
-                                <div class="mb-1">
                                     <label for="clientCountry">{{__('Country:')}}</label>
                                     <input type="text" name="clientCountry" wire:model="clientCountry" class="form-control" id="clientCountry" disabled>
+                                </div>
+                                <div class="mb-1">
+                                    <label for="clientCity">{{__('City:')}}</label>
+                                    <input type="text" name="clientCity" wire:model="clientCity" class="form-control" id="clientCity" disabled>
                                 </div>
                             </div>
                             <div class="col-12 col-sm-4">
@@ -279,8 +279,12 @@
                                     <input type="email" name="clientEmail" wire:model="clientEmail" class="form-control" id="clientEmail" disabled>
                                 </div>
                                 <div class="mb-1">
-                                    <label for="clientPhoneOne">{{__('Phone:')}}</label>
+                                    <label for="clientPhoneOne">{{__('Primary Phone:')}}</label>
                                     <input type="tel" name="clientPhoneOne" wire:model="clientPhoneOne" class="form-control" id="clientPhoneOne" disabled>
+                                </div>
+                                <div class="mb-1">
+                                    <label for="clientPhoneOne">{{__('Secondary Phone:')}}</label>
+                                    <input type="tel" name="clientPhoneTwo" wire:model="clientPhoneTwo" class="form-control" id="clientPhoneTwo" disabled>
                                 </div>
                             </div>
                             <div class="col-12 col-sm-4">
@@ -293,8 +297,8 @@
                                     <input type="date" name="formDateInvoice" wire:model="formDateInvoice" class="form-control" id="formDateInvoice" disabled>
                                 </div>
                                 <div class="mb-1">
-                                    <label for="clientID">{{__('Client-ID:')}}</label>
-                                    <input type="text" name="clientID" wire:model="clientID" class="form-control" id="clientID" disabled>
+                                    <label for="clientId">{{__('Client-ID:')}}</label>
+                                    <input type="text" name="clientId" wire:model="clientId" class="form-control" id="clientId" disabled>
                                 </div>
                                 <div class="mb-1">
                                     <label>{{__('Exchange Rate:')}} <small>($1 = ? IQD)</small></label>
@@ -314,7 +318,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="serviceName">{{__('Short Description:')}}</label>
-                            <input type="text" name="description" wire:model="description" class="form-control" id="description">
+                            <input type="text" name="description" wire:model="description" class="form-control" id="description" disabled>
                             <small class="text-danger">{{__('(Read Only)')}}</small>
                         </div>
                         <div class="row">
@@ -334,21 +338,22 @@
                                         @foreach ($arr_payments as $index => $a_pay)
                                         <tr>
                                             <td class="align-middle" scope="row">{{$index + 1}}</td>
-                                            <td class="align-middle" width="90px"><input type="date" name="arr_payments.{{ $index }}.payment_date" wire:model="payment_date.{{ $index }}.payment_date" class="form-control" id="arr_payments.{{ $index }}.payment_date"></td>
+                                            <td class="align-middle" width="90px">
+                                                <input type="date" name="arr_payments.{{ $index }}.payment_date" wire:model="arr_payments.{{ $index }}.payment_date" class="form-control" id="arr_payments.{{ $index }}.payment_date" @if($index == 0 && $hasFirstPayment) disabled @endif required>
                                             <td class="align-middle">
                                                 <div class="input-group flex-nowrap mb-1">
                                                     <span class="input-group-text" id="addon-wrapping">$</span>
-                                                    <input type="number" name="serviceDefaultCostDollar" wire:model="arr_payments.{{ $index }}.serviceDefaultCostDollar" class="form-control" wire:change="serviceQtyChange({{ $index }})">
+                                                    <input type="number" name="paymentAmountDollar" wire:model="arr_payments.{{ $index }}.paymentAmountDollar" class="form-control" wire:change="enterNewPayment({{$index}})" @if($index == 0 && $hasFirstPayment) disabled @endif required>
                                                 </div>
                                             </td>
                                             <td class="align-middle">
                                                 <div class="input-group flex-nowrap">
                                                     <span class="input-group-text" id="addon-wrapping">IQD</span>
-                                                    <input type="number" name="serviceTotalIraqi" wire:model="arr_payments.{{ $index }}.serviceTotalIraqi" class="form-control" disabled>
+                                                    <input type="number" name="serviceTotalIraqi" wire:model="arr_payments.{{ $index }}.paymentAmountIraqi" class="form-control" @if($index == 0 && $hasFirstPayment) disabled @endif required>
                                                 </div>
                                             </td>
                                             <td class="align-middle">
-                                                <button type="button" class="btn btn-danger" wire:click="removePayment({{ $index }})"><i class="fas fa-trash-alt"></i></button>
+                                                <button type="button" class="btn btn-danger" wire:click="removePayment({{ $index }})" @if($index == 0 && $hasFirstPayment) disabled @endif><i class="fas fa-trash-alt"></i></button>
                                             </td>                                       
                                         </tr>
                                       @endforeach
@@ -371,7 +376,7 @@
                                 @for ($i = 1; $i <= 5; $i++)
                                 <div class="mb-3">
                                     <label>{{__('Note No.')}}{{$i}}</label>
-                                    <input type="text" name="note" wire:model="note.{{$i}}" class="form-control" id="note.{{$i}}">
+                                    <input type="text" name="note" wire:model="note.{{$i}}" class="form-control" id="note.{{$i}}" disabled>
                                 </div>
                                 @endfor
                             </div>
@@ -379,24 +384,28 @@
 
                                 <div class="mb-3">
                                     <label>{{__('Grand Total:')}} ($)</label>
-                                    <input type="number" name="grandTotalDollar" wire:model="grandTotalDollar" class="form-control" id="grandTotalDollar" disabled>
+                                    {{-- <input type="number" name="grandTotalDollar" wire:model="grandTotalDollar" class="form-control" id="grandTotalDollar" disabled> --}}
+                                    <h3 class="text-success border">$ {{number_format($grandTotalDollar) ?? null}}</h3>
                                 </div>
 
                                 <div class="mb-3">
                                     <label>{{__('Due:')}} ($)</label>
-                                    <input type="number" name="dueDollar" wire:model="dueDollar" class="form-control" id="dueDollar" disabled>
+                                    {{-- <input type="number" name="dueDollar" wire:model="dueDollar" class="form-control" id="dueDollar" disabled> --}}
+                                    <h3 class="text-danger border">$ {{number_format($dueDollar) ?? null }}</h3>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                             
                                 <div class="mb-3">
                                     <label>{{__('Grand Total:')}} (IQD)</label>
-                                    <input type="number" name="grandTotalIraqi" wire:model="grandTotalIraqi" class="form-control" id="grandTotalIraqi" disabled>
+                                    {{-- <input type="number" name="grandTotalIraqi" wire:model="grandTotalIraqi" class="form-control" id="grandTotalIraqi" disabled> --}}
+                                    <h3 class="text-success border">{{number_format($grandTotalIraqi) ?? null }} IQD</h3>
                                 </div>
 
                                 <div class="mb-3">
                                     <label>{{__('Due:')}} (IQD)</label>
-                                    <input type="number" name="dueIraqi" wire:model="dueIraqi" class="form-control" id="dueIraqi" disabled>
+                                    {{-- <input type="number" name="dueIraqi" wire:model="dueIraqi" class="form-control" id="dueIraqi" disabled> --}}
+                                    <h3 class="text-danger border">{{number_format($dueIraqi) ?? null}} IQD</h3>
                                 </div>
                             </div>
                             
@@ -410,7 +419,7 @@
             </div>
         </div>
     </div>
-    {{-- 
+   
      <!-- Delete Cash Modal  -->
     <div wire:ignore.self class="modal fade" id="deleteCashModal" tabindex="-1" aria-labelledby="deleteCashModal"
         aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -424,13 +433,13 @@
                 <form wire:submit.prevent="destroyCash">
                     <div class="modal-body">
                         <p class="text-danger">{{ __('Are you sure you want to delete this Company?') }}</p>
-                        <p>{{ __('Please enter the')}}<strong> "{{$del_Cash_name}}" </strong>{{__('to confirm:') }}</p>
-                        <input type="text" wire:model="Cash_name_to_selete" class="form-control">
+                        <p>{{ __('Please enter the')}}<strong> "{{$del_cash_name}}" </strong>{{__('to confirm:') }}</p>
+                        <input type="text" wire:model="cash_name_to_selete" class="form-control">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" wire:click="closeModal"
                             data-dismiss="modal">{{__('Cancel')}}</button>
-                            <button type="submit" class="btn btn-danger" wire:disabled="!$confirmDelete || $Cash_name_to_selete !== $del_Cash_name">
+                            <button type="submit" class="btn btn-danger" wire:disabled="!$confirmDelete || $cash_name_to_selete !== $del_Cash_name">
                                 {{ __('Yes! Delete') }}
                             </button>
                     </div>
@@ -438,7 +447,7 @@
             </div>
         </div>
     </div>
-
+ {{-- 
     <!-- Insert Client Direct Modal -->
     <div wire:ignore.self class="modal fade overflow-auto" id="addClientDirect" tabindex="-1" aria-labelledby="addClientDirect" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl text-white mx-1 mx-lg-auto" style="max-width: 1140px;">

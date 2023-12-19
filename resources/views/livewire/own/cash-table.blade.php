@@ -4,7 +4,7 @@
 
     <div class="m-4">
         <h2 class="text-lg font-medium mr-auto">
-            <b style="color: #31fbe2">{{__('INVOICE TABLE')}}</b>
+            <b style="color: #31fbe2">{{__('CASH RECEIPT TABLE')}}</b>
         </h2>
         <div class="row d-flex justify-content-between m-0">
             <div class="d-flex">
@@ -16,20 +16,11 @@
                     <input type="search" wire:model="search" class="form-control" placeholder="Search..." style="width: 250px; border: 1px solid var(--primary)" />
                 </h2>
 
-                {{-- <h2 class="text-lg font-medium mr-1">
-                    <select wire:model="invoiceStatusFilter" name="invoiceStatusFilter" id="invoiceStatusFilter" class="form-control" style="width: 170px;">
-                        <option value="" default>{{__('All')}}</option>
-                        <option value="Sent">{{__('Sent')}}</option>
-                        <option value="Approved">{{__('Approved')}}</option>
-                        <option value="Rejected">{{__('Rejected')}}</option>
-                    </select>
-                </h2> --}}
-
                 <h2 class="text-lg font-medium mr-1">
-                    <select wire:model="statusFilter" class="form-control" style="width: 170px;">
+                    <select wire:model="CashDueFilter" name="CashDueFilter" id="CashDueFilter" class="form-control" style="width: 170px;" wire:change="applyFilter">
                         <option value="" default>{{__('All')}}</option>
-                        <option value="1">{{__('Active')}}</option>
-                        <option value="0">{{__('Non-Active')}}</option>
+                        <option value="Not Complete">{{__('Not Complete')}}</option>
+                        <option value="Complete">{{__('Complete')}}</option>
                     </select>
                 </h2>
 
@@ -60,26 +51,46 @@
                     <tr>
                         @foreach ($cols_td as $col)
                         <td class="align-middle">
-                            @if ($col === 'status')
+                            @if ($col === 'id')
+                            <b>#CR-{{ $item->id }}</b>
+                            @elseif ($col === 'invoice_id')
+                            <b>#INV-{{ $item->id }}</b>
+                            @elseif ($col === 'status')
                             <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                             </span>
                             @elseif ($col === 'grand_total_dollar')        
-                                $ {{number_format($item->grand_total_dollar)}}
+                                @if($item->due_dollar > 0)
+                                <span class="text-success">$ {{number_format($item->grand_total_dollar)}}</span>
+                                @else
+                                <span class="text-info">$ {{number_format($item->grand_total_dollar)}}</span>
+                                @endif 
                             @elseif ($col === 'grand_total_iraqi')        
-                                {{number_format($item->grand_total_iraqi)}} IQD
-                            @elseif ($col === 'invoice_status')
-                                @if($item->invoice_status == 'Sent') 
-                                    <span class="text-info">
-                                        <b>{{__('Sent')}}</b>
-                                    </span>
-                                @elseif ($item->invoice_status == 'Approved') 
+                                @if($item->due_iraqi > 0)
+                                <span class="text-success">{{number_format($item->grand_total_iraqi)}} IQD</span>
+                                @else
+                                <span class="text-info">{{number_format($item->grand_total_iraqi)}} IQD</span>
+                                @endif  
+                            @elseif ($col === 'due_dollar')        
+                                @if($item->due_dollar > 0)
+                                <span class="text-danger">$ {{number_format($item->due_dollar)}}</span>
+                                @else
+                                <span class="text-info">$ {{number_format($item->due_dollar)}}</span>
+                                @endif 
+                            @elseif ($col === 'due_iraqi')   
+                                @if($item->due_iraqi > 0)
+                                <span class="text-danger">{{number_format($item->due_iraqi)}} IQD</span>
+                                @else
+                                <span class="text-info">{{number_format($item->due_iraqi)}} IQD</span>
+                                @endif     
+                            @elseif ($col === 'cash_status')
+                                @if($item->cash_status == 'Complete') 
                                     <span class="text-success">
-                                        <b>{{__('Approved')}}</b>
+                                        <b>{{__('Complete')}}</b>
                                     </span>
                                 @else 
                                     <span class="text-danger">
-                                        <b>{{__('Rejected')}}</b>
+                                        <b>{{__('Not Complete')}}</b>
                                     </span>
                                 @endif
                             @else
@@ -88,12 +99,9 @@
                         </td>
                         @endforeach
                         <td class="align-middle">
-                            <button type="button" data-toggle="modal" data-target="#editInvoiceModal"
-                                wire:click="editInvoice({{ $item->id }})" class="btn btn-primary m-1">
-                                <i class="far fa-edit"></i>
-                            </button>
-                            <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon m-1">
-                                <i class="far {{ $item->status == 1 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
+                            <button type="button" data-toggle="modal" data-target="#updateCashModal"
+                                wire:click="editCash({{ $item->id }})" class="btn btn-primary m-1">
+                                <i class="fas fa-hand-holding-usd"></i>
                             </button>
                             {{-- <button type="button" wire:click="approved({{ $item->id }})" class="btn {{ $item->invoice_status == 'Approved' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
                                 <i class="{{ $item->invoice_status == 'Approved' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up' }}"></i>
@@ -101,7 +109,7 @@
                             <button type="button" wire:click="rejected({{ $item->id }})" class="btn {{ $item->invoice_status == 'Rejected' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
                                 <i class="{{ $item->invoice_status == 'Rejected' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down' }}"></i>
                             </button> --}}
-                            <button type="button" data-toggle="modal" data-target="#deleteInvoiceModal" wire:click="deleteInvoice({{ $item->id }})" class="btn btn-danger m-1" {{ $item->invoice_status == 'Approved' ? 'disabled' : '' }}>
+                            <button type="button" data-toggle="modal" data-target="#deleteCashModal" wire:click="deleteCash({{ $item->id }})" class="btn btn-danger m-1" {{ $item->invoice_status == 'Approved' ? 'disabled' : '' }}>
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </td>

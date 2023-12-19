@@ -59,7 +59,15 @@
                     <tr>
                         @foreach ($cols_td as $col)
                         <td class="align-middle">
-                            @if ($col === 'status')
+                            @if ($col === 'id')
+                                <b>#INV-{{ $item->id }}</b>
+                            @elseif ($col === 'quotation_id')
+                                @if(isset($item->quotation_id))
+                                    <b>#QUO-{{ $item->id }}</b>
+                                @else
+                                    <b>-</b>
+                                @endif   
+                            @elseif ($col === 'status')
                             <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                             </span>
