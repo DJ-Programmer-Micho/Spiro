@@ -46,7 +46,6 @@ class ClientLivewire extends Component
     {
         $rules = [];
         $rules['clientName'] = ['required'];
-        $rules['email'] = ['required'];
         $rules['address'] = ['required'];
         $rules['city'] = ['required'];
         $rules['country'] = ['required'];
@@ -60,7 +59,7 @@ class ClientLivewire extends Component
 
             $client = Client::create([
                 'client_name' => $validatedData['clientName'],
-                'email' => $validatedData['email'],
+                'email' => $this->email,
                 'address' => $validatedData['address'],
                 'city' => $validatedData['city'],
                 'country' => $validatedData['country'],
@@ -74,7 +73,7 @@ class ClientLivewire extends Component
                     ->notify(new TelegramClientNew(
                         $client->id,
                         $validatedData['clientName'],
-                        $validatedData['email'],
+                        $this->email ?? 'N/A',
                         $validatedData['address'],
                         $validatedData['phoneOne'],
                         $this->tele_id
@@ -133,7 +132,7 @@ class ClientLivewire extends Component
 
             Client::where('id', $this->clientUpdate)->update([
                 'client_name' => $validatedData['clientName'],
-                'email' => $validatedData['email'],
+                'email' => $this->email,
                 'address' => $validatedData['address'],
                 'city' => $validatedData['city'],
                 'country' => $validatedData['country'],

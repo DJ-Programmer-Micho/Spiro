@@ -79,7 +79,6 @@ class ExpenseLivewire extends Component
         $this->bill_data = BillsExpense::get();
     }
     public function selectExpenseBillModalStartup(){
-        $this->resetModal();
         $this->select_bill_data;
 
         $selected_by_user_bill_data = BillsExpense::where('id', $this->select_bill_data)->first();
@@ -138,7 +137,6 @@ class ExpenseLivewire extends Component
         $this->user_data = User::get();
     }
     public function selectExpenseEmpModalStartup(){
-        $this->resetModal();
         $this->select_user_data;
 
         $selected_by_user_user_data = User::where('id', $this->select_user_data)->first();

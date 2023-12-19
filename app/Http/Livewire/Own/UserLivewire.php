@@ -89,23 +89,26 @@ public function handleCroppedImage($img)
     public function addUser(){
         try {
             $validatedData = $this->validate();
+
             if ($this->img_public) {
                 $this->img_public = preg_replace('/^data:image\/\w+;base64,/', '', $this->img_public);
                 $this->decodedImage = base64_decode($this->img_public);
                 if ($this->decodedImage === false) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Imade did not Encoded, please check the file or file format!')]);
                 }
+
+                $filename = 'user_' . now()->format('YmdHis') . '.jpg';
+                $success = File::put(public_path('avatars/' . $filename), $this->decodedImage);
+                if ($success) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Avatar Uploaded Successfully')]);
+                } else {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => __('Avatar did not upload')]);
+                }
             } else {
                 $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => __('No Image Found!')]);
             }
 
-            $filename = 'user_' . now()->format('YmdHis') . '.jpg';
-            $success = File::put(public_path('avatars/' . $filename), $this->decodedImage);
-            if ($success) {
-                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Avatar Uploaded Successfully')]);
-            } else {
-                $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => __('Avatar did not upload')]);
-            }
+
 
             $user = User::create([
                 'name' => $validatedData['name'],
@@ -119,7 +122,7 @@ public function handleCroppedImage($img)
                 'user_id' => $user->id,
                 'job_title' => $this->jobTitle,
                 'national_id' => $validatedData['nationalId'],
-                'avatar' => $filename ?? null,
+                'avatar' => $filename ?? 'user.png',
                 'phone_number_1' => $validatedData['phoneNumberOne'],
                 'phone_number_2' => $this->phoneNumberTwo ?? null,
                 'email_address' => $this->actualEmail ?? null,
@@ -147,7 +150,7 @@ public function handleCroppedImage($img)
                         $validatedData['name'],
                         $roleName,
                         $this->jobTitle,
-                        $filename,
+                        $filename ?? 'user.png',
                         $this->tele_id
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
@@ -226,7 +229,7 @@ public function handleCroppedImage($img)
                 } else {
                     $oldAvatarFilename = Profile::where('user_id', $this->userUpdate)->value('avatar');
                     // Delete the old avatar file
-                    if ($oldAvatarFilename) {
+                    if ($oldAvatarFilename && $oldAvatarFilename != 'user.png') {
                         // Use public_path() for files in the public directory
                         $filePath = public_path('avatars/' . $oldAvatarFilename);
                     
@@ -315,6 +318,19 @@ public function handleCroppedImage($img)
 
     public function destroyUser(){
         if ($this->confirmDelete && $this->user_name_to_selete === $this->del_user_name) {
+
+
+
+            if ($this->del_user_data && $this->del_user_data->profile->avatar != 'user.png') {
+                // Use public_path() for files in the public directory
+                $filePath = public_path('avatars/' . $this->del_user_data->profile->avatar);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+
+
+
             User::find($this->del_user_id)->delete();
             if($this->telegram_channel_status == 1){
                 try{
@@ -329,6 +345,8 @@ public function handleCroppedImage($img)
                     $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
                 }
             }
+
+
             $this->del_user_id = null;
             $this->del_user_data = null;
             $this->del_user_name = null;
