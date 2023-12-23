@@ -58,5 +58,8 @@ Route::middleware([Localization::class])->group(function () {
     Route::get('/plan/guestplanview', [OwnController::class, 'guestPlanView'])->name('guestPlanView');
     Route::get('/plan/plansetting', [OwnController::class, 'planSetting'])->name('planSetting');
     Route::get('/top8', [OwnController::class, 'topEight'])->name('topEight');
+    Route::get('/pdf', function () {
+        return view('pdf');
+    });
     });
 });

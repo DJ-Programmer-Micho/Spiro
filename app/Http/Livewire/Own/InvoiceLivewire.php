@@ -10,7 +10,8 @@ use App\Models\Service;
 use Livewire\Component;
 use App\Models\Quotation;
 use Livewire\WithPagination;
-// use App\Notifications\Own\TelegramInvoiceNew;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\App;
 use App\Notifications\Own\TelegramCashNew;
 use App\Notifications\Own\TelegramClientNew;
 use Illuminate\Support\Facades\Notification;
@@ -18,16 +19,20 @@ use App\Notifications\Own\TelegramInvoiceNew;
 use App\Notifications\Own\TelegramInvoiceShort;
 use App\Notifications\Own\TelegramInvoiceDelete;
 use App\Notifications\Own\TelegramInvoiceUpdate;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class InvoiceLivewire extends Component
 {
     use WithPagination; 
+    use WithFileUploads;
     protected $paginationTheme = 'bootstrap';
 
     // Form Date Section
     public $quotationId;
     public $formDate;
     public $status;
+    public $print_id_selected;
     // Form Client Section
     public $client_data;
     public $select_client_data;
@@ -99,6 +104,23 @@ class InvoiceLivewire extends Component
         $this->service_data = Service::get();
         $this->initializeServicesArray();
     } // END FUNCTION OF PAGE LOAD
+
+    public function printCustomPdf(int $invoiceId){
+        $invoiceEditasd = Invoice::where('id',$invoiceId)->first();
+        $data = [
+            "invoiceId" => $invoiceEditasd->id,
+            "client" => $invoiceEditasd->client->client_name,
+            "date" =>$invoiceEditasd->invoice_date,
+            "total" => $invoiceEditasd->grand_total_dollar,
+        ];
+        $pdfContent = Pdf::loadView('pdf', $data)->output();
+        return response()->streamDownload(
+            function () use ($pdfContent) {
+                echo $pdfContent;
+            },
+            $invoiceEditasd->id.'_'.$invoiceEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
+        );
+    }    
 
     public function initializeServicesArray() {
         $this->arr_service = [];
@@ -408,6 +430,7 @@ class InvoiceLivewire extends Component
         try {
             $invoiceEdit = Invoice::find($invoiceId);
             $this->invoiceUpdate = $invoiceId;
+            $this->print_id_selected = $invoiceId;
 
             $clientInfo = Client::find($invoiceEdit->client_id);
             $paymentInfo = Payment::find($invoiceEdit->payment_id);

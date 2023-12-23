@@ -18,7 +18,7 @@
                         <div class="row">
                             <div class="col-12 col-sm-4">
                                 <div class="mb-3">
-                                    <label>{{__('Invoice Created Date')}}</label>
+                                    <label>{{__('Party Created Date')}}</label>
                                     <input type="date" name="formDate" wire:model="formDate" class="form-control" id="formDate">
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
                                 </div>
@@ -619,6 +619,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" wire:click="closeModal" data-dismiss="modal">{{__('Close')}}</button>
+                        <button type="button" class="btn btn-info" target="_blank" wire:click="printCustomPdf({{$this->invoiceUpdate}})">{{__('Print')}}</button>
                         <button type="submit" class="btn btn-success submitJs">{{__('Save')}}</button>
                     </div>
                 </form>
