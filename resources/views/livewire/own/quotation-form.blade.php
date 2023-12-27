@@ -132,104 +132,131 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row d-flex justify-content-between m-0">
-                            <h5 class="mt-4 mb-1"><b>{{__('Service Section')}}</b></h5>
-                            <div>
-                                <button class="btn btn-info" type="button" wire:click="newRecService">{{__('New Record Service')}}</button>
-                            </div>
+                        <div class="row d-flex justify-content-between m-0" style="border-top: 2px dotted #fff; border-bottom: 2px dotted #cc0022">
+                            <h5 class="mt-4"><b>{{__('Service Section')}}</b></h5>
+                            <button class="btn btn-success mt-3 mb-3" type="button" wire:click="addNewDate">{{__('Add New Date')}}</button>
                         </div>
-                        <div class="mb-3">
+                        
+                        @foreach ($arr_service_by_date as $dateIndex => $services)
+                        <div class="mb-3 mt-3">
+                            <div class="d-flex justify-content-between">
+                                <h3>{{__('Booking No.')}}{{ $dateIndex + 1}}</h3>
+                                <button class="btn btn-danger" type="button"
+                                    wire:click="removeDate('{{ $dateIndex }}')" @if($dateIndex == 0) disabled @endif>{{__('Remove This Date')}}</button>
+                            </div>
                             <label for="serviceName">{{__('Short Description:')}}</label>
-                            <input type="text" name="description" wire:model="description" class="form-control" id="description">
+                            <input type="text" name="arr_service_by_date.{{$dateIndex}}.description"
+                                wire:model="arr_service_by_date.{{$dateIndex}}.description" class="form-control"
+                                id="arr_service_by_date.{{$dateIndex}}.description">
                             <small class="text-info">{{__('(Read & Write)')}}</small>
                         </div>
-                        <div class="row">
-                            <div class="col-12 table-responsive met-table-panding">
+                        <div class="row" style="border-bottom: 2px dotted #cc0022;">
+                            <div class="row d-flex justify-content-between m-0">
+                                <div>
+                                    <input class="form-control" type="date"
+                                        name="arr_service_by_date.{{$dateIndex}}.actionDate"
+                                        wire:model="arr_service_by_date.{{$dateIndex}}.actionDate"
+                                        id="arr_service_by_date.{{$dateIndex}}.actionDate">
+                                </div>
+                                <div>
+                                    {{-- <button class="btn btn-info" type="button" wire:click="newRecService">{{__('New Record Service')}}</button>
+                                    --}}
+                                    <button class="btn btn-info" type="button"
+                                        wire:click="newRecService('{{ $dateIndex }}')">{{__('New Record Service')}}</button>
+
+                                </div>
                                 <table class="table table-dark table-striped table-bordered border-dark align-middle">
                                     <thead>
-                                      <tr>
-                                        {{-- <th scope="col"><input type="checkbox" name="" id=""></th> --}}
-                                        <th scope="col">#</th>
-                                        <th scope="col">Code</th> 
-                                        <th scope="col">Service</th> 
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Unit Price</th>
-                                        {{-- @if($this->showTextarea)
-                                        <th scope="col">Unit Price ($)</th>
-                                        @else
-                                        <th scope="col">Unit Price (IQD)</th>
-                                        @endif --}}
-                                        <th scope="col">QTY</th>
-                                        <th scope="col">Total</th>
-                                        {{-- @if($this->showTextarea)
-                                        <th scope="col">Total ($)</th>
-                                        @else
-                                        <th scope="col">Total (IQD)</th>
-                                        @endif --}}
-                                        <th scope="col">Action</th>
-                                      </tr>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Code</th>
+                                            <th scope="col">Service</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Unit Price</th>
+                                            <th scope="col">QTY</th>
+                                            <th scope="col">Total</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    {{-- @php
-                                        dd($arr_service);
-                                    @endphp --}}
-                                    {{-- <div class="col-12 d-flex justify-content-center align-items-center">
-                                        {{__('IQD')}}
-                                        <label class="switch">
-                                            <input type="checkbox" wire:model="showTextarea" id="customSwitch1" wire:click="updateAllDefaultCosts">
-                                            <span class="slider"></span>
-                                        </label>
-                                        {{__('$')}}
-                                    </div> --}}
-                                        @foreach ($arr_service as $index => $a_ser)
+                                        @foreach ($services['services'] as $serviceIndex => $a_ser)
                                         <tr>
-                                            <td class="align-middle" scope="row">{{$index + 1}}</td>
-                                            <td class="align-middle" width="90px"><input type="text" name="serviceCode.{{ $index }}" wire:model="arr_service.{{ $index }}.serviceCode" class="form-control" id="serviceCode.{{ $index }}"></td>
+                                            <td class="align-middle" scope="row">{{ $serviceIndex  + 1 }}</td>
+                                            <td class="align-middle" width="90px">
+                                                <input type="text" name="serviceCode.{{ $serviceIndex  }}"
+                                                    wire:model="arr_service_by_date.{{$dateIndex}}.services.{{$serviceIndex}}.serviceCode"
+                                                    class="form-control" id="serviceCode.{{ $serviceIndex  }}" disabled>
+
+                                            </td>
                                             <td class="align-middle" width="200px">
-                                                 <select wire:model="arr_service.{{ $index }}.select_service_data" class="form-control" wire:change="selectServiceDataChange({{ $index }})">
+                                                <select
+                                                    wire:model="arr_service_by_date.{{$dateIndex}}.services.{{$serviceIndex }}.select_service_data"
+                                                    class="form-control"
+                                                    wire:change="selectServiceDataChange('{{$dateIndex}}',{{ $serviceIndex  }})">
                                                     <option value="">{{__('Select Service Type')}}</option>
                                                     @foreach ($service_data as $service)
-                                                        <option value="{{ $service->id }}">{{ $service->service_name }}</option>
+                                                    <option value="{{ $service->id }}">{{ $service->service_name }}
+                                                    </option>
                                                     @endforeach
                                                 </select>
                                             </td>
                                             <td class="align-middle">
-                                                <input type="text" name="serviceDescription" wire:model="arr_service.{{ $index }}.serviceDescription" class="form-control">
+                                                <input type="text" name="serviceDescription"
+                                                    wire:model="arr_service_by_date.{{$dateIndex}}.services.{{$serviceIndex }}.serviceDescription"
+                                                    class="form-control" disabled>
                                             </td>
                                             <td class="align-middle">
                                                 <div class="input-group flex-nowrap mb-1">
                                                     <span class="input-group-text" id="addon-wrapping">$</span>
-                                                    <input type="number" name="serviceDefaultCostDollar" wire:model="arr_service.{{ $index }}.serviceDefaultCostDollar" class="form-control" wire:change="serviceQtyChange({{ $index }})">
+                                                    <input type="number" name="serviceDefaultCostDollar"
+                                                        wire:model="arr_service_by_date.{{$dateIndex}}.services.{{$serviceIndex }}.serviceDefaultCostDollar"
+                                                        class="form-control"
+                                                        wire:change="serviceQtyChange('{{$dateIndex}}',{{ $serviceIndex  }})">
                                                 </div>
                                                 <div class="input-group flex-nowrap">
                                                     <span class="input-group-text" id="addon-wrapping">IQD</span>
-                                                    <input type="number" name="serviceDefaultCostIraqi" wire:model="arr_service.{{ $index }}.serviceDefaultCostIraqi" class="form-control" wire:change="serviceQtyChange({{ $index }})" disabled>
+                                                    <input type="number" name="serviceDefaultCostIraqi"
+                                                        wire:model="arr_service_by_date.{{$dateIndex}}.services.{{$serviceIndex }}.serviceDefaultCostIraqi"
+                                                        class="form-control"
+                                                        wire:change="serviceQtyChange('{{$dateIndex}}',{{ $serviceIndex  }})"
+                                                        disabled>
                                                 </div>
                                             </td>
                                             <td class="align-middle" width="80px">
-                                                <input type="number" name="serviceQty" wire:model="arr_service.{{ $index }}.serviceQty" class="form-control" wire:change="serviceQtyChange({{ $index }})">
+                                                <input type="number" name="serviceQty"
+                                                    wire:model="arr_service_by_date.{{$dateIndex}}.services.{{$serviceIndex }}.serviceQty"
+                                                    class="form-control"
+                                                    wire:change="serviceQtyChange('{{$dateIndex}}',{{ $serviceIndex  }})">
                                             </td>
                                             <td class="align-middle">
                                                 <div class="input-group flex-nowrap mb-1">
                                                     <span class="input-group-text" id="addon-wrapping">$</span>
-                                                    <input type="number" name="serviceTotalDollar" wire:model="arr_service.{{ $index }}.serviceTotalDollar" class="form-control" disabled>
+                                                    <input type="number" name="serviceTotalDollar"
+                                                        wire:model="arr_service_by_date.{{$dateIndex}}.services.{{$serviceIndex }}.serviceTotalDollar"
+                                                        class="form-control" disabled>
                                                 </div>
                                                 <div class="input-group flex-nowrap">
                                                     <span class="input-group-text" id="addon-wrapping">IQD</span>
-                                                    <input type="number" name="serviceTotalIraqi" wire:model="arr_service.{{ $index }}.serviceTotalIraqi" class="form-control" disabled>
+                                                    <input type="number" name="serviceTotalIraqi"
+                                                        wire:model="arr_service_by_date.{{$dateIndex}}.services.{{$serviceIndex }}.serviceTotalIraqi"
+                                                        class="form-control" disabled>
                                                 </div>
                                             </td>
                                             <td class="align-middle">
-                                                <button type="button" class="btn btn-danger" wire:click="removeService({{ $index }})"><i class="fas fa-trash-alt"></i></button>
+                                                <button type="button" class="btn btn-danger"
+                                                    wire:click="removeService('{{ $dateIndex }}', {{ $serviceIndex  }})"  @if($serviceIndex == 0) disabled @endif>
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
                                             </td>
-                                            {{-- <td><button type="button" class="btn btn-danger" wire:click="#"><i class="fas fa-trash-alt"></i></button></td> --}}
                                         </tr>
-                                      @endforeach
+                                        @endforeach
                                     </tbody>
-                                  </table>
-
+                                </table>
                             </div>
                         </div>
+                        @endforeach
+
+
                         <div class="row d-flex justify-content-between m-0">
                             <h5 class="mt-4 mb-1"><b>{{__('Final Section')}}</b></h5>
                             {{-- <div>
@@ -238,13 +265,14 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                @for ($i = 1; $i <= 5; $i++)
+                                <textarea name="" id="" rows="10" style="width: 100%"></textarea>
+                                {{-- @for ($i = 1; $i <= 5; $i++)
                                 <div class="mb-3">
                                     <label>{{__('Note No.')}}{{$i}}</label>
                                     <input type="text" name="note" wire:model="note.{{$i}}" class="form-control" id="note.{{$i}}">
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
                                 </div>
-                                @endfor
+                                @endfor --}}
                             </div>
                             <div class="col-sm-3">
                                 <div class="mb-3">
@@ -254,9 +282,9 @@
                                 </div>
                             
                                 <div class="mb-3">
-                                    <label>{{__('TAX:')}} ($)</label>
-                                    <input type="number" name="taxDollar" wire:model="taxDollar" class="form-control" id="taxDollar" wire:change="calculateTotals">
-                                    <small class="text-info">{{__('(Read & Write)')}}</small>
+                                    {{-- <label>{{__('TAX:')}} ($)</label> --}}
+                                    <input type="hidden" name="taxDollar" wire:model="taxDollar" class="form-control" id="taxDollar" wire:change="calculateTotals">
+                                    {{-- <small class="text-info">{{__('(Read & Write)')}}</small> --}}
                                 </div>
 
                                 <div class="mb-3">
@@ -291,9 +319,9 @@
                                 </div>
                             
                                 <div class="mb-3">
-                                    <label>{{__('TAX:')}} (IQD)</label>
-                                    <input type="number" name="taxIraqi" wire:model="taxIraqi" class="form-control" id="taxIraqi" disabled>
-                                    <small class="text-danger">{{__('(Read Only)')}}</small>
+                                    {{-- <label>{{__('TAX:')}} (IQD)</label> --}}
+                                    <input type="hidden" name="taxIraqi" wire:model="taxIraqi" class="form-control" id="taxIraqi" disabled>
+                                    {{-- <small class="text-danger">{{__('(Read Only)')}}</small> --}}
                                 </div>
 
                                 <div class="mb-3">

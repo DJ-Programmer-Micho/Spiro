@@ -100,24 +100,8 @@ class QuotationLivewire extends Component
         $this->initializeServicesArray();
     } // END FUNCTION OF PAGE LOAD
 
-    public function initializeServicesArray() {
-        $this->arr_service = [];
-        for ($i = 0; $i < 3; $i++) {
-            $this->arr_service[] = [
-                'serviceCode' => '',
-                'select_service_data' => null,
-                'serviceDescription' => '',
-                'serviceDefaultCostDollar' => 0,
-                'serviceDefaultCostIraqi' => 0,
-                'serviceQty' => 0,
-                'serviceTotalDollar' => 0,
-                'serviceTotalIraqi' => 0,
-            ];
-        }
-    } //END FUNCTION OF INITIALIZE
-
-    public function newRecService() {
-        $this->arr_service[] = [
+    public function createEmptyService() {
+        return [
             'serviceCode' => '',
             'select_service_data' => null,
             'serviceDescription' => '',
@@ -127,37 +111,82 @@ class QuotationLivewire extends Component
             'serviceTotalDollar' => 0,
             'serviceTotalIraqi' => 0,
         ];
-    } // END FUNCTION OF ADD NEW SERVICE
+    }
 
-    public function removeService($index) {
-        unset($this->arr_service[$index]);
-        $this->arr_service = array_values($this->arr_service); // Reset array keys
-    } // END FUNCTION OF ADD DELETE SERVICE
+    public $arr_service_by_date = [];
+    public function initializeServicesArray() {
+        // $date = now()->format('Y-m-d');
+        $this->arr_service_by_date[0] = [
+            'actionDate' => '',
+            'description' => '',
+        ];
 
+        for ($i = 0; $i < 3; $i++) {
+            $this->arr_service_by_date[0]['services'][] = $this->createEmptyService();
+        }
+    }
 
-    public $showTextarea = 1;
-    public function serviceQtyChange($index) {
-        $this->arr_service[$index]['serviceTotalDollar'] =
-            $this->arr_service[$index]['serviceDefaultCostDollar'] * $this->arr_service[$index]['serviceQty'];
+    public function newRecService($dateIndex)
+    {
+        // $this->arr_service_by_date[$dateIndex][] = $this->createEmptyService();
+        $this->arr_service_by_date[$dateIndex]['services'][] = $this->createEmptyService();
 
+    }
+    public function removeService($dateIndex, $serviceIndex)
+    {
+        unset($this->arr_service_by_date[$dateIndex]['services'][$serviceIndex]);
+        // Re-index the services array
+        $this->arr_service_by_date[$dateIndex]['services'] = array_values($this->arr_service_by_date[$dateIndex]['services']);
+    }
 
-        $this->arr_service[$index]['serviceDefaultCostIraqi'] = $this->arr_service[$index]['serviceDefaultCostDollar'] * $this->exchange_rate;
+    public $newDate;
 
-        $this->arr_service[$index]['serviceTotalIraqi'] =
-            $this->arr_service[$index]['serviceDefaultCostIraqi'] * $this->arr_service[$index]['serviceQty'];
+    public function addNewDate()
+    {
+        // $newDate = now()->addDays(3)->format('Y-m-d');
+        $newDateData = [
+            'actionDate' => '',
+            'description' => '',
+            'services' => [ $this->createEmptyService() ],
+        ];
+    
+        // Reset the newDate property
+        $this->arr_service_by_date[] = $newDateData;
+        $this->newDate = null;
+        // This line will notify Livewire about the updated data
+        $this->arr_service_by_date = collect($this->arr_service_by_date)->values()->all();
+
+        // $this->arr_service_by_date = array_values($this->arr_service_by_date);
+    }
+    
+
+    public function removeDate($dateIndex)
+    {
+        unset($this->arr_service_by_date[$dateIndex]);
+        // Re-index the array to avoid any missing indices
+        $this->arr_service_by_date = array_values($this->arr_service_by_date);
+    }
+    
+    public function serviceQtyChange($date, $index) {
+        $this->arr_service_by_date[$date]['services'][$index]['serviceTotalDollar'] =
+            $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
+
+        $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] * $this->exchange_rate;
+
+        $this->arr_service_by_date[$date]['services'][$index]['serviceTotalIraqi'] =
+            $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
 
         $this->calculateTotals();
     }
 
-    public function selectServiceDataChange($index) {
-        $selectedService = Service::find($this->arr_service[$index]['select_service_data']);
+    public function selectServiceDataChange($date, $index) {
+        $selectedService = Service::find($this->arr_service_by_date[$date]['services'][$index]['select_service_data']);
         if ($selectedService) {
-            $this->arr_service[$index]['serviceCode'] = $selectedService->service_code;
-            $this->arr_service[$index]['serviceDescription'] = $selectedService->service_description;
-            $this->arr_service[$index]['serviceDefaultCostDollar'] = $selectedService->price_dollar;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceCode'] = $selectedService->service_code;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceDescription'] = $selectedService->service_description;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] = $selectedService->price_dollar;
             
-            $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
-            // $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_iraqi;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
 
             $this->calculateTotals();
         }
@@ -175,19 +204,15 @@ class QuotationLivewire extends Component
     public function calculateTotals() {
         $totalDollar = 0;
   
-        foreach ($this->arr_service as $service) {
-            $totalDollar += $service['serviceTotalDollar'];
+        foreach ($this->arr_service_by_date as $services) {
+            foreach ($services as $service) {
+                $totalDollar += isset($service['serviceTotalDollar']) ? $service['serviceTotalDollar'] : 0;
+            }
         }
-
         $this->totalDollar = $totalDollar;
         $this->grandTotalDollar = $totalDollar - $this->discountDollar + $this->taxDollar;
         $this->dueDollar = $this->grandTotalDollar - $this->fisrtPayDollar; 
 
-        // foreach ($this->arr_service as $service) {
-        //     $totalIraqi += $service['serviceTotalIraqi'];
-        // }
-
-        // $this->totalIraqi = $totalIraqi;
         $this->totalIraqi = $totalDollar * $this->exchange_rate;
         $this->discountIraqi = $this->discountDollar * $this->exchange_rate;
         $this->taxIraqi = $this->taxDollar * $this->exchange_rate;
@@ -197,17 +222,41 @@ class QuotationLivewire extends Component
         $this->dueIraqi = $this->grandTotalIraqi - $this->fisrtPayIraqi;
     }
 
-    public function exchangeUpdate(){
-        foreach ($this->arr_service as $index => $service) {
-            $selectedService = Service::find($service['select_service_data']);
-            if ($selectedService) {
-                $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
+    public function exchangeUpdate() {
+            foreach ($this->arr_service_by_date as $date => $services) {
+                foreach ($services['services'] as $index => $service) {
+                    $selectedService = Service::find($service['select_service_data']);
+                    if ($selectedService) {
+                        $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
+                    }
+                }
             }
-            $this->serviceQtyChange($index);
+            $this->calculateTotals();
         }
-        $this->calculateTotals();
-    }
+    
+    
+    // public function addNewDateWithServices() { XXXXXXXXXXXXXXXXX
+    //     $date = now()->format('Y-m-d');
 
+    //     if (!isset($this->arr_service_by_date[$date])) {
+    //         $this->arr_service_by_date[$date] = [];
+    //     }
+
+    //     // Add a new record for the date
+    //     $this->arr_service_by_date[$date][] = [
+    //         'serviceCode' => '',
+    //         'select_service_data' => null,
+    //         'serviceDescription' => $this->description,
+    //         'serviceDefaultCostDollar' => 0,
+    //         'serviceDefaultCostIraqi' => 0,
+    //         'serviceQty' => 0,
+    //         'serviceTotalDollar' => 0,
+    //         'serviceTotalIraqi' => 0,
+    //     ];
+
+    //     // Reset the description field
+    //     $this->description = '';
+    // }
 
     public function selectClientStartup(){
         $client_selected = Client::where('id', $this->select_client_data)->first();
@@ -290,6 +339,7 @@ class QuotationLivewire extends Component
     }
     
     public function addQuotation(){
+        dd($this->arr_service_by_date);
         try {
             $validatedData = $this->validate();
 
