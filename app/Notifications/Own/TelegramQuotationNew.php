@@ -37,9 +37,11 @@ class TelegramQuotationNew extends Notification
     protected $tableHeader;
     protected $tableBody;
 
+    protected $note;
+
     protected $tele_id;
 
-    public function __construct($q_id, $date, $clientId, $paymentId, $desc, $exchangeRate, $service, $taxDollar, $discountDollar, $fisrtpayDollar, $dueDollar, $taxIraqi, $discountIraqi, $fisrtpayIraqi, $dueIraqi, $totalDollar, $totalIraqi, $tele_id)
+    public function __construct($q_id, $date, $clientId, $paymentId, $desc, $exchangeRate, $service, $taxDollar, $discountDollar, $fisrtpayDollar, $dueDollar, $taxIraqi, $discountIraqi, $fisrtpayIraqi, $dueIraqi, $totalDollar, $totalIraqi, $note, $tele_id)
     {
         $this->q_id = $q_id;
         $this->date = $date;
@@ -58,6 +60,8 @@ class TelegramQuotationNew extends Notification
         $this->dueIraqi = $dueIraqi;
         $this->totalDollar = $totalDollar;
         $this->totalIraqi = $totalIraqi;
+
+        $this->note = $note;
 
         $this->tele_id = $tele_id;
 
@@ -90,22 +94,48 @@ class TelegramQuotationNew extends Notification
 
 
         // $this->tableHeader = "*Service Code | Service Name | Cost ($) | Cost (IQD) | QTY | Total ($) | Total (IQD)*\n";
-        $this->tableHeader = "*Index | Service Name | Cost ($) | Cost (IQD) | QTY | Total ($) | Total (IQD)*\n";
-        $this->tableBody = collect($this->service)->map(function ($service, $index) {
-            $serviceName = Service::find($service['select_service_data'])->service_name ?? 'Unknown Service';
-            return sprintf(
-                // "*%s | %s | $ %s | %s IQD | %s | $ %s | %s IQD*",
-                "*%s | %s | $ %s | %s IQD | %s | $ %s | %s IQD*",
-                // $service['serviceCode'],
-                $index + 1, 
-                $serviceName,
-                number_format($service['serviceDefaultCostDollar']),
-                number_format($service['serviceDefaultCostIraqi']),
-                $service['serviceQty'],
-                number_format($service['serviceTotalDollar']),
-                number_format($service['serviceTotalIraqi'])
-            );
+        // $this->tableHeader = "*Index | Service Name | Cost ($) | Cost (IQD) | QTY | Total ($) | Total (IQD)*\n";
+        // $this->tableBody = collect($this->service)->map(function ($service, $index) {
+        //     $serviceName = Service::find($service['select_service_data'])->service_name ?? 'Unknown Service';
+        //     return sprintf(
+        //         // "*%s | %s | $ %s | %s IQD | %s | $ %s | %s IQD*",
+        //         "*%s | %s | $ %s | %s IQD | %s | $ %s | %s IQD*",
+        //         // $service['serviceCode'],
+        //         $index + 1, 
+        //         $serviceName,
+        //         number_format($service['serviceDefaultCostDollar']),
+        //         number_format($service['serviceDefaultCostIraqi']),
+        //         $service['serviceQty'],
+        //         number_format($service['serviceTotalDollar']),
+        //         number_format($service['serviceTotalIraqi'])
+        //     );
+        // })->implode("\n");
+
+        $this->tableHeader = "*# | Service Name | Cost ($) | Cost (IQD) | QTY | Total ($) | Total (IQD)*\n";
+        $this->tableBody = collect($this->service)->map(function ($action, $actionIndex) {
+            $date = $this->service[$actionIndex]['actionDate'];
+            $description = $this->service[$actionIndex]['description'];
+        
+            $serviceTable = collect($action['services'])->map(function ($service, $serviceIndex) {
+                $serviceName = Service::find($service['select_service_data'])->service_name ?? 'Unknown Service';
+                return sprintf(
+                    "*%s | %s | $ %s | %s IQD | %s | $ %s | %s IQD*",
+                    $serviceIndex + 1,
+                    $serviceName,
+                    number_format($service['serviceDefaultCostDollar']),
+                    number_format($service['serviceDefaultCostIraqi']),
+                    $service['serviceQty'],
+                    number_format($service['serviceTotalDollar']),
+                    number_format($service['serviceTotalIraqi'])
+                );
+            })->implode("\n");
+            // return "*Date: $date *\nDescription: $description*\n$serviceTable\n-----------------";
+            return "*---\nDate: $date \nDescription: $description\n---*\n$serviceTable\n";
+
+            // return "*Date: $date | Description: $description*\n$serviceTable";
         })->implode("\n");
+        
+
     }
 
 
@@ -132,23 +162,26 @@ class TelegramQuotationNew extends Notification
        . "*" .'Date: '. $this->date . "*\n"
        . "*" .'Client: '. $this->clientName . "*\n"
        . "*" .'Payment: '. $this->paymentType . "*\n"
-       . "*" .'Description: '. $this->desc . "*\n"
+       . "*" .'Title: '. $this->desc . "*\n"
        . "*" .'Exchange Rate: $1 ~ '. $this->exchangeRate . " IQD *\n"
-       . "*" .'--'."*\n"
-       . "*" .'TAX ($): $ '. number_format($this->taxDollar). "*\n"
-       . "*" .'TAX (IQD): '. number_format($this->taxIraqi) . ' IQD' . "*\n"
+    //    . "*" .'--'."*\n"
+    //    . "*" .'TAX ($): $ '. number_format($this->taxDollar). "*\n"
+    //    . "*" .'TAX (IQD): '. number_format($this->taxIraqi) . ' IQD' . "*\n"
        . "*" .'--'."*\n"
        . "*" .'Discount ($): $'. number_format($this->discountDollar). "*\n"
        . "*" .'Discount (IQD): '. number_format($this->discountIraqi) . ' IQD' . "*\n"
-       . "*" .'--'."*\n"
-       . "*" .'First Pay ($): $'. number_format($this->fisrtpayDollar). "*\n"
-       . "*" .'First Pay (IQD): '. number_format($this->fisrtpayIraqi) . ' IQD' . "*\n"
-       . "*" .'--'."*\n"
-       . "*" .'Due ($): $'. number_format($this->fisrtpayDollar). "*\n"
-       . "*" .'Due (IQD): '. number_format($this->fisrtpayIraqi) . ' IQD' . "*\n"
+    //    . "*" .'--'."*\n"
+    //    . "*" .'First Pay ($): $'. number_format($this->fisrtpayDollar). "*\n"
+    //    . "*" .'First Pay (IQD): '. number_format($this->fisrtpayIraqi) . ' IQD' . "*\n"
+    //    . "*" .'--'."*\n"
+    //    . "*" .'Due ($): $'. number_format($this->fisrtpayDollar). "*\n"
+    //    . "*" .'Due (IQD): '. number_format($this->fisrtpayIraqi) . ' IQD' . "*\n"
        . "*" .'--'."*\n"
        . "*" .'Total Cost ($): $'. number_format($this->totalDollar). "*\n"
        . "*" .'Total Cost (IQD): '. number_format($this->totalIraqi) . ' IQD' . "*\n"
+       . "*" .'------- Note -------'."*\n"
+       . "*" .'Notes: ' . "*\n"
+       . "*" . $this->note . "*\n"
        . "*" .'------- Table -------'."*\n"
        . $this->tableHeader . $this->tableBody
         );

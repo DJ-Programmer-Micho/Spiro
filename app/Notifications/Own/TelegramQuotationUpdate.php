@@ -17,15 +17,15 @@ class TelegramQuotationUpdate extends Notification
     protected $service = [];
     protected $exchangeRate;
 
-    protected $taxDollar;
+   // protected $taxDollar;
     protected $discountDollar;
-    protected $fisrtpayDollar;
-    protected $dueDollar;
+   // protected $fisrtpayDollar;
+   // protected $dueDollar;
 
-    protected $taxIraqi;
+   // protected $taxIraqi;
     protected $discountIraqi;
-    protected $fisrtpayIraqi;
-    protected $dueIraqi;
+   // protected $fisrtpayIraqi;
+   // protected $dueIraqi;
 
     protected $totalDollar;
     protected $totalIraqi;
@@ -43,7 +43,7 @@ class TelegramQuotationUpdate extends Notification
     protected $old_quotation_data;
     protected $tele_id;
 
-    public function __construct($q_id, $date, $clientId, $paymentId, $desc, $exchangeRate, $service, $taxDollar, $discountDollar, $fisrtpayDollar, $dueDollar, $taxIraqi, $discountIraqi, $fisrtpayIraqi, $dueIraqi, $totalDollar, $totalIraqi, $notes, $status, $quotationStatus, $old_quotation_data, $tele_id)
+    public function __construct($q_id, $date, $clientId, $paymentId, $desc, $exchangeRate, $service, $discountDollar, $discountIraqi, $totalDollar, $totalIraqi, $notes, $status, $quotationStatus, $old_quotation_data, $tele_id)
     {
         $this->q_id = $q_id;
         $this->date = $date;
@@ -54,14 +54,14 @@ class TelegramQuotationUpdate extends Notification
         $this->service = $service;
         
 
-        $this->taxDollar = $taxDollar;
+        // $this->taxDollar = $taxDollar;
         $this->discountDollar = $discountDollar;
-        $this->fisrtpayDollar = $fisrtpayDollar;
-        $this->dueDollar = $dueDollar;
-        $this->taxIraqi = $taxIraqi;
+        // $this->fisrtpayDollar = $fisrtpayDollar;
+        // $this->dueDollar = $dueDollar;
+        // $this->taxIraqi = $taxIraqi;
         $this->discountIraqi = $discountIraqi;
-        $this->fisrtpayIraqi = $fisrtpayIraqi;
-        $this->dueIraqi = $dueIraqi;
+        // $this->fisrtpayIraqi = $fisrtpayIraqi;
+        // $this->dueIraqi = $dueIraqi;
         $this->totalDollar = $totalDollar;
         $this->totalIraqi = $totalIraqi;
 
@@ -123,14 +123,14 @@ class TelegramQuotationUpdate extends Notification
             $content .= "*" . 'Qyotation Status Changed: '. $this->old_quotation_data['quotation_status'] . ' ➡️ ' . $this->quotationStatus . "*\n";
         }
 
-        if ($this->taxDollar !== $this->old_quotation_data['taxDollar']) {
-            $content .=  "*" .'-----------------'."*\n"
-            . 'TAX Changed ($): $'. $this->old_quotation_data['taxDollar'] . ' ➡️ $' . $this->taxDollar . "*\n";
-        }
-        if (strval($this->taxIraqi) !== $this->old_quotation_data['taxIraqi']) {
-            $content .= "*" . 'TAX Changed (IQD): '. $this->old_quotation_data['taxIraqi'] . 'IQD ➡️ ' . $this->taxIraqi . 'IQD' . "*\n"
-            . "*" .'-----------------'."*\n";
-        }
+        // if ($this->taxDollar !== $this->old_quotation_data['taxDollar']) {
+        //     $content .=  "*" .'-----------------'."*\n"
+        //     . 'TAX Changed ($): $'. $this->old_quotation_data['taxDollar'] . ' ➡️ $' . $this->taxDollar . "*\n";
+        // }
+        // if (strval($this->taxIraqi) !== $this->old_quotation_data['taxIraqi']) {
+        //     $content .= "*" . 'TAX Changed (IQD): '. $this->old_quotation_data['taxIraqi'] . 'IQD ➡️ ' . $this->taxIraqi . 'IQD' . "*\n"
+        //     . "*" .'-----------------'."*\n";
+        // }
 
         if ($this->discountDollar !== $this->old_quotation_data['discountDollar']) {
             $content .= "*" . 'Discount Changed: $'. $this->old_quotation_data['discountDollar'] . ' ➡️ $' . $this->discountDollar . "*\n";
@@ -140,21 +140,21 @@ class TelegramQuotationUpdate extends Notification
             . "*" .'-----------------'."*\n";
         }
 
-        if ($this->fisrtpayDollar !== $this->old_quotation_data['fisrtPayDollar']) {
-            $content .= "*" . 'First Pay Changed: $'. $this->old_quotation_data['fisrtPayDollar'] . ' ➡️ $' . $this->fisrtpayDollar . "*\n";
-        }
-        if (strval($this->fisrtpayIraqi) !== $this->old_quotation_data['fisrtPayIraqi']) {
-            $content .= "*" . 'First Pay Changed: (IQD)'. $this->old_quotation_data['fisrtPayIraqi'] . 'IQD ➡️ ' . $this->fisrtpayIraqi . 'IQD' . "*\n"
-            . "*" .'-----------------'."*\n";
-        }
+        // if ($this->fisrtpayDollar !== $this->old_quotation_data['fisrtPayDollar']) {
+        //     $content .= "*" . 'First Pay Changed: $'. $this->old_quotation_data['fisrtPayDollar'] . ' ➡️ $' . $this->fisrtpayDollar . "*\n";
+        // }
+        // if (strval($this->fisrtpayIraqi) !== $this->old_quotation_data['fisrtPayIraqi']) {
+        //     $content .= "*" . 'First Pay Changed: (IQD)'. $this->old_quotation_data['fisrtPayIraqi'] . 'IQD ➡️ ' . $this->fisrtpayIraqi . 'IQD' . "*\n"
+        //     . "*" .'-----------------'."*\n";
+        // }
 
-        if ($this->dueDollar !== $this->old_quotation_data['dueDollar']) {
-            $content .= "*" . 'Due Changed: $'. $this->old_quotation_data['dueDollar'] . ' ➡️ $' . $this->dueDollar . "*\n";
-        }
-        if ($this->dueIraqi !== $this->old_quotation_data['dueIraqi']) {
-            $content .= "*" . 'Due Changed: '. $this->old_quotation_data['dueIraqi'] . 'IQD ➡️ ' . $this->dueIraqi . 'IQD' . "*\n"
-            . "*" .'-----------------'."*\n";
-        }
+        // if ($this->dueDollar !== $this->old_quotation_data['dueDollar']) {
+        //     $content .= "*" . 'Due Changed: $'. $this->old_quotation_data['dueDollar'] . ' ➡️ $' . $this->dueDollar . "*\n";
+        // }
+        // if ($this->dueIraqi !== $this->old_quotation_data['dueIraqi']) {
+        //     $content .= "*" . 'Due Changed: '. $this->old_quotation_data['dueIraqi'] . 'IQD ➡️ ' . $this->dueIraqi . 'IQD' . "*\n"
+        //     . "*" .'-----------------'."*\n";
+        // }
 
         if ($this->totalDollar !== $this->old_quotation_data['grandTotalDollar']) {
             $content .= "*" . 'Grand Total Changed: $'. $this->old_quotation_data['grandTotalDollar'] . ' ➡️ $' . $this->totalDollar  . "*\n";
@@ -163,6 +163,7 @@ class TelegramQuotationUpdate extends Notification
             $content .= "*" . 'Grand Total Changed: '. $this->old_quotation_data['grandTotalIraqi'] . 'IQD ➡️ ' . $this->totalIraqi . 'IQD' . "*\n"
             . "*" .'-----------------'."*\n";
         }
+
 
         function compareServices($oldService, $newService) {
             $changes = [];
@@ -178,50 +179,47 @@ class TelegramQuotationUpdate extends Notification
         
             return $changes;
         }
-        
-        $oldServices = json_decode(json_decode($this->old_quotation_data['arr_service'], true));
-        $newServices = $this->service;
-        
-        $content .= "*" . 'Services Changes:' . "*\n";
-        // $content .= "*" . '-----------------' . "*\n";
-        
-        $maxCount = max(count($oldServices), count($newServices));
-        
-        for ($index = 0; $index < $maxCount; $index++) {
-            $oldService = $oldServices[$index] ?? null;
-            $newService = $newServices[$index] ?? null;
-        
-            if ($oldService && $newService) {
-                // Both arrays have an element at this index, compare them
-                $serviceChanges = compareServices($oldService, $newService);
-        
-                // If there are changes, display them
-                if (!empty($serviceChanges)) {
 
-                    // $old_serviceName_2 = Service::find($serviceChanges['select_service_data']['old'])->service_name ?? 'Unknown Service';
-                    $old_serviceName_2 = Service::find($oldService->select_service_data)->service_name ?? 'Unknown Service';
-                    $new_serviceName_2 = Service::find($newService['select_service_data'])->service_name ?? 'Unknown Service';
-                    $content .= "*" . '-----------------' . "*\n";
-                    $content .= "*" . 'Service at Position ' . ($index + 1) . "*\n";
+
+
+        $oldDataTest = json_decode(json_decode($this->old_quotation_data['arr_service_by_date'], true), true);
+
+        foreach ($oldDataTest as $outerIndex => $outerItem) {
+            $maxCountOuter = max(count($outerItem['services']), count($this->service[$outerIndex]['services']));
         
-                    // Display specific changes
-                    foreach ($serviceChanges as $key => $change) {
-                        if ($key === 'select_service_data') {
-                            $content .= "*" . 'Name: ' . ": " . $old_serviceName_2 . ' ➡️ ' .$new_serviceName_2  . "*\n";
-                        } else {
-                            $content .= "*" . ucfirst($key) . ": " . $change['old'] . ' ➡️ ' . $change['new'] . "*\n";
+            for ($index = 0; $index < $maxCountOuter; $index++) {
+                $oldService = $outerItem['services'][$index] ?? null;
+                $newService = $this->service[$outerIndex]['services'][$index] ?? null;
+        
+                if ($oldService && $newService) {
+                    // Both arrays have an element at this index, compare them
+                    $serviceChanges = compareServices($oldService, $newService);
+        
+                    // If there are changes, display them
+                    if (!empty($serviceChanges)) {
+                        $old_serviceName_2 = Service::find($oldService['select_service_data'])->service_name ?? 'Unknown Service';
+                        $new_serviceName_2 = Service::find($newService['select_service_data'])->service_name ?? 'Unknown Service';
+                        $content .= "*" . '-----------------' . "*\n";
+                        $content .= "*" . 'Service at Position ' . ($index + 1) . " (In Invoice No.: " . $outerIndex + 1 . ") was updated." . "*\n";
+        
+                        // Display specific changes
+                        foreach ($serviceChanges as $key => $change) {
+                            if ($key === 'select_service_data') {
+                                $content .= "*" . 'Name: '  . $old_serviceName_2 . ' ➡️ ' . $new_serviceName_2 . "*\n";
+                            } else {
+                                $content .= "*" . ucfirst($key) . ": " . $change['old'] . ' ➡️ ' . $change['new'] . "*\n";
+                            }
                         }
                     }
-                }
-            } elseif ($oldService) {
-                // Only old array has an element at this index
-                $old_serviceName = Service::find($oldService->select_service_data)->service_name ?? 'Unknown Service';
-                $content .= "*" . 'Service at Position ' . ($index + 1) . ' ('. $old_serviceName . ') was removed.' . "*\n";
-            } elseif ($newService) {
+                } elseif ($oldService) {
+                    // Only old array has an element at this index
+                    $old_serviceName = Service::find($oldService['select_service_data'])->service_name ?? 'Unknown Service';
+                    $content .= "*" . '-----------------' . "*\n" . "*" . 'Service at Position ' . ($index + 1) . ' (In Invoice No.: ' . $outerIndex + 1 . ' ) (' . $old_serviceName . ') was removed.' . "*\n";
+                } elseif ($newService) {
                 // Only new array has an element at this index
                 $new_serviceName = Service::find($newService['select_service_data'])->service_name ?? 'Unknown Service';
                 $content .= "*" . '-----------------' . "*\n"
-                    . "*" . 'Service at Position ' . ($index + 1) . ' was added.' . "*\n"
+                    . "*" . 'Service at Position ' . ($index + 1) .  ' (In Invoice No.: ' . $outerIndex + 1 . ' ) was added.' . "*\n"
                     . "*" . 'Code: '.  $newService['serviceCode'] . "*\n"
                     . "*" . 'Name: '.  $new_serviceName . "*\n"
                     . "*" . 'Description: '.  $newService['serviceDescription'] . "*\n"
@@ -232,6 +230,8 @@ class TelegramQuotationUpdate extends Notification
                     . "*" . 'Total (IQD): '.  $newService['serviceTotalIraqi'] . "*\n";
             }
         }
+        }
+        
         
        return TelegramMessage::create()
        ->to($this->tele_id)

@@ -61,7 +61,7 @@
                         <td class="align-middle">
                             @if ($col === 'id')
                                 <b>#QUI-{{ $item->id }}</b>
-                            @elseif ($col === 'grand_total_dollar')        
+                            @elseif ($col === 'status')        
                             <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                             </span>

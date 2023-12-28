@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('client_id')->references('id')->on('clients')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('payment_id')->references('id')->on('payments')->onDelete('cascade')->onUpdate('cascade');
             $table->date('qoutation_date')->nullable();
-            $table->string('description')->nullable();
+            // $table->string('description')->nullable();
             $table->json('services');
-            $table->json('notes')->nullable();
+            $table->longText('notes')->nullable();
 
             $table->unsignedDecimal('total_amount_dollar', 12, 0)->default(0);
             $table->unsignedDecimal('tax_dollar', 12, 0)->default(0);

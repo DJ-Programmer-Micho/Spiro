@@ -45,22 +45,23 @@ class QuotationLivewire extends Component
     // Form service Section
     public $service_data;
     public $select_service_data;
-    public $arr_service = [];
+    public $arr_service_by_date = [];
+    // public $arr_service = [];
     // Form Final Section
     public $description;
-    public $note = [];
-    public $totalDollar;
-    public $taxDollar;
-    public $discountDollar;
-    public $fisrtPayDollar;
-    public $dueDollar;
-    public $grandTotalDollar;
-    public $totalIraqi;
-    public $taxIraqi;
-    public $discountIraqi;
-    public $fisrtPayIraqi;
-    public $dueIraqi;
-    public $grandTotalIraqi;
+    public $note = null;
+    public $totalDollar = 0;
+    public $taxDollar = 0;
+    public $discountDollar = 0;
+    public $fisrtPayDollar = 0;
+    public $dueDollar = 0;
+    public $grandTotalDollar = 0;
+    public $totalIraqi = 0;
+    public $taxIraqi = 0;
+    public $discountIraqi = 0;
+    public $fisrtPayIraqi = 0;
+    public $dueIraqi = 0;
+    public $grandTotalIraqi = 0;
     //FILTERS
     public $search;
     public $statusFilter = '';
@@ -91,6 +92,7 @@ class QuotationLivewire extends Component
     protected $listeners = ['dateRangeSelected' => 'applyDateRangeFilter'];
 
     public function mount() {
+        $this->formDate = now()->format('Y-m-d');
         $this->telegram_channel_status = 1;
         $this->tele_id = env('TELEGRAM_GROUP_ID');
         $this->client_data = Client::get();
@@ -107,13 +109,12 @@ class QuotationLivewire extends Component
             'serviceDescription' => '',
             'serviceDefaultCostDollar' => 0,
             'serviceDefaultCostIraqi' => 0,
-            'serviceQty' => 0,
+            'serviceQty' => 1,
             'serviceTotalDollar' => 0,
             'serviceTotalIraqi' => 0,
         ];
     }
 
-    public $arr_service_by_date = [];
     public function initializeServicesArray() {
         // $date = now()->format('Y-m-d');
         $this->arr_service_by_date[0] = [
@@ -126,24 +127,19 @@ class QuotationLivewire extends Component
         }
     }
 
-    public function newRecService($dateIndex)
-    {
-        // $this->arr_service_by_date[$dateIndex][] = $this->createEmptyService();
+    public function newRecService($dateIndex) {
         $this->arr_service_by_date[$dateIndex]['services'][] = $this->createEmptyService();
-
     }
-    public function removeService($dateIndex, $serviceIndex)
-    {
+
+    public function removeService($dateIndex, $serviceIndex) {
         unset($this->arr_service_by_date[$dateIndex]['services'][$serviceIndex]);
-        // Re-index the services array
         $this->arr_service_by_date[$dateIndex]['services'] = array_values($this->arr_service_by_date[$dateIndex]['services']);
     }
 
     public $newDate;
-
     public function addNewDate()
     {
-        // $newDate = now()->addDays(3)->format('Y-m-d');
+        // $newDate = now()->format('Y-m-d');
         $newDateData = [
             'actionDate' => '',
             'description' => '',
@@ -168,14 +164,9 @@ class QuotationLivewire extends Component
     }
     
     public function serviceQtyChange($date, $index) {
-        $this->arr_service_by_date[$date]['services'][$index]['serviceTotalDollar'] =
-            $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
-
+        $this->arr_service_by_date[$date]['services'][$index]['serviceTotalDollar'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
         $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] * $this->exchange_rate;
-
-        $this->arr_service_by_date[$date]['services'][$index]['serviceTotalIraqi'] =
-            $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
-
+        $this->arr_service_by_date[$date]['services'][$index]['serviceTotalIraqi'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
         $this->calculateTotals();
     }
 
@@ -185,11 +176,25 @@ class QuotationLivewire extends Component
             $this->arr_service_by_date[$date]['services'][$index]['serviceCode'] = $selectedService->service_code;
             $this->arr_service_by_date[$date]['services'][$index]['serviceDescription'] = $selectedService->service_description;
             $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] = $selectedService->price_dollar;
-            
             $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceTotalDollar'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
+            $this->arr_service_by_date[$date]['services'][$index]['serviceTotalIraqi'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
 
             $this->calculateTotals();
         }
+    }
+
+    public function exchangeUpdate() {
+        foreach ($this->arr_service_by_date as $date => $services) {
+            foreach ($services['services'] as $index => $service) {
+                $selectedService = Service::find($service['select_service_data']);
+                if ($selectedService) {
+                    $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
+                    $this->arr_service_by_date[$date]['services'][$index]['serviceTotalIraqi'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
+                }
+            }
+        }
+        $this->calculateTotals();
     }
 
     public function updatedDiscount() {
@@ -203,60 +208,28 @@ class QuotationLivewire extends Component
 
     public function calculateTotals() {
         $totalDollar = 0;
-  
+    
         foreach ($this->arr_service_by_date as $services) {
-            foreach ($services as $service) {
-                $totalDollar += isset($service['serviceTotalDollar']) ? $service['serviceTotalDollar'] : 0;
+            foreach ($services['services'] as $service) {
+                $totalDollar += $service['serviceTotalDollar'] ?? 0;
             }
         }
+    
         $this->totalDollar = $totalDollar;
-        $this->grandTotalDollar = $totalDollar - $this->discountDollar + $this->taxDollar;
-        $this->dueDollar = $this->grandTotalDollar - $this->fisrtPayDollar; 
-
         $this->totalIraqi = $totalDollar * $this->exchange_rate;
+    
         $this->discountIraqi = $this->discountDollar * $this->exchange_rate;
         $this->taxIraqi = $this->taxDollar * $this->exchange_rate;
         $this->fisrtPayIraqi = $this->fisrtPayDollar * $this->exchange_rate;
-        
-        $this->grandTotalIraqi = $this->taxIraqi + ($this->totalIraqi - $this->discountIraqi);
-        $this->dueIraqi = $this->grandTotalIraqi - $this->fisrtPayIraqi;
+    
+        $grandTotalDollar = $totalDollar - $this->discountDollar + $this->taxDollar;
+        $this->grandTotalDollar = max(0, $grandTotalDollar);
+        $this->dueDollar = max(0, $this->grandTotalDollar - $this->fisrtPayDollar);
+    
+        $grandTotalIraqi = $this->taxIraqi + ($this->totalIraqi - $this->discountIraqi);
+        $this->grandTotalIraqi = max(0, $grandTotalIraqi);
+        $this->dueIraqi = max(0, $this->grandTotalIraqi - $this->fisrtPayIraqi);
     }
-
-    public function exchangeUpdate() {
-            foreach ($this->arr_service_by_date as $date => $services) {
-                foreach ($services['services'] as $index => $service) {
-                    $selectedService = Service::find($service['select_service_data']);
-                    if ($selectedService) {
-                        $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
-                    }
-                }
-            }
-            $this->calculateTotals();
-        }
-    
-    
-    // public function addNewDateWithServices() { XXXXXXXXXXXXXXXXX
-    //     $date = now()->format('Y-m-d');
-
-    //     if (!isset($this->arr_service_by_date[$date])) {
-    //         $this->arr_service_by_date[$date] = [];
-    //     }
-
-    //     // Add a new record for the date
-    //     $this->arr_service_by_date[$date][] = [
-    //         'serviceCode' => '',
-    //         'select_service_data' => null,
-    //         'serviceDescription' => $this->description,
-    //         'serviceDefaultCostDollar' => 0,
-    //         'serviceDefaultCostIraqi' => 0,
-    //         'serviceQty' => 0,
-    //         'serviceTotalDollar' => 0,
-    //         'serviceTotalIraqi' => 0,
-    //     ];
-
-    //     // Reset the description field
-    //     $this->description = '';
-    // }
 
     public function selectClientStartup(){
         $client_selected = Client::where('id', $this->select_client_data)->first();
@@ -282,7 +255,7 @@ class QuotationLivewire extends Component
         $rules['status'] = ['required'];
         $rules['select_client_data'] = ['required'];
         $rules['select_payment_data'] = ['required'];
-        $rules['arr_service'] = ['required'];
+        $rules['arr_service_by_date'] = ['required'];
         $rules['totalDollar'] = ['required'];
         $rules['taxDollar'] = ['required'];
         $rules['discountDollar'] = ['required'];
@@ -339,22 +312,20 @@ class QuotationLivewire extends Component
     }
     
     public function addQuotation(){
-        dd($this->arr_service_by_date);
         try {
             $validatedData = $this->validate();
-
             $quotation = Quotation::create([
                 'client_id' => $validatedData['select_client_data'],
                 'payment_id' => $validatedData['select_payment_data'],
                 'exchange_rate' => $this->exchange_rate,
-                'qoutation_date' => $validatedData['formDate'],
+                'qoutation_date' =>now()->format('Y-m-d'),
                 'status' => $validatedData['status'],
                 'quotation_status' => $validatedData['quotation_status'],
                 'status' => $validatedData['status'],
-                'services' => json_encode($validatedData['arr_service']),
+                'services' => json_encode($validatedData['arr_service_by_date']),
                 'total_amount_dollar' => $validatedData['totalDollar'],
                 'tax_dollar' => $validatedData['taxDollar'],
-                'discoun_dollart' => $validatedData['discountDollar'],
+                'discount_dollar' => $validatedData['discountDollar'],
                 'first_pay_dollar' => $validatedData['fisrtPayDollar'],
                 'due_dollar' => $validatedData['dueDollar'],
                 'grand_total_dollar' => $validatedData['grandTotalDollar'],
@@ -365,7 +336,7 @@ class QuotationLivewire extends Component
                 'due_iraqi' => $validatedData['dueIraqi'],
                 'grand_total_iraqi' => $validatedData['grandTotalIraqi'],
                 'description' => $this->description,
-                'notes' => json_encode($this->note),
+                'notes' => $this->note,
             ]);
 
             if($this->telegram_channel_status == 1){
@@ -378,7 +349,7 @@ class QuotationLivewire extends Component
                         $validatedData['select_payment_data'],
                         $this->description ?? null,
                         $this->exchange_rate,
-                        $validatedData['arr_service'],
+                        $validatedData['arr_service_by_date'],
                         $validatedData['taxDollar'],
                         $validatedData['discountDollar'],
                         $validatedData['fisrtPayDollar'],
@@ -389,6 +360,7 @@ class QuotationLivewire extends Component
                         $validatedData['dueIraqi'],
                         $validatedData['grandTotalDollar'],
                         $validatedData['grandTotalIraqi'],
+                        $this->note,
 
                         $this->tele_id
                     ));
@@ -414,7 +386,6 @@ class QuotationLivewire extends Component
             $clientInfo = Client::find($quotationEdit->client_id);
             $paymentInfo = Payment::find($quotationEdit->payment_id);
             $this->old_quotation_data = [];
-
             if ($quotationEdit) {
                 $this->old_quotation_data = null;
                 // Quotation Date
@@ -435,20 +406,20 @@ class QuotationLivewire extends Component
                 $this->exchange_rate = $quotationEdit->exchange_rate;
                 // Service Section
                 $this->description = $quotationEdit->description;
-                $this->arr_service = json_decode($quotationEdit->services);
+                $this->arr_service_by_date = json_decode($quotationEdit->services, true);
                 // final Section
-                $this->note = json_decode($quotationEdit->notes, true) ?? [];
+                $this->note = $quotationEdit->notes ?? null;
                 $this->totalDollar = $quotationEdit->total_amount_dollar;
-                $this->taxDollar = $quotationEdit->tax_dollar;
                 $this->discountDollar = $quotationEdit->discount_dollar;
-                $this->fisrtPayDollar = $quotationEdit->first_pay_dollar;
-                $this->dueDollar = $quotationEdit->due_dollar;
                 $this->grandTotalDollar = $quotationEdit->grand_total_dollar;
+                // $this->taxDollar = $quotationEdit->tax_dollar;
+                // $this->fisrtPayDollar = $quotationEdit->first_pay_dollar;
+                // $this->dueDollar = $quotationEdit->due_dollar;
+                // $this->taxIraqi = $quotationEdit->tax_iraqi;
+                // $this->dueIraqi = $quotationEdit->due_iraqi;
+                // $this->fisrtPayIraqi = $quotationEdit->first_pay_iraqi;
                 $this->totalIraqi = $quotationEdit->total_amount_iraqi;
-                $this->taxIraqi = $quotationEdit->tax_iraqi;
                 $this->discountIraqi = $quotationEdit->discount_iraqi;
-                $this->fisrtPayIraqi = $quotationEdit->first_pay_iraqi;
-                $this->dueIraqi = $quotationEdit->due_iraqi;
                 $this->grandTotalIraqi = $quotationEdit->grand_total_iraqi;
 
                 $this->old_quotation_data = [
@@ -471,9 +442,9 @@ class QuotationLivewire extends Component
                     'exchange_rate' => $quotationEdit->exchange_rate,
                     // Service Section
                     'description' => $quotationEdit->description,
-                    'arr_service' => json_encode($quotationEdit->services),
+                    'arr_service_by_date' => json_encode($quotationEdit->services, true),
                     // final Section
-                    'note' => json_decode($quotationEdit->notes, true) ?? [],
+                    'note' => $quotationEdit->notes ?? null,
                     'totalDollar' => $quotationEdit->total_amount_dollar,
                     'taxDollar' => $quotationEdit->tax_dollar,
                     'discountDollar' => $quotationEdit->discount_dollar,
@@ -496,36 +467,35 @@ class QuotationLivewire extends Component
     } // END FUNCTION OF EDIT CLIENT
 
     public function updateQuotation(){
-        try {
+        // try {
             $validatedData = $this->validate();
 
             Quotation::where('id', $this->quotationUpdate)->update([
                 'client_id' => $validatedData['select_client_data'],
                 'payment_id' => $validatedData['select_payment_data'],
                 'exchange_rate' => $this->exchange_rate,
-                'qoutation_date' => $validatedData['formDate'],
+                'qoutation_date' =>now()->format('Y-m-d'),
                 'status' => $validatedData['status'],
                 'quotation_status' => $validatedData['quotation_status'],
-                'status' => $validatedData['status'],
-                'services' => json_encode($validatedData['arr_service']),
+                'services' => json_encode($validatedData['arr_service_by_date']),
                 'total_amount_dollar' => $validatedData['totalDollar'],
-                'tax_dollar' => $validatedData['taxDollar'],
+                // 'tax_dollar' => $validatedData['taxDollar'],
                 'discount_dollar' => $validatedData['discountDollar'],
-                'first_pay_dollar' => $validatedData['fisrtPayDollar'],
-                'due_dollar' => $validatedData['dueDollar'],
+                // 'first_pay_dollar' => $validatedData['fisrtPayDollar'],
+                // 'due_dollar' => $validatedData['dueDollar'],
                 'grand_total_dollar' => $validatedData['grandTotalDollar'],
                 'total_amount_iraqi' => $validatedData['totalIraqi'],
-                'tax_iraqi' => $validatedData['taxIraqi'],
+                // 'tax_iraqi' => $validatedData['taxIraqi'],
                 'discount_iraqi' => $validatedData['discountIraqi'],
-                'first_pay_iraqi' => $validatedData['fisrtPayIraqi'],
-                'due_iraqi' => $validatedData['dueIraqi'],
+                // 'first_pay_iraqi' => $validatedData['fisrtPayIraqi'],
+                // 'due_iraqi' => $validatedData['dueIraqi'],
                 'grand_total_iraqi' => $validatedData['grandTotalIraqi'],
                 'description' => $this->description,
-                'notes' => json_encode($this->note),
+                'notes' => $this->note,
             ]);
 
             if($this->telegram_channel_status == 1){
-                try{
+                // try{
 
                     if ( $validatedData['select_client_data']) {
                         $client = Client::find( $validatedData['select_client_data']);
@@ -561,19 +531,19 @@ class QuotationLivewire extends Component
                         $paymentType,
                         $this->description ?? null,
                         $this->exchange_rate,
-                        $validatedData['arr_service'],
-                        $validatedData['taxDollar'],
+                        $validatedData['arr_service_by_date'],
+                        // $validatedData['taxDollar'],
                         $validatedData['discountDollar'],
-                        $validatedData['fisrtPayDollar'],
-                        $validatedData['dueDollar'],
-                        $validatedData['taxIraqi'],
+                        // $validatedData['fisrtPayDollar'],
+                        // $validatedData['dueDollar'],
+                        // $validatedData['taxIraqi'],
                         $validatedData['discountIraqi'],
-                        $validatedData['fisrtPayIraqi'],
-                        $validatedData['dueIraqi'],
+                        // $validatedData['fisrtPayIraqi'],
+                        // $validatedData['dueIraqi'],
                         $validatedData['grandTotalDollar'],
                         $validatedData['grandTotalIraqi'],
 
-                        json_encode($this->note),
+                        $this->note,
                         $validatedData['status'],
                         $validatedData['quotation_status'],
 
@@ -581,16 +551,16 @@ class QuotationLivewire extends Component
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                }  catch (\Exception $e) {
+                // }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
-                }
+                // }
             }
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Updated Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        } catch (\Exception $e){
+        // } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        }
+        // }
     } // END FUNCTION OF UPDATE CLIENT
 
     public function deleteQuotation(int $selected_quotation_id){
@@ -635,7 +605,7 @@ class QuotationLivewire extends Component
 
     // PRIVATE & PUBLIC FUNCTIONS
     private function resetModal(){
-        $this->formDate = '';
+        $this->formDate = now()->format('Y-m-d');
         $this->status = '';
         $this->quotation_status = 'Sent';
         $this->client_data = '';
@@ -652,9 +622,9 @@ class QuotationLivewire extends Component
         $this->paymentType = '';
         $this->service_data = '';
         $this->select_service_data = '';
-        $this->arr_service = [];
+        $this->arr_service_by_date = [];
         $this->description = '';
-        $this->note = [];
+        $this->note = null;
         $this->exchange_rate = 0;
         $this->totalDollar = 0;
         $this->taxDollar = 0;
@@ -908,8 +878,8 @@ class QuotationLivewire extends Component
 
 
         $colspan = 6;
-        $cols_th = ['#','Client Name', 'Payment Type', 'Description', 'Total', 'Grand Total', 'Quotation', 'Status','Date','Created Date', 'Actions'];
-        $cols_td = ['id','client.client_name','payment.payment_type','description','grand_total_dollar','grand_total_iraqi','quotation_status','status','qoutation_date','created_at'];
+        $cols_th = ['#','Client Name', 'Payment Type', 'Title', 'Grand Total ($)', 'Grand Total (IQD)', 'Quotation', 'Status','Created Date', 'Actions'];
+        $cols_td = ['id','client.client_name','payment.payment_type','description','grand_total_dollar','grand_total_iraqi','quotation_status','status','created_at'];
 
         $data = Quotation::with(['client', 'payment'])
         ->where(function ($query) {
