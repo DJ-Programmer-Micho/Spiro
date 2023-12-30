@@ -45,4 +45,12 @@ class OwnController extends Controller
     public function cash(){
         return view('dashboard.own.cash.index');
     } // END FUNCTION (DASHBOARD)
+
+    public function createTask(){
+        return view('dashboard.own.empTask.index');
+    } // END FUNCTION (DASHBOARD)
+
+    public function addTask(){
+        return view('dashboard.own.task.index');
+    } // END FUNCTION (DASHBOARD)
 }

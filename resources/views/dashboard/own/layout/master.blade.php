@@ -240,7 +240,50 @@
                     <span>{{__('cash')}}</span></a>
             </li>
 
-
+            <!-- Divider -->
+            <hr class="sidebar-divider my-1">
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                {{__('Tasks')}}
+            </div>
+            <li class="nav-item {{(str_contains(request()->path(), 'own/task')) ? 'active' : ''}}">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTask" aria-expanded="true" aria-controls="collapseTask">
+                    <lord-icon
+                    src="https://cdn.lordicon.com/ghhwiltn.json"
+                    trigger="loop"
+                    delay="2000"
+                    colors="primary:#cc0022,secondary:#ffffff"
+                    style="width:48px;height:48px">
+                    </lord-icon>
+                    <span>{{__('Tasks')}}</span>
+                </a>
+                <div id="collapseTask" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="py-2 collapse-inner rounded" style="background-color: #1f2535">
+                        {{-- <h6 class="collapse-header">{{__('Setting')}}</h6> --}}
+                        <a class="collapse-item" href="{{route('own.createTask')}}">
+                            <lord-icon
+                            src="https://cdn.lordicon.com/ghhwiltn.json"
+                            trigger="loop"
+                            delay="2000"
+                            colors="primary:#cc0022,secondary:#ffffff"
+                            state="in-reveal"
+                            style="width:48px;height:48px">
+                        </lord-icon>
+                            <span class="text-white">{{__('Create Task')}}</span>
+                        </a>
+                        <a class="collapse-item" href="{{route('own.addTask')}}">
+                            <lord-icon 
+                                src="https://cdn.lordicon.com/zrkkrrpl.json"
+                                trigger="loop" 
+                                delay="2000"
+                                colors="primary:#cc0022,secondary:#eee" 
+                                style="width:48px;height:48px">
+                            </lord-icon>
+                            <span class="text-white">{{__('Add Task Option')}}</span>
+                        </a>
+                    </div>
+                </div>
+            </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-1">

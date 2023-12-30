@@ -53,8 +53,8 @@ Route::middleware([Localization::class])->group(function () {
     Route::get('/quotation', [OwnController::class, 'quotation'])->name('own.quotation');
     Route::get('/invoice', [OwnController::class, 'invoice'])->name('own.invoice');
     Route::get('/cash', [OwnController::class, 'cash'])->name('own.cash');
-    Route::get('/usersdata', [OwnController::class, 'userData'])->name('userData');
-    Route::get('/plan/userplanview', [OwnController::class, 'userPlanView'])->name('userPlanView');
+    Route::get('/createTask', [OwnController::class, 'createTask'])->name('own.createTask');
+    Route::get('/addTask', [OwnController::class, 'addTask'])->name('own.addTask');
     Route::get('/plan/guestplanview', [OwnController::class, 'guestPlanView'])->name('guestPlanView');
     Route::get('/plan/plansetting', [OwnController::class, 'planSetting'])->name('planSetting');
     Route::get('/top8', [OwnController::class, 'topEight'])->name('topEight');
