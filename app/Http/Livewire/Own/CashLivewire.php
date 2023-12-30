@@ -38,10 +38,12 @@ class CashLivewire extends Component
     public $arr_payments = [];
     // Form Final Section
     public $description;
-    public $note = [];
+    public $note;
 
     public $dueDollar;
     public $grandTotalDollar;
+    //FLAGS
+    public $actionFlag = false;
 
     public $dueIraqi;
     public $grandTotalIraqi;
@@ -149,6 +151,12 @@ class CashLivewire extends Component
         }
         $this->dueDollar = $this->grandTotalDollar - $totalPaid;
         $this->dueIraqi = $this->grandTotalIraqi - ($totalPaid * $this->exchange_rate);
+
+        if ($this->dueDollar < 0) {
+            $this->actionFlag = true;
+        } else {
+            $this->actionFlag = false;
+        }
     }
 
     public function selectDataInvoice(){
@@ -178,7 +186,7 @@ class CashLivewire extends Component
             $this->grandTotalIraqi = $cashData->grand_total_iraqi;
 
             
-            $this->note = json_decode($cashData->notes, true);
+            $this->note = $cashData->notes;
 
             $this->initializePaymentArray($cashData ?? null);
         }
@@ -274,7 +282,7 @@ class CashLivewire extends Component
                 $this->grandTotalIraqi = $cashEdit->invoice->grand_total_iraqi;
 
                 $this->selectNotAttached = $cashEdit->invoice->id;
-                $this->note = json_decode($cashEdit->invoice->notes, true);
+                $this->note = $cashEdit->invoice->notes;
 
                 $this->initializePaymentEditArray($cashEdit->invoice ?? null, $cashEdit->id);
             } else {
@@ -385,10 +393,10 @@ class CashLivewire extends Component
         $this->clientAddress = '';
         $this->clientPhoneOne = '';
         $this->clientPhoneTwo = '';
-
+        $this->actionFlag = true;
         $this->arr_payments = [];
         $this->description = '';
-        $this->note = [];
+        $this->note = null;
         $this->dueDollar = null;
         $this->grandTotalDollar = null;
         $this->dueIraqi = null;

@@ -102,10 +102,10 @@
                             <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon m-1">
                                 <i class="far {{ $item->status == 1 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
                             </button>
-                            {{-- <button type="button" wire:click="approved({{ $item->id }})" class="btn {{ $item->invoice_status == 'Approved' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
-                                <i class="{{ $item->invoice_status == 'Approved' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up' }}"></i>
+                            <button type="button" wire:click="printCustomPdf('{{ $item->id }}')" class="btn btn-dark btn-icon m-1">
+                                <i class="fas fa-print"></i>
                             </button>
-                            <button type="button" wire:click="rejected({{ $item->id }})" class="btn {{ $item->invoice_status == 'Rejected' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
+                            {{-- <button type="button" wire:click="rejected({{ $item->id }})" class="btn {{ $item->invoice_status == 'Rejected' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
                                 <i class="{{ $item->invoice_status == 'Rejected' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down' }}"></i>
                             </button> --}}
                             <button type="button" data-toggle="modal" data-target="#deleteInvoiceModal" wire:click="deleteInvoice({{ $item->id }})" class="btn btn-danger m-1" {{ $item->invoice_status == 'Approved' ? 'disabled' : '' }}>

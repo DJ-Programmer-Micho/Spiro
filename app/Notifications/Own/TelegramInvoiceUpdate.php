@@ -165,6 +165,10 @@ class TelegramInvoiceUpdate extends Notification
             . "*" .'-----------------'."*\n";
         }
 
+        if ($this->date !== $this->old_invoice_data['note']) {
+            $content .= "*" . 'Notes Changed: ' . "\n" . $this->old_invoice_data['note'] .  "\n" .'↓'. "\n" . $this->notes . "*\n";
+        }
+
         function compareServices($oldService, $newService) {
             $changes = [];
         
@@ -179,50 +183,47 @@ class TelegramInvoiceUpdate extends Notification
         
             return $changes;
         }
-        
-        $oldServices = json_decode(json_decode($this->old_invoice_data['arr_service'], true));
-        $newServices = $this->service;
-        
-        $content .= "*" . 'Services Changes:' . "*\n";
-        // $content .= "*" . '-----------------' . "*\n";
-        
-        $maxCount = max(count($oldServices), count($newServices));
-        
-        for ($index = 0; $index < $maxCount; $index++) {
-            $oldService = $oldServices[$index] ?? null;
-            $newService = $newServices[$index] ?? null;
-        
-            if ($oldService && $newService) {
-                // Both arrays have an element at this index, compare them
-                $serviceChanges = compareServices($oldService, $newService);
-        
-                // If there are changes, display them
-                if (!empty($serviceChanges)) {
 
-                    // $old_serviceName_2 = Service::find($serviceChanges['select_service_data']['old'])->service_name ?? 'Unknown Service';
-                    $old_serviceName_2 = Service::find($oldService->select_service_data)->service_name ?? 'Unknown Service';
-                    $new_serviceName_2 = Service::find($newService['select_service_data'])->service_name ?? 'Unknown Service';
-                    $content .= "*" . '-----------------' . "*\n";
-                    $content .= "*" . 'Service at Position ' . ($index + 1) . "*\n";
+
+
+        $oldDataTest = json_decode(json_decode($this->old_quotation_data['arr_service_by_date'], true), true);
+
+        foreach ($oldDataTest as $outerIndex => $outerItem) {
+            $maxCountOuter = max(count($outerItem['services']), count($this->service[$outerIndex]['services']));
         
-                    // Display specific changes
-                    foreach ($serviceChanges as $key => $change) {
-                        if ($key === 'select_service_data') {
-                            $content .= "*" . 'Name: ' . ": " . $old_serviceName_2 . ' ➡️ ' .$new_serviceName_2  . "*\n";
-                        } else {
-                            $content .= "*" . ucfirst($key) . ": " . $change['old'] . ' ➡️ ' . $change['new'] . "*\n";
+            for ($index = 0; $index < $maxCountOuter; $index++) {
+                $oldService = $outerItem['services'][$index] ?? null;
+                $newService = $this->service[$outerIndex]['services'][$index] ?? null;
+        
+                if ($oldService && $newService) {
+                    // Both arrays have an element at this index, compare them
+                    $serviceChanges = compareServices($oldService, $newService);
+        
+                    // If there are changes, display them
+                    if (!empty($serviceChanges)) {
+                        $old_serviceName_2 = Service::find($oldService['select_service_data'])->service_name ?? 'Unknown Service';
+                        $new_serviceName_2 = Service::find($newService['select_service_data'])->service_name ?? 'Unknown Service';
+                        $content .= "*" . '-----------------' . "*\n";
+                        $content .= "*" . 'Service at Position ' . ($index + 1) . " (In Invoice No.: " . $outerIndex + 1 . ") was updated." . "*\n";
+        
+                        // Display specific changes
+                        foreach ($serviceChanges as $key => $change) {
+                            if ($key === 'select_service_data') {
+                                $content .= "*" . 'Name: '  . $old_serviceName_2 . ' ➡️ ' . $new_serviceName_2 . "*\n";
+                            } else {
+                                $content .= "*" . ucfirst($key) . ": " . $change['old'] . ' ➡️ ' . $change['new'] . "*\n";
+                            }
                         }
                     }
-                }
-            } elseif ($oldService) {
-                // Only old array has an element at this index
-                $old_serviceName = Service::find($oldService->select_service_data)->service_name ?? 'Unknown Service';
-                $content .= "*" . 'Service at Position ' . ($index + 1) . ' ('. $old_serviceName . ') was removed.' . "*\n";
-            } elseif ($newService) {
+                } elseif ($oldService) {
+                    // Only old array has an element at this index
+                    $old_serviceName = Service::find($oldService['select_service_data'])->service_name ?? 'Unknown Service';
+                    $content .= "*" . '-----------------' . "*\n" . "*" . 'Service at Position ' . ($index + 1) . ' (In Invoice No.: ' . $outerIndex + 1 . ' ) (' . $old_serviceName . ') was removed.' . "*\n";
+                } elseif ($newService) {
                 // Only new array has an element at this index
                 $new_serviceName = Service::find($newService['select_service_data'])->service_name ?? 'Unknown Service';
                 $content .= "*" . '-----------------' . "*\n"
-                    . "*" . 'Service at Position ' . ($index + 1) . ' was added.' . "*\n"
+                    . "*" . 'Service at Position ' . ($index + 1) .  ' (In Invoice No.: ' . $outerIndex + 1 . ' ) was added.' . "*\n"
                     . "*" . 'Code: '.  $newService['serviceCode'] . "*\n"
                     . "*" . 'Name: '.  $new_serviceName . "*\n"
                     . "*" . 'Description: '.  $newService['serviceDescription'] . "*\n"
@@ -232,6 +233,7 @@ class TelegramInvoiceUpdate extends Notification
                     . "*" . 'Total ($): '.  $newService['serviceTotalDollar'] . "*\n"
                     . "*" . 'Total (IQD): '.  $newService['serviceTotalIraqi'] . "*\n";
             }
+        }
         }
         
        return TelegramMessage::create()

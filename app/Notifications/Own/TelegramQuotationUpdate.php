@@ -164,6 +164,9 @@ class TelegramQuotationUpdate extends Notification
             . "*" .'-----------------'."*\n";
         }
 
+        if ($this->notes !== $this->old_quotation_data['note']) {
+            $content .= "*" . 'Notes Changed: ' . "\n" . $this->old_quotation_data['note'] .  "\n" .'↓'. "\n" . $this->notes . "*\n";
+        }
 
         function compareServices($oldService, $newService) {
             $changes = [];

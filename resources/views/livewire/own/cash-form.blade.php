@@ -187,12 +187,9 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                @for ($i = 1; $i <= 5; $i++)
-                                <div class="mb-3">
-                                    <label>{{__('Note No.')}}{{$i}}</label>
-                                    <input type="text" name="note" wire:model="note.{{$i}}" class="form-control" id="note.{{$i}}" disabled>
-                                </div>
-                                @endfor
+                                <label aria-label="note">{{__('Note No.')}}</label>
+                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
+                                <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>
                             <div class="col-sm-3">
 
@@ -227,7 +224,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" wire:click="closeModal" data-dismiss="modal">{{__('Close')}}</button>
-                        <button type="submit" class="btn btn-success submitJs">{{__('Save')}}</button>
+                        <button type="submit" class="btn btn-success submitJs" @if($actionFlag == 'true') disabled @endif>{{__('Save')}}</button>
                     </div>
                 </form>
             </div>
@@ -373,12 +370,9 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                @for ($i = 1; $i <= 5; $i++)
-                                <div class="mb-3">
-                                    <label>{{__('Note No.')}}{{$i}}</label>
-                                    <input type="text" name="note" wire:model="note.{{$i}}" class="form-control" id="note.{{$i}}" disabled>
-                                </div>
-                                @endfor
+                                <label aria-label="note">{{__('Note No.')}}</label>
+                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
+                                <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>
                             <div class="col-sm-3">
 
@@ -413,7 +407,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" wire:click="closeModal" data-dismiss="modal">{{__('Close')}}</button>
-                        <button type="submit" class="btn btn-success submitJs">{{__('Save')}}</button>
+                        <button type="submit" class="btn btn-success submitJs" @if($actionFlag == 'true') disabled @endif>{{__('Save')}}</button>
                     </div>
                 </form>
             </div>

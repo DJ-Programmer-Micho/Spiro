@@ -697,7 +697,7 @@ class QuotationLivewire extends Component
 
     public function approved(int $quotation_Id) {
         //ADD NEW INVOICE
-        try {
+        // try {
             $itemState = Quotation::find($quotation_Id);
 
             $invoice = Invoice::create([
@@ -707,22 +707,21 @@ class QuotationLivewire extends Component
                 'exchange_rate' => $itemState->exchange_rate,
                 'invoice_date' => now()->format('Y-m-d'),
                 'status' => $itemState->status,
-                // 'services' => json_encode($itemState->arr_service),
                 'services' => $itemState->services,
-                'total_amount_dollar' => $itemState->total_amount_dollar,
-                'tax_dollar' => $itemState->tax_dollar,
-                'discoun_dollart' => $itemState->discount_dollar,
-                'first_pay_dollar' => $itemState->first_pay_dollar,
-                'due_dollar' => $itemState->due_dollar,
-                'grand_total_dollar' => $itemState->grand_total_dollar,
+                'total_amount_dollar' => $itemState->grand_total_dollar,
                 'total_amount_iraqi' => $itemState->total_amount_iraqi,
-                'tax_iraqi' => $itemState->tax_iraqi,
+                'tax_iraqi' => 0,
+                'tax_dollar' => 0,
+                'discount_dollar' => $itemState->discount_dollar,
                 'discount_iraqi' => $itemState->discount_iraqi,
-                'first_pay_iraqi' => $itemState->first_pay_iraqi,
-                'due_iraqi' => $itemState->due_iraqi,
+                'first_pay_dollar' => 0,
+                'first_pay_iraqi' => 0,
+                'due_dollar' => 0,
+                'due_iraqi' => 0,
+                'grand_total_dollar' => $itemState->grand_total_dollar,
                 'grand_total_iraqi' => $itemState->grand_total_iraqi,
                 'description' => $itemState->description,
-                'notes' => $itemState->note,
+                'notes' => $itemState->notes,
             ]);
 
             // Toggle the quotation status (sent -> approved)
@@ -732,7 +731,7 @@ class QuotationLivewire extends Component
             $itemState->quotation_status = 'Approved';
     
             if($this->telegram_channel_status == 1){
-                try{
+                // try{
                     if ( $itemState->client_id) {
                         $client = Client::find($itemState->client_id);
             
@@ -757,16 +756,16 @@ class QuotationLivewire extends Component
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                }  catch (\Exception $e) {
+                // }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
-                }
+                // }
             }
     
             $itemState->save();
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Status Updated Successfully')]);
 
             if($this->telegram_channel_status == 1){
-                try{
+                // try{
                     Notification::route('toTelegram', null)
                     ->notify(new TelegramInvoiceNew(
                         $invoice->id,
@@ -791,16 +790,16 @@ class QuotationLivewire extends Component
                         $this->tele_id
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                }  catch (\Exception $e) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
-                }
+                // }  catch (\Exception $e) {
+                    // $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+                // }
             }
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Added To Invoice Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        } catch (\Exception $e){
-            $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong OR Duplicated Quotation ID')]);
-        }
+        // } catch (\Exception $e){
+            // $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong OR Duplicated Quotation ID')]);
+        // }
     } // END FUNCTION OF UPDATING QUOTATION STATUS
 
     public function rejected(int $quotation_Id) {

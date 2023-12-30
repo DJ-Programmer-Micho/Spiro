@@ -9,23 +9,26 @@ use App\Models\Payment;
 use App\Models\Service;
 use Livewire\Component;
 use App\Models\Quotation;
+
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\App;
+
 use App\Notifications\Own\TelegramCashNew;
 use App\Notifications\Own\TelegramClientNew;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\Own\TelegramInvoiceNew;
 use App\Notifications\Own\TelegramInvoiceShort;
+
 use App\Notifications\Own\TelegramInvoiceDelete;
 use App\Notifications\Own\TelegramInvoiceUpdate;
+
 use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class InvoiceLivewire extends Component
 {
     use WithPagination; 
-    use WithFileUploads;
+    // use WithFileUploads;
     protected $paginationTheme = 'bootstrap';
 
     // Form Date Section
@@ -51,7 +54,7 @@ class InvoiceLivewire extends Component
     // Form service Section
     public $service_data;
     public $select_service_data;
-    public $arr_service = [];
+    public $arr_service_by_date = [];
     // Form Final Section
     public $description;
     public $note = [];
@@ -97,6 +100,7 @@ class InvoiceLivewire extends Component
     protected $listeners = ['dateRangeSelected' => 'applyDateRangeFilter'];
 
     public function mount() {
+        $this->formDate = now()->format('Y-m-d');
         $this->telegram_channel_status = 1;
         $this->tele_id = env('TELEGRAM_GROUP_ID');
         $this->client_data = Client::get();
@@ -106,6 +110,7 @@ class InvoiceLivewire extends Component
     } // END FUNCTION OF PAGE LOAD
 
     public function printCustomPdf(int $invoiceId){
+        // dd('asd');
         $invoiceEditasd = Invoice::where('id',$invoiceId)->first();
         $data = [
             "invoiceId" => $invoiceEditasd->id,
@@ -113,76 +118,114 @@ class InvoiceLivewire extends Component
             "date" =>$invoiceEditasd->invoice_date,
             "total" => $invoiceEditasd->grand_total_dollar,
         ];
-        $pdfContent = Pdf::loadView('pdf', $data)->output();
-        return response()->streamDownload(
-            function () use ($pdfContent) {
-                echo $pdfContent;
-            },
-            $invoiceEditasd->id.'_'.$invoiceEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
-        );
+
+        
+        $pdf = Pdf::loadView('pdfInvoice', $data);
+        return $pdf->download('invoice.pdf');
+        // $pdfContent = Pdf::loadView('pdfInvoice', $data)->output();
+        // return response()->streamDownload(
+        //     function () use ($pdfContent) {
+        //         echo $pdfContent;
+        //     },
+        //     $invoiceEditasd->id.'_'.$invoiceEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
+        // );
     }    
 
-    public function initializeServicesArray() {
-        $this->arr_service = [];
-        for ($i = 0; $i < 3; $i++) {
-            $this->arr_service[] = [
-                'serviceCode' => '',
-                'select_service_data' => null,
-                'serviceDescription' => '',
-                'serviceDefaultCostDollar' => 0,
-                'serviceDefaultCostIraqi' => 0,
-                'serviceQty' => 0,
-                'serviceTotalDollar' => 0,
-                'serviceTotalIraqi' => 0,
-            ];
-        }
-    } //END FUNCTION OF INITIALIZE
-
-    public function newRecService() {
-        $this->arr_service[] = [
+    
+    public function createEmptyService() {
+        return [
             'serviceCode' => '',
             'select_service_data' => null,
             'serviceDescription' => '',
             'serviceDefaultCostDollar' => 0,
             'serviceDefaultCostIraqi' => 0,
-            'serviceQty' => 0,
+            'serviceQty' => 1,
             'serviceTotalDollar' => 0,
             'serviceTotalIraqi' => 0,
         ];
-    } // END FUNCTION OF ADD NEW SERVICE
+    }
 
-    public function removeService($index) {
-        unset($this->arr_service[$index]);
-        $this->arr_service = array_values($this->arr_service); // Reset array keys
-    } // END FUNCTION OF ADD DELETE SERVICE
+    public function initializeServicesArray() {
+        // $date = now()->format('Y-m-d');
+        $this->arr_service_by_date[0] = [
+            'actionDate' => '',
+            'description' => '',
+        ];
 
+        for ($i = 0; $i < 3; $i++) {
+            $this->arr_service_by_date[0]['services'][] = $this->createEmptyService();
+        }
+    }
+
+    public function newRecService($dateIndex) {
+        $this->arr_service_by_date[$dateIndex]['services'][] = $this->createEmptyService();
+    }
+
+    public function removeService($dateIndex, $serviceIndex) {
+        unset($this->arr_service_by_date[$dateIndex]['services'][$serviceIndex]);
+        $this->arr_service_by_date[$dateIndex]['services'] = array_values($this->arr_service_by_date[$dateIndex]['services']);
+    }
+
+    public $newDate;
+    public function addNewDate()
+    {
+        // $newDate = now()->format('Y-m-d');
+        $newDateData = [
+            'actionDate' => '',
+            'description' => '',
+            'services' => [ $this->createEmptyService() ],
+        ];
+    
+        // Reset the newDate property
+        $this->arr_service_by_date[] = $newDateData;
+        $this->newDate = null;
+        // This line will notify Livewire about the updated data
+        $this->arr_service_by_date = collect($this->arr_service_by_date)->values()->all();
+
+        // $this->arr_service_by_date = array_values($this->arr_service_by_date);
+    }
+    
+
+    public function removeDate($dateIndex)
+    {
+        unset($this->arr_service_by_date[$dateIndex]);
+        // Re-index the array to avoid any missing indices
+        $this->arr_service_by_date = array_values($this->arr_service_by_date);
+    }
 
     public $showTextarea = 1;
-    public function serviceQtyChange($index) {
-        $this->arr_service[$index]['serviceTotalDollar'] =
-            $this->arr_service[$index]['serviceDefaultCostDollar'] * $this->arr_service[$index]['serviceQty'];
-
-
-        $this->arr_service[$index]['serviceDefaultCostIraqi'] = $this->arr_service[$index]['serviceDefaultCostDollar'] * $this->exchange_rate;
-
-        $this->arr_service[$index]['serviceTotalIraqi'] =
-            $this->arr_service[$index]['serviceDefaultCostIraqi'] * $this->arr_service[$index]['serviceQty'];
-
+    public function serviceQtyChange($date, $index) {
+        $this->arr_service_by_date[$date]['services'][$index]['serviceTotalDollar'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
+        $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] * $this->exchange_rate;
+        $this->arr_service_by_date[$date]['services'][$index]['serviceTotalIraqi'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
         $this->calculateTotals();
     }
 
-    public function selectServiceDataChange($index) {
-        $selectedService = Service::find($this->arr_service[$index]['select_service_data']);
+    public function selectServiceDataChange($date, $index) {
+        $selectedService = Service::find($this->arr_service_by_date[$date]['services'][$index]['select_service_data']);
         if ($selectedService) {
-            $this->arr_service[$index]['serviceCode'] = $selectedService->service_code;
-            $this->arr_service[$index]['serviceDescription'] = $selectedService->service_description;
-            $this->arr_service[$index]['serviceDefaultCostDollar'] = $selectedService->price_dollar;
-            
-            $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
-            // $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_iraqi;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceCode'] = $selectedService->service_code;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceDescription'] = $selectedService->service_description;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] = $selectedService->price_dollar;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
+            $this->arr_service_by_date[$date]['services'][$index]['serviceTotalDollar'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostDollar'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
+            $this->arr_service_by_date[$date]['services'][$index]['serviceTotalIraqi'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
 
             $this->calculateTotals();
         }
+    }
+
+    public function exchangeUpdate() {
+        foreach ($this->arr_service_by_date as $date => $services) {
+            foreach ($services['services'] as $index => $service) {
+                $selectedService = Service::find($service['select_service_data']);
+                if ($selectedService) {
+                    $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
+                    $this->arr_service_by_date[$date]['services'][$index]['serviceTotalIraqi'] = $this->arr_service_by_date[$date]['services'][$index]['serviceDefaultCostIraqi'] * $this->arr_service_by_date[$date]['services'][$index]['serviceQty'];
+                }
+            }
+        }
+        $this->calculateTotals();
     }
 
     public function updatedDiscount() {
@@ -196,40 +239,28 @@ class InvoiceLivewire extends Component
 
     public function calculateTotals() {
         $totalDollar = 0;
-  
-        foreach ($this->arr_service as $service) {
-            $totalDollar += $service['serviceTotalDollar'];
+    
+        foreach ($this->arr_service_by_date as $services) {
+            foreach ($services['services'] as $service) {
+                $totalDollar += $service['serviceTotalDollar'] ?? 0;
+            }
         }
-
+    
         $this->totalDollar = $totalDollar;
-        $this->grandTotalDollar = $totalDollar - $this->discountDollar + $this->taxDollar;
-        $this->dueDollar = $this->grandTotalDollar - $this->fisrtPayDollar; 
-
-        // foreach ($this->arr_service as $service) {
-        //     $totalIraqi += $service['serviceTotalIraqi'];
-        // }
-
-        // $this->totalIraqi = $totalIraqi;
         $this->totalIraqi = $totalDollar * $this->exchange_rate;
+    
         $this->discountIraqi = $this->discountDollar * $this->exchange_rate;
         $this->taxIraqi = $this->taxDollar * $this->exchange_rate;
         $this->fisrtPayIraqi = $this->fisrtPayDollar * $this->exchange_rate;
-        
-        $this->grandTotalIraqi = $this->taxIraqi + ($this->totalIraqi - $this->discountIraqi);
-        $this->dueIraqi = $this->grandTotalIraqi - $this->fisrtPayIraqi;
+    
+        $grandTotalDollar = $totalDollar - $this->discountDollar + $this->taxDollar;
+        $this->grandTotalDollar = max(0, $grandTotalDollar);
+        $this->dueDollar = max(0, $this->grandTotalDollar - $this->fisrtPayDollar);
+    
+        $grandTotalIraqi = $this->taxIraqi + ($this->totalIraqi - $this->discountIraqi);
+        $this->grandTotalIraqi = max(0, $grandTotalIraqi);
+        $this->dueIraqi = max(0, $this->grandTotalIraqi - $this->fisrtPayIraqi);
     }
-
-    public function exchangeUpdate(){
-        foreach ($this->arr_service as $index => $service) {
-            $selectedService = Service::find($service['select_service_data']);
-            if ($selectedService) {
-                $this->arr_service[$index]['serviceDefaultCostIraqi'] = $selectedService->price_dollar * $this->exchange_rate;
-            }
-            $this->serviceQtyChange($index);
-        }
-        $this->calculateTotals();
-    }
-
 
     public function selectClientStartup(){
         $client_selected = Client::where('id', $this->select_client_data)->first();
@@ -253,15 +284,15 @@ class InvoiceLivewire extends Component
         $rules['status'] = ['required'];
         $rules['select_client_data'] = ['required'];
         $rules['select_payment_data'] = ['required'];
-        $rules['arr_service'] = ['required'];
+        $rules['arr_service_by_date'] = ['required'];
         $rules['totalDollar'] = ['required'];
-        $rules['taxDollar'] = ['required'];
+        // $rules['taxDollar'] = ['required'];
         $rules['discountDollar'] = ['required'];
         $rules['fisrtPayDollar'] = ['required'];
         $rules['dueDollar'] = ['required'];
         $rules['grandTotalDollar'] = ['required'];
         $rules['totalIraqi'] = ['required'];
-        $rules['taxIraqi'] = ['required'];
+        // $rules['taxIraqi'] = ['required'];
         $rules['discountIraqi'] = ['required'];
         $rules['fisrtPayIraqi'] = ['required'];
         $rules['dueIraqi'] = ['required'];
@@ -310,30 +341,31 @@ class InvoiceLivewire extends Component
     }
     
     public function addInvoice(){
-        try {
+
+        // try {
             $validatedData = $this->validate();
             $invoice = Invoice::create([
                 'quotation_id' => null,
                 'client_id' => $validatedData['select_client_data'],
                 'payment_id' => $validatedData['select_payment_data'],
-                'invoice_date' => $validatedData['formDate'],
+                'invoice_date' => now()->format('Y-m-d'),
                 'exchange_rate' => $this->exchange_rate,
                 'status' => $validatedData['status'],
-                'services' => json_encode($validatedData['arr_service']),
+                'services' => json_encode($validatedData['arr_service_by_date']),
                 'total_amount_dollar' => $validatedData['totalDollar'],
-                'tax_dollar' => $validatedData['taxDollar'],
+                'tax_dollar' => 0,
                 'discoun_dollart' => $validatedData['discountDollar'],
                 'first_pay_dollar' => $validatedData['fisrtPayDollar'],
                 'due_dollar' => $validatedData['dueDollar'],
                 'grand_total_dollar' => $validatedData['grandTotalDollar'],
                 'total_amount_iraqi' => $validatedData['totalIraqi'],
-                'tax_iraqi' => $validatedData['taxIraqi'],
+                'tax_iraqi' => 0,
                 'discount_iraqi' => $validatedData['discountIraqi'],
                 'first_pay_iraqi' => $validatedData['fisrtPayIraqi'],
                 'due_iraqi' => $validatedData['dueIraqi'],
                 'grand_total_iraqi' => $validatedData['grandTotalIraqi'],
                 'description' => $this->description,
-                'notes' => json_encode($this->note),
+                'notes' => $this->note,
             ]);
 
             $fisrt_payment_arr = [];
@@ -367,7 +399,7 @@ class InvoiceLivewire extends Component
 
 
             if($this->telegram_channel_status == 1){
-                try{
+                // try{
                     Notification::route('toTelegram', null)
                     ->notify(new TelegramInvoiceNew(
                         $invoice->id,
@@ -377,28 +409,30 @@ class InvoiceLivewire extends Component
                         $validatedData['select_payment_data'],
                         $this->description ?? null,
                         $this->exchange_rate,
-                        $validatedData['arr_service'],
-                        $validatedData['taxDollar'],
+                        $validatedData['arr_service_by_date'],
+                        0,
                         $validatedData['discountDollar'],
                         $validatedData['fisrtPayDollar'],
                         $validatedData['dueDollar'],
-                        $validatedData['taxIraqi'],
+                        0,
                         $validatedData['discountIraqi'],
                         $validatedData['fisrtPayIraqi'],
                         $validatedData['dueIraqi'],
+                        $validatedData['totalDollar'],
+                        $validatedData['totalIraqi'],
                         $validatedData['grandTotalDollar'],
                         $validatedData['grandTotalIraqi'],
 
                         $this->tele_id
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                }  catch (\Exception $e) {
+                // }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending INV Notification.')]);
-                }
+                // }
             }
 
             if($this->telegram_channel_status == 1){
-                try{
+                // try{
                     Notification::route('toTelegram', null)
                     ->notify(new TelegramCashNew(
                         $cash->id,
@@ -413,17 +447,17 @@ class InvoiceLivewire extends Component
                         $this->tele_id
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                }  catch (\Exception $e) {
+                // }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending CR Notification.')]);
-                }
+                // }
             }
 
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Invoice Added Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        } catch (\Exception $e){
+        // } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        }
+        // }
     }
 
     public function editInvoice(int $invoiceId){
@@ -456,9 +490,9 @@ class InvoiceLivewire extends Component
                 $this->exchange_rate = $invoiceEdit->exchange_rate;
                 // Service Section
                 $this->description = $invoiceEdit->description;
-                $this->arr_service = json_decode($invoiceEdit->services);
+                $this->arr_service_by_date = json_decode($invoiceEdit->services, true);
                 // final Section
-                $this->note = json_decode($invoiceEdit->notes, true) ?? [];
+                $this->note = $invoiceEdit->notes;
                 $this->totalDollar = $invoiceEdit->total_amount_dollar;
                 $this->taxDollar = $invoiceEdit->tax_dollar;
                 $this->discountDollar = $invoiceEdit->discount_dollar;
@@ -474,7 +508,7 @@ class InvoiceLivewire extends Component
 
                 $this->old_invoice_data = [
                     // invoice Date
-                    'formDate' => $invoiceEdit->qoutation_date,
+                    'formDate' => $invoiceEdit->invoice_date,
                     'status' => $invoiceEdit->status,
                     'quotationId' => $invoiceEdit->qoutation_id,
                     // Client Information
@@ -492,9 +526,9 @@ class InvoiceLivewire extends Component
                     'exchange_rate' => $invoiceEdit->exchange_rate,
                     // Service Section
                     'description' => $invoiceEdit->description,
-                    'arr_service' => json_encode($invoiceEdit->services),
+                    'arr_service_by_date' => json_encode($invoiceEdit->services, true),
                     // final Section
-                    'note' => json_decode($invoiceEdit->notes, true) ?? [],
+                    'note' => $invoiceEdit->notes,
                     'totalDollar' => $invoiceEdit->total_amount_dollar,
                     'taxDollar' => $invoiceEdit->tax_dollar,
                     'discountDollar' => $invoiceEdit->discount_dollar,
@@ -526,7 +560,7 @@ class InvoiceLivewire extends Component
                 'exchange_rate' => $this->exchange_rate,
                 'invoice_date' => $validatedData['formDate'],
                 'status' => $validatedData['status'],
-                'services' => json_encode($validatedData['arr_service']),
+                'services' => json_encode($validatedData['arr_service_by_date']),
                 'total_amount_dollar' => $validatedData['totalDollar'],
                 'tax_dollar' => $validatedData['taxDollar'],
                 'discount_dollar' => $validatedData['discountDollar'],
@@ -581,7 +615,7 @@ class InvoiceLivewire extends Component
                         $paymentType,
                         $this->description ?? null,
                         $this->exchange_rate,
-                        $validatedData['arr_service'],
+                        $validatedData['arr_service_by_date'],
                         $validatedData['taxDollar'],
                         $validatedData['discountDollar'],
                         $validatedData['fisrtPayDollar'],
@@ -671,7 +705,7 @@ class InvoiceLivewire extends Component
 
     // PRIVATE & PUBLIC FUNCTIONS
     private function resetModal(){
-        $this->formDate = '';
+        $this->formDate = now()->format('Y-m-d');
         $this->status = '';
         $this->quotationId = null;
         $this->client_data = '';
@@ -688,9 +722,9 @@ class InvoiceLivewire extends Component
         $this->paymentType = '';
         $this->service_data = '';
         $this->select_service_data = '';
-        $this->arr_service = [];
+        $this->arr_service_by_date = [];
         $this->description = '';
-        $this->note = [];
+        $this->note = null;
         $this->exchange_rate = 0;
         $this->totalDollar = 0;
         $this->taxDollar = 0;
@@ -785,8 +819,8 @@ class InvoiceLivewire extends Component
 
 
         $colspan = 6;
-        $cols_th = ['#','Client Name', 'Quotation ID','Payment Type', 'Description', 'Total', 'Grand Total', 'Status','Date','Created Date', 'Actions'];
-        $cols_td = ['id','client.client_name','quotation_id','payment.payment_type','description','grand_total_dollar','grand_total_iraqi','status','invoice_date','created_at'];
+        $cols_th = ['#','Client Name', 'Quotation ID','Payment Type', 'Title', 'Total', 'Grand Total', 'Status','Created Date', 'Actions'];
+        $cols_td = ['id','client.client_name','quotation_id','payment.payment_type','description','grand_total_dollar','grand_total_iraqi','status','created_at'];
 
         $data = Invoice::with(['client', 'payment'])
         ->where(function ($query) {

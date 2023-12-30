@@ -113,7 +113,7 @@
         }
 
         .disclaimer-text {
-            padding-top: 40px;
+            padding-top: 20px;
             font-size: 0.6rem;
         }
     </style>
@@ -171,13 +171,69 @@
           </table>
         </div>
         <div>
+          <div style="margin-top: 15px"></div>
           <table cellpadding="0" cellspacing="0">
             <tr>
-              <td></td>
-              <td></td>
-              <td class="right"></td>
+              <td colspan="1" class="src-heading" style="text-align:center; ">
+                DATE : {{__('31-12-2023')}}
+              </td>
               <td colspan="5" class="src-heading" style="text-align:center; ">
-                {{__('Payment Information')}}
+                TITLE : {{__('Happy New Year')}}
+              </td>
+            </tr>
+            <tr class="heading">
+              <td>
+                {{__('SERVICE CODE')}}
+              </td>
+              <td>
+                {{__('SERVICE NAME')}}
+              </td>
+              <td>
+                {{__('DESCRIPTION')}}
+              </td>
+              <td>
+                {{__('PRICE')}}
+              </td>
+              <td class="center">
+                {{__('QTY')}}
+              </td>
+              <td class="right">
+                {{__('AMOUNT')}}
+              </td>
+            </tr>
+            <tr class="item">
+              <td> {{$serviceCode ?? '#XXX'}} </td>
+              <td> {{$serviceName ?? 'Service Name'}} </td>
+              <td> {{$serviceDesc ?? 'Description'}}</td>
+              <td> {{$unitPrice ?? '$XXXX'}} </td>
+              <td class="center"> {{$qty ?? 'XX'}} </td>
+              <td class="right"> {{$amount ?? '$XXXX'}} </td>
+            </tr>
+            <tr class="item">
+              <td> {{$serviceCode ?? '#XXX'}} </td>
+              <td> {{$serviceName ?? 'Service Name'}} </td>
+              <td> {{$serviceDesc ?? 'Description'}}</td>
+              <td> {{$unitPrice ?? '$XXXX'}} </td>
+              <td class="center"> {{$qty ?? 'XX'}} </td>
+              <td class="right"> {{$amount ?? '$XXXX'}} </td>
+            </tr>
+            <tr class="item">
+              <td> {{$serviceCode ?? '#XXX'}} </td>
+              <td> {{$serviceName ?? 'Service Name'}} </td>
+              <td> {{$serviceDesc ?? 'Description'}}</td>
+              <td> {{$unitPrice ?? '$XXXX'}} </td>
+              <td class="center"> {{$qty ?? 'XX'}} </td>
+              <td class="right"> {{$amount ?? '$XXXX'}} </td>
+            </tr>
+          </table>
+          <div style="margin-top: 15px"></div>
+          <table cellpadding="0" cellspacing="0">
+            <tr>
+              <td colspan="1" class="src-heading" style="text-align:center; ">
+                DATE : {{__('31-12-2023')}}
+              </td>
+              <td colspan="5" class="src-heading" style="text-align:center; ">
+                TITLE : {{__('Happy New Year')}}
               </td>
             </tr>
             <tr class="heading">
@@ -240,13 +296,36 @@
               <td class="center"> {{$qty ?? 'XX'}} </td>
               <td class="right"> {{$amount ?? '$XXXX'}} </td>
             </tr>
-            <tr class="item">
-              <td> {{$serviceCode ?? '#XXX'}} </td>
-              <td> {{$serviceName ?? 'Service Name'}} </td>
-              <td> {{$serviceDesc ?? 'Description'}}</td>
-              <td> {{$unitPrice ?? '$XXXX'}} </td>
-              <td class="center"> {{$qty ?? 'XX'}} </td>
-              <td class="right"> {{$amount ?? '$XXXX'}} </td>
+          </table>
+          <div style="margin-top: 15px"></div>
+          <table cellpadding="0" cellspacing="0">
+            <tr>
+              <td colspan="1" class="src-heading" style="text-align:center; ">
+                DATE : {{__('31-12-2023')}}
+              </td>
+              <td colspan="5" class="src-heading" style="text-align:center; ">
+                TITLE : {{__('Happy New Year')}}
+              </td>
+            </tr>
+            <tr class="heading">
+              <td>
+                {{__('SERVICE CODE')}}
+              </td>
+              <td>
+                {{__('SERVICE NAME')}}
+              </td>
+              <td>
+                {{__('DESCRIPTION')}}
+              </td>
+              <td>
+                {{__('PRICE')}}
+              </td>
+              <td class="center">
+                {{__('QTY')}}
+              </td>
+              <td class="right">
+                {{__('AMOUNT')}}
+              </td>
             </tr>
             <tr class="item">
               <td> {{$serviceCode ?? '#XXX'}} </td>
@@ -272,7 +351,6 @@
               <td class="center"> {{$qty ?? 'XX'}} </td>
               <td class="right"> {{$amount ?? '$XXXX'}} </td>
             </tr>
-            
           </table>
         </div>
         <div class="invoice-summary">
@@ -285,10 +363,10 @@
                 <td style="font-size:13px; font-weight: 600;"> {{__('Grand Total')}} </td>
                 <td class="right"> {{$amountDollar ?? '$XXXX'}} </td>
               </tr>
-              <tr>
+              {{-- <tr>
                 <td style="font-size:13px; font-weight: 600; "> {{__('TAX')}} </td>
                 <td class="right"> {{$tax ?? '$XXXX'}} </td>
-              </tr>
+              </tr> --}}
               <tr>
                 <td style="font-size:13px; font-weight: 600; "> {{__('Discount')}} </td>
                 <td class="right"> {{$discount ?? '$XXXX'}} </td>
