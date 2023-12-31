@@ -78,12 +78,12 @@ class EmpTaskLivewire extends Component
     } // END FUNCTION OF PAGE LOAD
 
     public function initializeInvoiceSelection() {
-        // $attachedInvoiceIds = Cash::pluck('invoice_id')->toArray();
-        // $notAttachedInvoices = Invoice::whereNotIn('id', $attachedInvoiceIds)->get();
-        // $this->notAttached = $notAttachedInvoices;
-        $attachedInvoiceIds = EmpTask::where('progress', 100)->pluck('invoice_id')->toArray();
+        $attachedInvoiceIds = EmpTask::pluck('invoice_id')->toArray();
         $notAttachedInvoices = Invoice::whereNotIn('id', $attachedInvoiceIds)->get();
         $this->notAttached = $notAttachedInvoices;
+        // $attachedInvoiceIds = EmpTask::where('progress', 100)->pluck('invoice_id')->toArray();
+        // $notAttachedInvoices = Invoice::whereNotIn('id', $attachedInvoiceIds)->get();
+        // $this->notAttached = $notAttachedInvoices;
         // dd($this->notAttached );
     }
     public function initializePaymentArray() {
@@ -213,7 +213,7 @@ class EmpTaskLivewire extends Component
             //     }  catch (\Exception $e) {
             //         $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
             //     }
-            // }
+            }
 
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Cash Receipt Added Successfully')]);
             $this->resetModal();
@@ -409,22 +409,30 @@ class EmpTaskLivewire extends Component
         $colspan = 9;
         $cols_th = ['#', 'Invoice ID', 'Invoice Date', 'Progress', 'Task Status','Status', 'Actions'];
         $cols_td = ['id', 'invoice.id', 'invoice.invoice_date', 'progress', 'task_status', 'status'];
-        
+                
         $data = EmpTask::with(['invoice'])
-            ->when($this->search, function ($query) {
-                $query->whereHas('invoice.client', function ($subQuery) {
-                    $subQuery->where('client_name', 'like', '%' . $this->search . '%');
-                })
-                ->orWhereHas('invoice', function ($subQuery) {
-                    $subQuery->where('description', 'like', '%' . $this->search . '%');
-                })
-                ->orWhere('invoice_id', 'like', '%' . $this->search . '%');
+        ->when($this->search, function ($query) {
+            $query->whereHas('invoice.client', function ($subQuery) {
+                $subQuery->where('client_name', 'like', '%' . $this->search . '%');
             })
-            ->when($this->startDate && $this->endDate, function ($query) {
-                $query->whereBetween('invoice.invoice_date', [$this->startDate, $this->endDate]);
+            ->orWhereHas('invoice', function ($subQuery) {
+                $subQuery->where('description', 'like', '%' . $this->search . '%');
             })
-            ->orderBy('progress', 'ASC')
-            ->paginate(15);
+            ->orWhere('invoice_id', 'like', '%' . $this->search . '%');
+        })
+        ->when($this->startDate && $this->endDate, function ($query) {
+            $query->join('invoices', 'invoices.id', '=', 'emp_tasks.invoice_id')
+                ->whereBetween('invoices.invoice_date', [$this->startDate, $this->endDate])
+                ->select('emp_tasks.*');
+        })
+        ->orderBy('emp_tasks.progress', 'ASC')
+        ->paginate(15);
+    
+    
+    
+    
+
+
         // $colspan = 9;
         // $cols_th = ['#', 'Invoice ID', 'User ID', 'Task ID', 'Start Date', 'End Date', 'Progress', 'Task Status', 'Status', 'Actions'];
         // $cols_td = ['id', 'invoice.id', 'user.name', 'task.task_option', 'start_date', 'end_date', 'progress', 'task_status', 'status'];

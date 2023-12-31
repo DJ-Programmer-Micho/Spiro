@@ -22,8 +22,8 @@ class EmpTask extends Model
         return $this->belongsTo(Invoice::class, 'invoice_id');
     }
 
-    public function task()
-    {
-        return $this->belongsTo(Task::class);
-    }
+    // public function task()
+    // {
+    //     return $this->belongsTo(Task::class);
+    // }
 }
