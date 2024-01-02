@@ -2,7 +2,10 @@
 
 namespace App\Notifications\Own;
 
+use App\Models\Task;
+use App\Models\User;
 use App\Models\Client;
+use App\Models\EmpTask;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Service;
@@ -12,62 +15,76 @@ use NotificationChannels\Telegram\TelegramMessage;
 
 class TelegramEmpTaskNew extends Notification
 {
-    protected $c_id;
-    protected $dateCash;
+    protected $t_id;
     protected $invoiceId;
-    protected $arrPayments = [];
-    protected $dueDollar;
-    protected $dueIraqi;
-    protected $totalDollar;
-    protected $totalIraqi;
-
-    protected $desc;
-    protected $exchangeRate;
-    protected $invoiceData;
-
-
+    protected $arrTasks = [];
+    protected $gProgress;
+    protected $taskStatus;
 
     protected $clientName;
+    protected $title;
+    protected $invoiceDate;
+    protected $taskData;
 
     protected $tableHeader;
     protected $tableBody;
 
     protected $tele_id;
 
-    public function __construct($c_id, $dateCash, $invoiceId, $arrPayments, $dueDollar, $totalDollar, $dueIraqi, $totalIraqi, $tele_id)
+    public function __construct($t_id, $invoiceId, $arrTasks, $gProgress, $taskStatus, $tele_id)
     {
 
-        $this->c_id = $c_id;
-        $this->dateCash = $dateCash;
+        $this->t_id = $t_id;
         $this->invoiceId = $invoiceId;
-        $this->arrPayments = $arrPayments;
+        $this->arrTasks = $arrTasks;
+        $this->gProgress = $gProgress;
+        $this->taskStatus = $taskStatus;
 
-        $this->dueDollar = $dueDollar;
-        $this->totalDollar = $totalDollar;
-        $this->dueIraqi = $dueIraqi;
-        $this->totalIraqi = $totalIraqi;
+        $this->taskData = EmpTask::where('id', $this->t_id)->first();
 
-        $this->invoiceData = Invoice::where('id', $this->invoiceId)->first();
-
-        $this->clientName = $this->invoiceData->client->client_name;
-        $this->desc = $this->invoiceData->description;
-        $this->exchangeRate = $this->invoiceData->exchange_rate;
+        $this->clientName = $this->taskData->invoice->client->client_name;
+        $this->title = $this->taskData->invoice->description;
+        $this->invoiceDate = $this->taskData->invoice->invoice_date;
 
         $this->tele_id = $tele_id;
 
 
         // $this->tableHeader = "*Service Code | Service Name | Cost ($) | Cost (IQD) | QTY | Total ($) | Total (IQD)*\n";
-        $this->tableHeader = "*Index | Date | Paid ($) | Paid (IQD)*\n";
-        $this->tableBody = collect($this->arrPayments)->map(function ($payment, $index) {
+        $userNames = $this->getUserNames($this->arrTasks);
+        $taskOptionNames = $this->getTaskOptionNames($this->arrTasks);
+        $this->tableHeader = "*# | Name | Task | Start Date | End Date | Progress*\n";
+        $this->tableBody = collect($this->arrTasks)->map(function ($task, $index) use ($userNames, $taskOptionNames) {
             return sprintf(
-                "*%d | %s | $ %s | %s IQD*",
+                "*%d | %s | %s | %s | %s | %s *",
                 $index + 1,
-                $payment['payment_date'],  // Assuming payment_date is the correct key
-                number_format($payment['paymentAmountDollar']),
-                number_format($payment['paymentAmountIraqi'])
+                $userNames[$task['name']],  
+                $taskOptionNames[$task['task']],
+                $task['start_date'], 
+                $task['end_date'], 
+                $task['progress'] . '%', 
             );
         })->implode("\n");
         
+    }
+
+    private function getUserNames($tasks)
+    {
+        $userIds = collect($tasks)->pluck('name')->unique()->toArray();
+
+        // Fetch user names from the database
+        $userNames = User::whereIn('id', $userIds)->pluck('name', 'id')->toArray();
+
+        return $userNames;
+    }
+
+    private function getTaskOptionNames($tasks)
+    {
+        $taskOptionIds = collect($tasks)->pluck('task')->unique()->toArray();
+
+        // Fetch task option names from the database
+        $taskOptionNames = Task::whereIn('id', $taskOptionIds)->pluck('task_option', 'id')->toArray();
+
+        return $taskOptionNames;
     }
 
     public function via($notifiable)
@@ -77,22 +94,18 @@ class TelegramEmpTaskNew extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#CR-" . rand(10, 99);
+        $registrationId = "#TSK-" . rand(10, 99);
         $registration3Id = rand(100, 999);
-        $content = "*" . 'Cash Reciept ADDED' . "*\n"
+        $content = "*" . 'TASK ADDED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'Cash Reciept-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
+        . "*" .'TASK-ID: '. $registrationId . '-'. $this->t_id .'-' . $registration3Id . "*\n"
         . "*" .'-----------------'."*\n"
-        . "*" .'Date: '.  $this->dateCash . "*\n"
+        . "*" .'Title: '. $this->title . "*\n"
         . "*" .'Client: '. $this->clientName . "*\n"
-        . "*" .'Description: '. $this->desc . "*\n"
-        . "*" .'Exchange Rate: $1 ~ '. $this->exchangeRate . " IQD *\n"
-        . "*" .'--'."*\n"
-        . "*" .'Total Cost ($): $'. number_format($this->dueIraqi). "*\n"
-        . "*" .'Due ($): $'. number_format($this->dueDollar). "*\n"
-        . "*" .'--'."*\n"
-        . "*" .'Total Cost (IQD): '. number_format($this->totalIraqi) . ' IQD' . "*\n"
-        . "*" .'Due (IQD): '. number_format($this->totalDollar) . ' IQD' . "*\n"
+        . "*" .'Date: '.  $this->invoiceDate . "*\n"
+        . "*" .'------- Status -------'."*\n"
+        . "*" .'Task Status: '.  $this->taskStatus . "*\n"
+        . "*" .'Progress: '.  $this->gProgress . "*\n"
         . "*" .'------- Table -------'."*\n"
         . $this->tableHeader . $this->tableBody;
 

@@ -492,7 +492,7 @@ class InvoiceLivewire extends Component
                 $this->description = $invoiceEdit->description;
                 $this->arr_service_by_date = json_decode($invoiceEdit->services, true);
                 // final Section
-                $this->note = $invoiceEdit->notes;
+                $this->note = json_decode($invoiceEdit->notes, true);
                 $this->totalDollar = $invoiceEdit->total_amount_dollar;
                 $this->taxDollar = $invoiceEdit->tax_dollar;
                 $this->discountDollar = $invoiceEdit->discount_dollar;
@@ -551,7 +551,7 @@ class InvoiceLivewire extends Component
     } // END FUNCTION OF EDIT INVOICE
 
     public function updateInvoice(){
-        try {
+        // try {
             $validatedData = $this->validate();
 
             Invoice::where('id', $this->invoiceUpdate)->update([
@@ -562,13 +562,13 @@ class InvoiceLivewire extends Component
                 'status' => $validatedData['status'],
                 'services' => json_encode($validatedData['arr_service_by_date']),
                 'total_amount_dollar' => $validatedData['totalDollar'],
-                'tax_dollar' => $validatedData['taxDollar'],
+                'tax_dollar' =>0,
                 'discount_dollar' => $validatedData['discountDollar'],
                 'first_pay_dollar' => $validatedData['fisrtPayDollar'],
                 'due_dollar' => $validatedData['dueDollar'],
                 'grand_total_dollar' => $validatedData['grandTotalDollar'],
                 'total_amount_iraqi' => $validatedData['totalIraqi'],
-                'tax_iraqi' => $validatedData['taxIraqi'],
+                'tax_iraqi' => 0,
                 'discount_iraqi' => $validatedData['discountIraqi'],
                 'first_pay_iraqi' => $validatedData['fisrtPayIraqi'],
                 'due_iraqi' => $validatedData['dueIraqi'],
@@ -616,11 +616,11 @@ class InvoiceLivewire extends Component
                         $this->description ?? null,
                         $this->exchange_rate,
                         $validatedData['arr_service_by_date'],
-                        $validatedData['taxDollar'],
+                        0, // $validatedData['taxDollar'],
                         $validatedData['discountDollar'],
                         $validatedData['fisrtPayDollar'],
                         $validatedData['dueDollar'],
-                        $validatedData['taxIraqi'],
+                        0, // $validatedData['taxIraqi'],
                         $validatedData['discountIraqi'],
                         $validatedData['fisrtPayIraqi'],
                         $validatedData['dueIraqi'],
@@ -641,9 +641,9 @@ class InvoiceLivewire extends Component
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Invoice Updated Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        } catch (\Exception $e){
+        // } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        }
+        // }
     } // END FUNCTION OF UPDATE INVOICE
 
     public function deleteInvoice(int $selected_invoice_id){

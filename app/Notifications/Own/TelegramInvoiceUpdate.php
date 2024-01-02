@@ -124,49 +124,49 @@ class TelegramInvoiceUpdate extends Notification
             $content .= "*" . 'Quotation ID Changed: '. $this->old_invoice_data['quotationId'] . ' ➡️ ' . $this->quotationId . "*\n";
         }
 
-        if ($this->taxDollar !== $this->old_invoice_data['taxDollar']) {
-            $content .=  "*" .'-----------------'."*\n"
-            . 'TAX Changed ($): $'. $this->old_invoice_data['taxDollar'] . ' ➡️ $' . $this->taxDollar . "*\n";
-        }
-        if (strval($this->taxIraqi) !== $this->old_invoice_data['taxIraqi']) {
-            $content .= "*" . 'TAX Changed (IQD): '. $this->old_invoice_data['taxIraqi'] . 'IQD ➡️ ' . $this->taxIraqi . 'IQD' . "*\n"
-            . "*" .'-----------------'."*\n";
-        }
+        // if ($this->taxDollar !== $this->old_invoice_data['taxDollar']) {
+        //     $content .=  "*" .'-----------------'."*\n"
+        //     . 'TAX Changed ($): $'. $this->old_invoice_data['taxDollar'] . ' ➡️ $' . $this->taxDollar . "*\n";
+        // }
+        // if (strval($this->taxIraqi) !== $this->old_invoice_data['taxIraqi']) {
+        //     $content .= "*" . 'TAX Changed (IQD): '. $this->old_invoice_data['taxIraqi'] . 'IQD ➡️ ' . $this->taxIraqi . 'IQD' . "*\n"
+        //     . "*" .'-----------------'."*\n";
+        // }
 
         if ($this->discountDollar !== $this->old_invoice_data['discountDollar']) {
-            $content .= "*" . 'Discount Changed: $'. $this->old_invoice_data['discountDollar'] . ' ➡️ $' . $this->discountDollar . "*\n";
+            $content .= "*" . 'Discount Changed: $'. number_format($this->old_invoice_data['discountDollar']) . ' ➡️ $' . number_format($this->discountDollar) . "*\n";
         }
         if (strval($this->discountIraqi) !== $this->old_invoice_data['discountIraqi']) {
-            $content .= "*" . 'Discount Changed (IQD): '. $this->old_invoice_data['discountIraqi'] . 'IQD ➡️ ' . $this->discountIraqi . 'IQD' . "*\n"
+            $content .= "*" . 'Discount Changed (IQD): '. number_format($this->old_invoice_data['discountIraqi']) . 'IQD ➡️ ' . number_format($this->discountIraqi) . 'IQD' . "*\n"
             . "*" .'-----------------'."*\n";
         }
 
         if ($this->fisrtpayDollar !== $this->old_invoice_data['fisrtPayDollar']) {
-            $content .= "*" . 'First Pay Changed: $'. $this->old_invoice_data['fisrtPayDollar'] . ' ➡️ $' . $this->fisrtpayDollar . "*\n";
+            $content .= "*" . 'First Pay Changed: $'. number_format($this->old_invoice_data['fisrtPayDollar']) . ' ➡️ $' . number_format($this->fisrtpayDollar) . "*\n";
         }
         if (strval($this->fisrtpayIraqi) !== $this->old_invoice_data['fisrtPayIraqi']) {
-            $content .= "*" . 'First Pay Changed: (IQD)'. $this->old_invoice_data['fisrtPayIraqi'] . 'IQD ➡️ ' . $this->fisrtpayIraqi . 'IQD' . "*\n"
+            $content .= "*" . 'First Pay Changed: (IQD)'. number_format($this->old_invoice_data['fisrtPayIraqi']) . 'IQD ➡️ ' . number_format($this->fisrtpayIraqi) . 'IQD' . "*\n"
             . "*" .'-----------------'."*\n";
         }
 
         if ($this->dueDollar !== $this->old_invoice_data['dueDollar']) {
-            $content .= "*" . 'Due Changed: $'. $this->old_invoice_data['dueDollar'] . ' ➡️ $' . $this->dueDollar . "*\n";
+            $content .= "*" . 'Due Changed: $'. number_format($this->old_invoice_data['dueDollar']) . ' ➡️ $' . number_format($this->dueDollar) . "*\n";
         }
         if ($this->dueIraqi !== $this->old_invoice_data['dueIraqi']) {
-            $content .= "*" . 'Due Changed: '. $this->old_invoice_data['dueIraqi'] . 'IQD ➡️ ' . $this->dueIraqi . 'IQD' . "*\n"
+            $content .= "*" . 'Due Changed: '. number_format($this->old_invoice_data['dueIraqi']) . 'IQD ➡️ ' . number_format($this->dueIraqi) . 'IQD' . "*\n"
             . "*" .'-----------------'."*\n";
         }
 
         if ($this->totalDollar !== $this->old_invoice_data['grandTotalDollar']) {
-            $content .= "*" . 'Grand Total Changed: $'. $this->old_invoice_data['grandTotalDollar'] . ' ➡️ $' . $this->totalDollar  . "*\n";
+            $content .= "*" . 'Grand Total Changed: $'. number_format($this->old_invoice_data['grandTotalDollar']) . ' ➡️ $' . number_format($this->totalDollar)  . "*\n";
         }
         if ($this->totalIraqi !== $this->old_invoice_data['grandTotalIraqi']) {
-            $content .= "*" . 'Grand Total Changed: '. $this->old_invoice_data['grandTotalIraqi'] . 'IQD ➡️ ' . $this->totalIraqi . 'IQD' . "*\n"
+            $content .= "*" . 'Grand Total Changed: '. number_format($this->old_invoice_data['grandTotalIraqi']) . 'IQD ➡️ ' . number_format($this->totalIraqi) . 'IQD' . "*\n"
             . "*" .'-----------------'."*\n";
         }
 
         if ($this->date !== $this->old_invoice_data['note']) {
-            $content .= "*" . 'Notes Changed: ' . "\n" . $this->old_invoice_data['note'] .  "\n" .'↓'. "\n" . $this->notes . "*\n";
+            $content .= "*" . 'Notes Changed: ' . "\n" . json_decode($this->old_invoice_data['note'], true) .  "\n" .'         ↓'. "\n" . json_decode($this->notes, true) . "*\n";
         }
 
         function compareServices($oldService, $newService) {
@@ -180,13 +180,11 @@ class TelegramInvoiceUpdate extends Notification
                     ];
                 }
             }
-        
             return $changes;
         }
 
 
-
-        $oldDataTest = json_decode(json_decode($this->old_quotation_data['arr_service_by_date'], true), true);
+        $oldDataTest = json_decode(json_decode($this->old_invoice_data['arr_service_by_date'], true), true);
 
         foreach ($oldDataTest as $outerIndex => $outerItem) {
             $maxCountOuter = max(count($outerItem['services']), count($this->service[$outerIndex]['services']));
@@ -201,15 +199,22 @@ class TelegramInvoiceUpdate extends Notification
         
                     // If there are changes, display them
                     if (!empty($serviceChanges)) {
-                        $old_serviceName_2 = Service::find($oldService['select_service_data'])->service_name ?? 'Unknown Service';
-                        $new_serviceName_2 = Service::find($newService['select_service_data'])->service_name ?? 'Unknown Service';
+                        $old_serviceName_2 = Service::find($oldService['select_service_data']) ?? 'Unknown Service';
+                        $new_serviceName_2 = Service::find($newService['select_service_data']) ?? 'Unknown Service';
                         $content .= "*" . '-----------------' . "*\n";
                         $content .= "*" . 'Service at Position ' . ($index + 1) . " (In Invoice No.: " . $outerIndex + 1 . ") was updated." . "*\n";
-        
                         // Display specific changes
                         foreach ($serviceChanges as $key => $change) {
                             if ($key === 'select_service_data') {
-                                $content .= "*" . 'Name: '  . $old_serviceName_2 . ' ➡️ ' . $new_serviceName_2 . "*\n";
+                                $content .= "*" . 'Name: '  . $old_serviceName_2->service_name . ' ➡️ ' . $new_serviceName_2->service_name . "*\n";
+                            } else if ($key === 'serviceDefaultCostDollar') {
+                                $content .= "*" . 'Service Cost Dollar: $' . number_format($oldService['serviceDefaultCostDollar']) . ' ➡️ $' . number_format($newService['serviceDefaultCostDollar']) . "*\n";
+                            } else if ($key === 'serviceDefaultCostIraqi') {
+                                $content .= "*" . 'Service Cost Dollar: ' . number_format($oldService['serviceDefaultCostIraqi']) . ' IQD ➡️ ' . number_format($newService['serviceDefaultCostIraqi']) . " IQD *\n";
+                            } else if ($key === 'serviceTotalDollar') {
+                                $content .= "*" . 'Service Cost Dollar: $' . number_format($oldService['serviceTotalDollar']) . ' ➡️ $' . number_format($newService['serviceTotalDollar']) . "*\n";
+                            } else if ($key === 'serviceTotalIraqi') {
+                                $content .= "*" . 'Service Cost Dollar: ' . number_format($oldService['serviceTotalIraqi']) . ' IQD ➡️ ' . number_format($newService['serviceTotalIraqi']) . " IQD *\n";
                             } else {
                                 $content .= "*" . ucfirst($key) . ": " . $change['old'] . ' ➡️ ' . $change['new'] . "*\n";
                             }
@@ -227,11 +232,11 @@ class TelegramInvoiceUpdate extends Notification
                     . "*" . 'Code: '.  $newService['serviceCode'] . "*\n"
                     . "*" . 'Name: '.  $new_serviceName . "*\n"
                     . "*" . 'Description: '.  $newService['serviceDescription'] . "*\n"
-                    . "*" . 'Cost ($): '.  $newService['serviceDefaultCostDollar'] . "*\n"
-                    . "*" . 'Cost (IQD): '.  $newService['serviceDefaultCostIraqi'] . "*\n"
+                    . "*" . 'Cost ($): '.  number_format($newService['serviceDefaultCostDollar']) . "*\n"
+                    . "*" . 'Cost (IQD): '.  number_format($newService['serviceDefaultCostIraqi']) . "*\n"
                     . "*" . 'QTY: '.  $newService['serviceQty'] . "*\n"
-                    . "*" . 'Total ($): '.  $newService['serviceTotalDollar'] . "*\n"
-                    . "*" . 'Total (IQD): '.  $newService['serviceTotalIraqi'] . "*\n";
+                    . "*" . 'Total ($): '.  number_format($newService['serviceTotalDollar']) . "*\n"
+                    . "*" . 'Total (IQD): '.  number_format($newService['serviceTotalIraqi']) . "*\n";
             }
         }
         }

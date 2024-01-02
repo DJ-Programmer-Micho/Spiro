@@ -84,9 +84,9 @@
                         </td>
                         @endforeach
                         <td class="align-middle">
-                            <button type="button" data-toggle="modal" data-target="#updateCashModal"
-                                wire:click="editCash({{ $item->id }})" class="btn btn-primary m-1">
-                                <i class="fas fa-hand-holding-usd"></i>
+                            <button type="button" data-toggle="modal" data-target="#updateTaskModal"
+                                wire:click="editEdit({{ $item->id }})" class="btn btn-primary m-1">
+                                <i class="far fa-edit"></i>
                             </button>
                             {{-- <button type="button" wire:click="approved({{ $item->id }})" class="btn {{ $item->invoice_status == 'Approved' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
                                 <i class="{{ $item->invoice_status == 'Approved' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up' }}"></i>
@@ -94,7 +94,7 @@
                             <button type="button" wire:click="rejected({{ $item->id }})" class="btn {{ $item->invoice_status == 'Rejected' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
                                 <i class="{{ $item->invoice_status == 'Rejected' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down' }}"></i>
                             </button> --}}
-                            <button type="button" data-toggle="modal" data-target="#deleteCashModal" wire:click="deleteCash({{ $item->id }})" class="btn btn-danger m-1" {{ $item->invoice_status == 'Approved' ? 'disabled' : '' }}>
+                            <button type="button" data-toggle="modal" data-target="#deleteTaskModal" wire:click="deleteTask({{ $item->id }})" class="btn btn-danger m-1">
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </td>
