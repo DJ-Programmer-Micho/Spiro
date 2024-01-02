@@ -164,7 +164,7 @@
                         </div>
                         <div class="row d-flex justify-content-between m-0">
                             <h5 class="mt-4 mb-1">
-                                <b>{{__('Invoice Total Progress')}}</b>
+                                <b>{{__('Invoice Total Progress')}} | {{$gProgress}} %</b>
                             </h5>
                         </div>
                         <div class="progress">
@@ -296,7 +296,7 @@
                         </div>
                         <div class="row d-flex justify-content-between m-0">
                             <h5 class="mt-4 mb-1">
-                                <b>{{__('Invoice Total Progress')}}</b>
+                                <b>{{__('Invoice Total Progress')}} | {{$gProgress}} %</b>
                             </h5>
                         </div>
                         <div class="progress">

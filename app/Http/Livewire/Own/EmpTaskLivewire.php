@@ -49,7 +49,7 @@ class EmpTaskLivewire extends Component
     public $clientName;
     public $invoiceDate;
     public $invoiceTitle;
-    public $gProgress;
+    public $gProgress = 0;
 
     protected $listeners = ['dateRangeSelected' => 'applyDateRangeFilter'];
 
@@ -304,6 +304,10 @@ class EmpTaskLivewire extends Component
         $this->clientName = '';
         $this->arr_tasks = [];
         $this->description = '';
+        $this->gProgress = 0;
+        $this->clientName = null;
+        $this->invoiceDate = null;
+        $this->invoiceTitle = null;
 
         $this->initializeTasksArray();
     } // END FUNCTION OF RESET VARIABLES
