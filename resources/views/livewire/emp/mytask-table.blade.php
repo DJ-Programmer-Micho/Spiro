@@ -1,5 +1,17 @@
 <div>
     {{-- @include('livewire.own.user-form') --}}
+    <style>
+        .card-header {
+            padding: 0;
+            margin-bottom: 0;
+            background-color: #1a0933;
+            border-bottom: 3px solid #40167f;
+            color: white;
+        }
+        .card-body {
+            background-color: #1a0933;
+        }
+    </style>
     <div class="m-4">
         <h2 class="text-lg font-medium mr-auto">
             <b style="color: #31fbe2">{{__('TASKS TABLE')}}</b>
@@ -13,130 +25,116 @@
             </div>
             <div>
                 <div class="">
-                    <button class="btn btn-info" data-toggle="modal"
-                        data-target="#createUserModal">{{__('Add New User')}}</button>
                 </div>
             </div>
         </div>
 
+        
+    
         <div class="accordion" id="accordionExample">
+            @foreach ($groupedTasks as $id_index => $group)
+            @php
+                $taskData = App\Models\EmpTask::find($id_index);
+            @endphp
             <div class="card">
               <div class="card-header" id="headingOne">
                 <h2 class="mb-0">
-                  <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Collapsible Group Item #1
+                  <button class="btn btn-info btn-block d-flex justify-content-between" type="button" data-toggle="collapse" data-target="#collapse{{$id_index}}" aria-expanded="true" aria-controls="collapse{{$id_index}}">
+                    <div>
+                        #INV - {{$taskData->invoice->id}} | {{$taskData->invoice->description}}
+                    </div>
+                    <div>
+                        {{-- @php
+                            dd($taskData);
+                        @endphp --}}
+                        {{$taskData->progress}} |
+                        @if(count($group) == 1)
+                        ({{count($group)}}) Task
+                        @else
+                        ({{count($group)}}) Tasks
+                        @endif
+                    </div>
                   </button>
                 </h2>
               </div>
           
-              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+              <div id="collapse{{$id_index}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div class="card-body">
-                  Some placeholder content for the first accordion panel. This panel is shown by default, thanks to the <code>.show</code> class.
+                    <div class="row">
+                        <div class="col-12 table-responsive met-table-panding">
+                            <table class="table table-dark table-striped table-bordered border-dark align-middle">
+
+                                <thead>
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Task</th> 
+                                    <th scope="col">Start Date</th> 
+                                    <th scope="col">End Date</th> 
+                                    <th scope="col">Progress</th> 
+                                    <th scope="col">Status</th> 
+                                    <th scope="col">Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach ($group as $index => $subgroup)
+                                    @foreach ($subgroup as $sub_index => $sub_task)
+                                    @php
+                                        $taskName = App\Models\Task::find($sub_task['task'])->task_option;
+                                    @endphp
+                    
+                                    <tr>
+                                        <td class="align-middle text-center" width="30px">{{ $sub_index + 1 }}</td>
+                                        <td class="align-middle text-center" width="130px">{{ $taskName }}</td>
+                                        <td class="align-middle text-center" width="150px">{{ $sub_task['start_date'] }}</td>
+                                        <td class="align-middle text-center" width="150px">{{ $sub_task['end_date'] }}</td>
+                                        <td class="align-middle text-center">
+                                            <input 
+                                            type="range" 
+                                            step="5" 
+                                            min="0" 
+                                            max="100" 
+                                            value="progress_.{{ $id_index }}_{{$sub_index}}" 
+                                            name="progress_.{{ $id_index }}_{{$sub_index}}" 
+                                            wire:model="progress_.{{ $id_index }}_{{$sub_index}}" 
+                                            class="form-control p-0" 
+                                            required
+                                        >
+                                        
+                                        {{ $progress_[$id_index . '_' . $sub_index] }}%
+
+
+                                        </td>
+                                        <td class="align-middle text-center" width="120px">
+                                            @if ($progress_[$id_index . '_' . $sub_index] == 100)
+                                               <span class="text-success">{{__('Complete')}}</span>
+                                            @elseif ($progress_[$id_index . '_' . $sub_index] > 0)
+                                                <span class="text-warning">{{__('In Process')}}</span>
+                                            @else    
+                                                <span class="text-danger">{{__('Pending')}}</span>
+                                            @endif
+                                            </td>
+                                        <td class="align-middle text-center">
+                                            {{-- <button type="button" class="btn btn-success" wire:click="completeTask({{ $index }})"><i class="fas fa-check"></i></button> --}}
+                                            <button type="button" class="btn btn-dark" wire:click="updateTask({{ $id_index }}, {{ $sub_index }})"><i class="fas fa-paper-plane"></i></button>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
               </div>
             </div>
-            <div class="card">
-              <div class="card-header" id="headingTwo">
-                <h2 class="mb-0">
-                  <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Collapsible Group Item #2
-                  </button>
-                </h2>
-              </div>
-              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                <div class="card-body">
-                  Some placeholder content for the second accordion panel. This panel is hidden by default.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header" id="headingThree">
-                <h2 class="mb-0">
-                  <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Collapsible Group Item #3
-                  </button>
-                </h2>
-              </div>
-              <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                <div class="card-body">
-                  And lastly, the placeholder content for the third and final accordion panel. This panel is hidden by default.
-                </div>
-              </div>
-            </div>
+            @endforeach
           </div>
 
         @if (session()->has('message'))
         <h5 class="alert alert-success">{{ session('message') }}</h5>
         @endif
 
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-sm table-dark">
-                <thead>
-                    <tr>
-                        @foreach ($cols_th as $col)
-                        <th>{{ __($col) }}</th>
-                        @endforeach
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($items as $item)
-                    <tr>
-                        @foreach ($cols_td as $col)
-                        <td class="align-middle">
-                            @if ($col === 'status')
-                            <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
-                                <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
-                            </span>
-                            @elseif ($col === 'avatar')
-                            <img src="{{ asset('avatars/' . $item->avatar) }}" alt="spiro" class="img-thumbnail rounded-circle" width="75px">
-                            {{-- @elseif ($col === 'priority')
-                            <input type="number" id="priority_{{ $item->id }}" value="{{ $item->priority }}"
-                                class="form-control bg-dark text-white"> --}}
-                            @elseif ($col === 'role')
-                                @if($item->role == 1) 
-                                    <span class="text-danger">
-                                        <b>Admin</b>
-                                    </span>
-                                @elseif ($item->role == 2)
-                                    <span class="text-warning">
-                                        <b>Editor</b>
-                                    </span>
-                                @elseif ($item->role == 3) 
-                                    <span class="text-white">
-                                        <b>Finance</b>
-                                    </span>
-                                @else 
-                                    <span class="text-info">
-                                        <b>Employee</b>
-                                    </span>
-                                @endif
-                            @else
-                            {{ data_get($item, $col) }}
-                            @endif
-                        </td>
-                        @endforeach
-                        <td class="align-middle">
-                            <button type="button" data-toggle="modal" data-target="#updateUserModal"
-                                wire:click="editUser({{ $item->id }})" class="btn btn-primary m-1">
-                                <i class="far fa-edit"></i>
-                            </button>
-                            <button type="button" data-toggle="modal" data-target="#deleteUserModal"
-                                wire:click="deleteUser({{ $item->id }})" class="btn btn-danger m-1">
-                                <i class="far fa-trash-alt"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td class="align-middle" colspan="{{ count($cols_th) + 1 }}">{{__('No Record Found')}}</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        <div class="dark:bg-gray-800 dark:text-white">
-            {{-- {{ $items->links() }} --}}
-        </div>
 
     </div>
 {{-- </div> --}}
@@ -151,5 +149,6 @@
         message '] }}');
 
 </script>
+
 @endif
 </div>

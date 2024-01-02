@@ -298,6 +298,39 @@ class EmpTaskLivewire extends Component
         }
     } // END FUNCTION OF DESTROY CLIENT
 
+
+    public function approved(int $item){
+        $EmpApprovment = EmpTask::find($item);
+        // Toggle the status (0 to 1 and 1 to 0)
+        $EmpApprovment->approved = $EmpApprovment->approved == 0 ? 1 : 0;
+
+        // if($this->telegram_channel_status == 1){
+        //     try{
+        //         $this->editFood($food_id);
+        //         Notification::route('toTelegram', null)
+        //         ->notify(new TelegramFoodShort(
+        //             $this->old_food_data,
+        //             $foodState->id,
+        //             $foodState->cat_id,
+        //             $this->names,
+        //             $foodState->status,
+        //             $this->priority,
+        //             $this->special,
+        //             $this->telegram_channel_link,
+        //             $this->view_business_name,
+        //         ));
+        //         $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+        //     }  catch (\Exception $e) {
+        //         $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
+        //     }
+        // }
+
+        $EmpApprovment->save();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Task Has Been Approved')]);
+    }// END FUNCTION OF UPDATING PRIOEITY
+
+
+
     // PRIVATE & PUBLIC FUNCTIONS
     private function resetModal(){
         $this->formDate = '';

@@ -88,12 +88,9 @@
                                 wire:click="editEdit({{ $item->id }})" class="btn btn-primary m-1">
                                 <i class="far fa-edit"></i>
                             </button>
-                            {{-- <button type="button" wire:click="approved({{ $item->id }})" class="btn {{ $item->invoice_status == 'Approved' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
-                                <i class="{{ $item->invoice_status == 'Approved' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up' }}"></i>
+                            <button type="button" wire:click="approved({{ $item->id }})" class="btn {{ $item->approved == 1 ? 'btn-success text-dark' : 'btn-dark' }} btn-icon m-1">
+                                <i class="{{ $item->approved == 1 ? 'fas fa-thumbs-up' : 'far fa-thumbs-down' }}"></i>
                             </button>
-                            <button type="button" wire:click="rejected({{ $item->id }})" class="btn {{ $item->invoice_status == 'Rejected' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
-                                <i class="{{ $item->invoice_status == 'Rejected' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down' }}"></i>
-                            </button> --}}
                             <button type="button" data-toggle="modal" data-target="#deleteTaskModal" wire:click="deleteTask({{ $item->id }})" class="btn btn-danger m-1">
                                 <i class="far fa-trash-alt"></i>
                             </button>

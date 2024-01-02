@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('emp_tasks', function (Blueprint $table) {
             $table->id();            
-            $table->foreignId('invoice_id')->unique()->references('id')->on('invoices')->onDelete('cascade')->onUpdate('cascade');            $table->json('tasks');
+            $table->foreignId('invoice_id')->unique()->references('id')->on('invoices')->onDelete('cascade')->onUpdate('cascade');            
+            $table->json('tasks');
             $table->unsignedInteger('progress')->default(0);
             $table->string('task_status');
             $table->integer('status');
+            $table->integer('approved')->default(0);
             $table->timestamps();
         });
     }

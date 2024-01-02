@@ -15,6 +15,7 @@ class EmpTask extends Model
         'progress', 
         'task_status', 
         'status', 
+        'approved', 
     ];
 
     public function invoice()
