@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\Localization;
+use App\Http\Middleware\CheckUserStatus;
+use App\Http\Middleware\Own;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OwnController;
 use App\Http\Controllers\AuthController;
@@ -42,7 +44,7 @@ Route::middleware([Localization::class])->group(function () {
 | MET ROUTE SUPER ADMIN
 |--------------------------------------------------------------------------
 */  
-    Route::prefix('/own')->group(function () {
+    Route::prefix('/own')->middleware(['CheckUserStatus', 'Own'])->group(function () {
     Route::get('/', [OwnController::class, 'dashboardOwn'])->name('dashboardOwn');
     Route::get('/user', [OwnController::class, 'user'])->name('own.user');
     Route::get('/client', [OwnController::class, 'client'])->name('own.client');

@@ -56,8 +56,8 @@ class EmpTaskLivewire extends Component
     public function mount() {
         $this->telegram_channel_status = 1;
         $this->tele_id = env('TELEGRAM_GROUP_ID');
-        $this->user_data = User::get();
-        $this->task_data = Task::get();
+        $this->user_data = User::where('status', 1)->where('role', '!=', 1)->get();
+        $this->task_data = Task::where('status', 1)->get();
         $this->initializeInvoiceSelection();
     } // END FUNCTION OF PAGE LOAD
 
