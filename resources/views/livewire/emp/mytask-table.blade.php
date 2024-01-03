@@ -1,12 +1,11 @@
 <div>
-    {{-- @include('livewire.own.user-form') --}}
     <style>
         .card-header {
             padding: 0;
             margin-bottom: 0;
             background-color: #1a0933;
             border-bottom: 3px solid #40167f;
-            color: white;
+            color: rgb(0, 0, 0);
         }
         .card-body {
             background-color: #1a0933;
@@ -39,7 +38,7 @@
             <div class="card">
               <div class="card-header" id="headingOne">
                 <h2 class="mb-0">
-                  <button class="btn btn-info btn-block d-flex justify-content-between" type="button" data-toggle="collapse" data-target="#collapse{{$id_index}}" aria-expanded="true" aria-controls="collapse{{$id_index}}">
+                  <button class="btn btn-info btn-block d-flex justify-content-between" style="color: #000; font-weight: bold" type="button" data-toggle="collapse" data-target="#collapse{{$id_index}}" aria-expanded="true" aria-controls="collapse{{$id_index}}">
                     <div>
                         #INV - {{$taskData->invoice->id}} | {{$taskData->invoice->description}}
                     </div>
@@ -47,11 +46,12 @@
                         {{-- @php
                             dd($taskData);
                         @endphp --}}
-                        {{$taskData->progress}} |
-                        @if(count($group) == 1)
-                        ({{count($group)}}) Task
+                        {{$taskData->progress}}% |
+                        
+                        @if(count($group[0]) == 1)
+                        ({{count($group[0])}}) Task
                         @else
-                        ({{count($group)}}) Tasks
+                        ({{count($group[0])}}) Tasks
                         @endif
                     </div>
                   </button>

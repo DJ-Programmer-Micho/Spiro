@@ -52,7 +52,7 @@ Route::middleware([Localization::class])->group(function () {
     });
 
     Route::prefix('/own')->middleware(['CheckUserStatus', 'Own'])->group(function () {
-        Route::get('/', [OwnController::class, 'dashboardOwn'])->name('dashboardOwn');
+        Route::get('/', [OwnController::class, 'dashboardOwn'])->name('own.dashboard');
         Route::get('/user', [OwnController::class, 'user'])->name('own.user');
         Route::get('/client', [OwnController::class, 'client'])->name('own.client');
         Route::get('/service', [OwnController::class, 'service'])->name('own.service');

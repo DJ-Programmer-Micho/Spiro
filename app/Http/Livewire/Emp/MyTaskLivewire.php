@@ -2,8 +2,6 @@
 
 namespace App\Http\Livewire\Emp;
 
-use App\Models\Task;
-use App\Models\Branch;
 use App\Models\EmpTask;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -19,46 +17,18 @@ class MyTaskLivewire extends Component
     // protected $paginationTheme = 'bootstrap';
 
     public $groupedTasks;
-    
-
 
     public function mount() {
-        $this->initializeFilteredTasks();
+       $this->initializeFilteredTasks();
     } // END FUNCTION OF PAGE LOAD
-
-    // public function initializeFilteredTasks()
-    // {
-    //     $userId = auth()->id();
-    
-    //     $tasks = EmpTask::get()
-    //         ->map(function ($empTask) use ($userId) {
-    //             $decodedTasks = json_decode($empTask->tasks, true);
-    
-    //             return [
-    //                 'id' => $empTask->id,
-    //                 'invoice_id' => $empTask->invoice_id, // Add this line to include invoice_id
-    //                 'tasks' => array_filter($decodedTasks, function ($task) use ($userId) {
-    //                     return $task['name'] == $userId;
-    //                 })
-    //             ];
-    //         })
-    //         ->filter(function ($empTask) {
-    //             return !empty($empTask['tasks']);
-    //         })
-    //         ->groupBy('id')
-    //         ->map(function ($group) {
-    //             return collect($group)->pluck('tasks')->flatten(1)->toArray();
-    //         });
-    
-    //     $this->groupedTasks = $tasks;
-    // }
     
     public $progress_ = [];
 
     public function initializeFilteredTasks()
     {
     $userId = auth()->id();
-    $this->groupedTasks = EmpTask::get()
+    try {
+    $this->groupedTasks = EmpTask::where('approved', 0)->get()
         ->map(function ($empTask) use ($userId) {
             $decodedTasks = json_decode($empTask->tasks, true);
 
@@ -89,55 +59,47 @@ class MyTaskLivewire extends Component
            }
            }
        }
-
-    //    dd( $this->progress_);
+        }  catch (\Exception $e) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+        }
     }
-    
-    // public function getTaskData($id_index, $index)
-    // {
-    //     // dd($id_index);
-    //     return $this->groupedTasks[$id_index][$index];
-    // }
-
     public function updateTask($id_index, $sub_index)
     {
-        // $empTask = EmpTask::find($id_index);
-        // dd(json_decode($empTask->tasks,true)[$index]) ;
-        // // = $this->progress_[$taskData['id']];
-        // $empTask->save();
+        try {
+            $empTask = EmpTask::find($id_index);
+            $tasks = json_decode($empTask->tasks, true);
+            $tasks[$sub_index]['progress'] = $this->progress_[$id_index . '_' . $sub_index];
+            $empTask->tasks = json_encode($tasks);
+            $empTask->save();
+            ///////////////////////////
+            $sumProgress = 0;
+            $gProgress = 0;
+            $tempData = json_decode($empTask->tasks, true);
+            foreach ($tempData as $task) {
+                $sumProgress += $task['progress'];
+            }
+            $gProgress += $sumProgress /  count($tempData);
+            $empTask->progress = $gProgress;
     
-
-        $empTask = EmpTask::find($id_index);
-        $tasks = json_decode($empTask->tasks, true);
+            if($gProgress == 100) {
+                $empTask->task_status = 'Complete';
+            } else if ($gProgress > 0) {
+                $empTask->task_status = 'In Process';
+            } else {
+                $empTask->task_status = 'In Pending';
+            }
     
-        // Update the progress for the specific task
-        // dd($tasks,$tasks[$sub_index],$sub_index, $tasks[$sub_index]['progress'] );
-        $tasks[$sub_index]['progress'] = $this->progress_[$id_index . '_' . $sub_index];
-    
-        // Save the changes to the database
-        // dd(json_encode($tasks));
-        $empTask->tasks = json_encode($tasks);
-        $empTask->save();
-
-        ///////////////////////////
-        $sumProgress = 0;
-        $gProgress = 0;
-        $tempData = json_decode($empTask->tasks, true);
-        foreach ($tempData as $task) {
-            $sumProgress += $task['progress'];
+            $empTask->save();
+            $this->initializeFilteredTasks();
+            $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => __('Task Progress Updated.')]);
+        }  catch (\Exception $e) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Task Progress Did Not Update.')]);
         }
-    
-        $gProgress += $sumProgress /  count($tempData);
 
-        $empTask->progress = $gProgress;
-        $empTask->save();
-
-        $this->initializeFilteredTasks();
     }
     
     public function render()
     {
-        
         return view('livewire.emp.mytask-table',[
             'groupedTasks' => $this->groupedTasks,
         ]);
