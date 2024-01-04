@@ -22,11 +22,34 @@ use App\Notifications\Own\TelegramInvoiceShort;
 use App\Notifications\Own\TelegramInvoiceDelete;
 use App\Notifications\Own\TelegramInvoiceUpdate;
 
-use Barryvdh\DomPDF\Facade\Pdf;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
+
 
 
 class InvoiceLivewire extends Component
 {
+
+    public function printCustomPdf(int $invoiceId){
+        $invoiceEditasd = Invoice::where('id',$invoiceId)->first();
+        $data = [
+            "invoiceId" => $invoiceEditasd->id,
+            "client" => $invoiceEditasd->client->client_name,
+            "date" =>$invoiceEditasd->invoice_date,
+            "total" => $invoiceEditasd->grand_total_dollar,
+        ];
+
+        
+        $pdfContent = LaravelMpdf::loadView('pdfInvoice', $data);
+        return $pdfContent->stream('document.pdf');
+        // $pdfContent = PDF::loadView('pdfInvoice', $data)->output();
+        // return response()->streamDownload(
+        //     function () use ($pdfContent) {
+        //         echo $pdfContent;
+        //     },
+        //     $invoiceEditasd->id.'_'.$invoiceEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
+        // );
+    } 
+
     use WithPagination; 
     // use WithFileUploads;
     protected $paginationTheme = 'bootstrap';
@@ -109,28 +132,7 @@ class InvoiceLivewire extends Component
         $this->initializeServicesArray();
     } // END FUNCTION OF PAGE LOAD
 
-    public function printCustomPdf(int $invoiceId){
-        // dd('asd');
-        $invoiceEditasd = Invoice::where('id',$invoiceId)->first();
-        $data = [
-            "invoiceId" => $invoiceEditasd->id,
-            "client" => $invoiceEditasd->client->client_name,
-            "date" =>$invoiceEditasd->invoice_date,
-            "total" => $invoiceEditasd->grand_total_dollar,
-        ];
-
-        
-        $pdf = Pdf::loadView('pdfInvoice', $data);
-        return $pdf->download('invoice.pdf');
-        // $pdfContent = Pdf::loadView('pdfInvoice', $data)->output();
-        // return response()->streamDownload(
-        //     function () use ($pdfContent) {
-        //         echo $pdfContent;
-        //     },
-        //     $invoiceEditasd->id.'_'.$invoiceEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
-        // );
-    }    
-
+   
     
     public function createEmptyService() {
         return [
