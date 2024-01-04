@@ -13,42 +13,25 @@ use App\Models\Quotation;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\File;
 use App\Notifications\Own\TelegramCashNew;
 use App\Notifications\Own\TelegramClientNew;
 use Illuminate\Support\Facades\Notification;
+
 use App\Notifications\Own\TelegramInvoiceNew;
 use App\Notifications\Own\TelegramInvoiceShort;
 
-use App\Notifications\Own\TelegramInvoiceDelete;
-use App\Notifications\Own\TelegramInvoiceUpdate;
-
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
 
-
+// use Barryvdh\DomPDF\Facade as PDF;
+use App\Notifications\Own\TelegramInvoiceDelete;
+use App\Notifications\Own\TelegramInvoiceUpdate;
 
 class InvoiceLivewire extends Component
 {
 
-    public function printCustomPdf(int $invoiceId){
-        $invoiceEditasd = Invoice::where('id',$invoiceId)->first();
-        $data = [
-            "invoiceId" => $invoiceEditasd->id,
-            "client" => $invoiceEditasd->client->client_name,
-            "date" =>$invoiceEditasd->invoice_date,
-            "total" => $invoiceEditasd->grand_total_dollar,
-        ];
 
-        
-        $pdfContent = LaravelMpdf::loadView('pdfInvoice', $data);
-        return $pdfContent->stream('document.pdf');
-        // $pdfContent = PDF::loadView('pdfInvoice', $data)->output();
-        // return response()->streamDownload(
-        //     function () use ($pdfContent) {
-        //         echo $pdfContent;
-        //     },
-        //     $invoiceEditasd->id.'_'.$invoiceEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
-        // );
-    } 
 
     use WithPagination; 
     // use WithFileUploads;
@@ -131,7 +114,45 @@ class InvoiceLivewire extends Component
         $this->service_data = Service::get();
         $this->initializeServicesArray();
     } // END FUNCTION OF PAGE LOAD
+    public function printCustomPdf(int $invoiceId){
+              $invoiceEditasd = Invoice::where('id',$invoiceId)->first();
 
+              $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
+                $imageData = base64_encode(File::get($imagePath));
+                $base64Image = 'data:image/jpeg;base64,' . $imageData;
+                // public/assets/dashboard/img/mainlogopdf.png
+        $data = [
+            "img" => $base64Image,
+
+            "invoiceId" => $invoiceEditasd->id,
+            "client" => $invoiceEditasd->client->client_name ?? 'UnKnown',
+            "email" => $invoiceEditasd->client->email ?? 'UnKnown',
+            "country" => $invoiceEditasd->client->country ?? 'UnKnown',
+            "city" => $invoiceEditasd->client->city ?? 'UnKnown',
+            "phoneOne" => $invoiceEditasd->client->phoneOne ?? 'UnKnown',
+            "phoneTwo" => $invoiceEditasd->client->phoneTwo ?? 'UnKnown',
+            
+            "date" =>$invoiceEditasd->invoice_date ?? 'UnKnown',
+            "total" => $invoiceEditasd->grand_total_dollar ?? 'UnKnown',
+            "clientId" => $invoiceEditasd->client->id ?? 'UnKnown',
+
+            "serviceData" => json_decode($invoiceEditasd->services,true) ?? 'XXX',
+
+            "amountDollar" => $invoiceEditasd->total_amount_dollar ?? '$XXXX',
+            "discount" => $invoiceEditasd->discount_dollar ?? '$XXXX',
+            "grandDollar" => $invoiceEditasd->grand_total_dollar ?? '$XXXX',
+        ];
+
+        $pdfContent = PDF::loadView('pdfInvoice', $data)->output();
+        return response()->streamDownload(
+            function () use ($pdfContent) {
+                echo $pdfContent;
+            },
+            $invoiceEditasd->id.'_'.$invoiceEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
+        );
+
+        dd('done');
+    } 
    
     
     public function createEmptyService() {
