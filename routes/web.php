@@ -47,7 +47,7 @@ Route::middleware([Localization::class])->group(function () {
 |--------------------------------------------------------------------------
 */  
     Route::prefix('/emp')->middleware(['CheckUserStatus', 'Emp'])->group(function () {
-        Route::get('/', [EmpController::class, 'dashboardEmp'])->name('dashboardEmp');
+        Route::get('/', [EmpController::class, 'dashboardEmp'])->name('emp.dashboard');
         Route::get('/mytask', [EmpController::class, 'myTask'])->name('emp.mytask');
     });
 

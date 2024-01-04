@@ -84,8 +84,7 @@
                         </td>
                         @endforeach
                         <td class="align-middle">
-                            <button type="button" data-toggle="modal" data-target="#updateTaskModal"
-                                wire:click="editEdit({{ $item->id }})" class="btn btn-primary m-1">
+                            <button type="button" data-toggle="modal" data-target="#updateTaskModal" wire:click="editTask({{ $item->id }})" class="btn btn-primary m-1">
                                 <i class="far fa-edit"></i>
                             </button>
                             <button type="button" wire:click="approved({{ $item->id }})" class="btn {{ $item->approved == 1 ? 'btn-success text-dark' : 'btn-dark' }} btn-icon m-1">

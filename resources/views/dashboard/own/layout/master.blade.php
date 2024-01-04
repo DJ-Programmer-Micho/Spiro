@@ -288,233 +288,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider my-1">
             <!-- Heading -->
-            <div class="sidebar-heading">
-                {{__('General Setting')}}
-            </div>
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item {{(str_contains(request()->path(), 'rest/setting/')) ? 'active' : ''}}">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                    <lord-icon
-                    src="https://cdn.lordicon.com/sbiheqdr.json"
-                    trigger="loop"
-                    delay="2000"
-                    colors="primary:#cc0022,secondary:#eee"
-                    style="width:48px;height:48px">
-                    </lord-icon>
-                    <span>{{__('Setting')}}</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="py-2 collapse-inner rounded" style="background-color: #1f2535">
-                        {{-- <h6 class="collapse-header">{{__('Setting')}}</h6> --}}
-                        <a class="collapse-item" href="#">
-                            <lord-icon src="https://cdn.lordicon.com/wloilxuq.json" trigger="loop" delay="2000"
-                                colors="primary:#cc0022,secondary:#eee" state="hover-2" style="width:36px;height:36px">
-                            </lord-icon>
-                            <span class="text-white">{{__('Language')}}</span>
-                        </a>
-                        <a class="collapse-item" href="#">
-                            <lord-icon src="https://cdn.lordicon.com/wloilxuq.json" trigger="loop" delay="2000"
-                                colors="primary:#cc0022,secondary:#eee" state="hover-1" style="width:36px;height:36px">
-                            </lord-icon>
-                            <span class="text-white">{{__('Resturant Name')}}</span>
-
-                        </a>
-                        <a class="collapse-item" href="#">
-                            <lord-icon src="https://cdn.lordicon.com/wloilxuq.json" trigger="loop" delay="2000"
-                                colors="primary:#cc0022,secondary:#eee" state="hover-2" style="width:36px;height:36px">
-                            </lord-icon>
-                            <span class="text-white">{{__('Menu Setting')}}</span>
-                        </a>
-                        <a class="collapse-item" href="#">
-                            <lord-icon src="https://cdn.lordicon.com/wloilxuq.json" trigger="loop" delay="2000"
-                                colors="primary:#cc0022,secondary:#eee" state="hover-1" style="width:36px;height:36px">
-                            </lord-icon>
-                            <span class="text-white">{{__('Start Up Page')}}</span>
-
-                        </a>
-
-                    </div>
-                </div>
-            </li>
-
-            <hr class="sidebar-divider my-1">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                {{__('Subscription')}}
-            </div>
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item ">
-                <a class="nav-link {{(str_contains(request()->path(), 'rest/plan/')) ? 'active' : ''}}" href="#">
-                    <lord-icon
-                    src="https://cdn.lordicon.com/huwchbks.json"
-                    trigger="loop"
-                    delay="2000"
-                    colors="primary:#cc0022,secondary:#eee"
-                    style="width:48px;height:48px">
-                </lord-icon>
-                    <span>{{__('Plan')}}</span></a>
-            </li>
-            <!-- Divider -->
-            <hr class="sidebar-divider my-1">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                {{__('Customization')}}
-            </div>
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item {{(str_contains(request()->path(), 'rest/design/')) ? 'active' : ''}}">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <lord-icon
-                                src="https://cdn.lordicon.com/fgkmrslx.json"
-                                trigger="loop"
-                                delay="2000"
-                                colors="primary:#cc0022,secondary:#eee"
-                                style="width:48px;height:48px">
-                            </lord-icon> 
-                    <span>{{__('Menu Design')}}</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="py-2 collapse-inner rounded" style="background-color: #1f2535">
-                        {{-- <h6 class="collapse-header">Custom Utilities:</h6> --}}
-                        <a class="collapse-item" href="#">
-                            <lord-icon
-                                        src="https://cdn.lordicon.com/pndvzexs.json"
-                                        trigger="loop"
-                                        delay="2000"
-                                        colors="primary:#cc0022,secondary:#eee"
-                                        style="width:36px;height:36px">
-                                    </lord-icon>
-                            <span class="text-white">{{__('Select UI/UX')}}</span>
-                            
-                            </a>
-                        <a class="collapse-item" href="#">
-                            <lord-icon
-                            src="https://cdn.lordicon.com/tyounuzx.json"
-                            trigger="loop"
-                            delay="2000"
-                            colors="primary:#cc0022,secondary:#eee"
-                            style="width:36px;height:36px">
-                        </lord-icon>
-                            <span class="text-white">{{__('Customize UI/UX')}}</span>
-                            
-                            </a>
-                        <a class="collapse-item"  href="#">
-                            <lord-icon
-                            src="https://cdn.lordicon.com/fqrjldna.json"
-                            trigger="loop"
-                            colors="primary:#cc0022,secondary:#eee"
-                            state="loop"
-                            style="width:36px;height:36px">
-                        </lord-icon>
-                            <span class="text-white">{{__('QR Code')}}</span>
-                            </a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-1">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                {{__('Support')}}
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item {{(str_contains(request()->path(), 'rest/support/')) ? 'active' : ''}}">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <lord-icon
-                    src="https://cdn.lordicon.com/mdksbrtj.json"
-                    trigger="loop"
-                    delay="2000"
-                    colors="primary:#cc0022,secondary:#ccc"
-                    style="width:48px;height:48px">
-                </lord-icon>
-                    <span>{{__('Need Help?')}}</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="py-2 collapse-inner rounded" style="background-color: #1f2535">
-                        <h6 class="collapse-header">{{__('Self Support:')}}</h6>
-                        <a class="collapse-item" href="#">
-                            <lord-icon
-                            src="https://cdn.lordicon.com/tdxypxgp.json"
-                            trigger="loop"
-                            colors="primary:#cc0022,secondary:#ccc"
-                            state="loop"
-                            style="width:36px;height:36px">
-                        </lord-icon>
-                            <span class="text-white">{{__('Tutorial')}}</span>
-                            </a>
-                        <a class="collapse-item" href="#">
-                            <lord-icon
-                            src="https://cdn.lordicon.com/jqeuwnmb.json"
-                            trigger="loop"
-                            delay="500"
-                            colors="primary:#cc0022,secondary:#ccc"
-                            style="width:36px;height:36px">
-                        </lord-icon> 
-                            <span class="text-white">{{__('Documents')}}</span>
-                            </a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">{{__('Team Support:')}}</h6>
-                        <a class="collapse-item" href="#">
-                            <lord-icon
-                            src="https://cdn.lordicon.com/bwnhdkha.json"
-                            trigger="loop"
-                            delay="2000"
-                            colors="primary:#cc0022,secondary:#ccc"
-                            style="width:36px;height:36px">
-                        </lord-icon> 
-                            <span class="text-white">{{__('Contact Us')}}</span>
-                            </a>
-                        <a class="collapse-item" href="#">
-                            <lord-icon
-                            src="https://cdn.lordicon.com/hdiorcun.json"
-                            trigger="loop"
-                            delay="2000"
-                            colors="primary:#ccc,secondary:#cc0022"
-                            style="width:36px;height:36px">
-                        </lord-icon>
-                            <span class="text-white">{{__('Menu Fix')}}</span>
-                            </a>
-                        <a class="collapse-item" href="#">
-                            <lord-icon
-                            src="https://cdn.lordicon.com/tdrtiskw.json"
-                            trigger="loop"
-                            delay="2000"
-                            colors="primary:#cc0022,secondary:#ccc"
-                            style="width:36px;height:36px">
-                        </lord-icon>
-                            <span class="text-white">{{__('Error!')}}</span>
-                            </a>
-                    </div>
-                </div>
-            </li>
-           
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block my-1">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                {{__('View')}}
-            </div>
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item ">
-                <a class="nav-link" target="_blank" href="#">
-                {{-- <a class="nav-link" target="_blank" href="{{url(auth()->user()->name)}}"> --}}
-                    <div class="side-menu__icon"> <lord-icon
-                        src="https://cdn.lordicon.com/udwhdpod.json"
-                        trigger="loop"
-                        delay="2000"
-                        colors="primary:#cc0022,secondary:#ccc"
-                        style="width:48px;height:48px">
-                    </lord-icon>
-                    <span>{{__('Quick Look')}}</span></a>
-            </li>
+       
 
 
             <!-- Sidebar Toggler (Sidebar) -->
@@ -587,21 +361,21 @@
                             </div>
                         </li> --}}
 
-                        <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
+                                <span class="badge badge-danger badge-counter">0</span>
                             </a>
                             <!-- Dropdown - Alerts -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
-                                    Alerts Center
+                                    {{__('Alerts Center')}}
                                 </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                <a class="ropdown-item text-center small text-gray-500">{{__('Empty')}}</a>
+                                {{-- <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="mr-3">
                                         <div class="icon-circle bg-primary">
                                             <i class="fas fa-file-alt text-white"></i>
@@ -634,7 +408,7 @@
                                         Spending Alert: We've noticed unusually high spending for your account.
                                     </div>
                                 </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a> --}}
                             </div>
                         </li>
 
@@ -644,13 +418,13 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-envelope fa-fw"></i>
                                 <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
+                                <span class="badge badge-danger badge-counter">0</span>
                             </a>
                             <!-- Dropdown - Messages -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="messagesDropdown">
                                 <h6 class="dropdown-header">
-                                    Message Center
+                                    {{__('Message Center')}}
                                 </h6>
                                 {{-- <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
@@ -700,7 +474,8 @@
                                         <div class="small text-gray-500">Chicken the Dog · 2w</div>
                                     </div>
                                 </a> --}}
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+                                <a class="dropdown-item text-center small text-gray-500">{{__('No Messages')}}</a>
+                                {{-- <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a> --}}
                             </div>
                         </li>
 
@@ -711,16 +486,20 @@
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {{-- <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{auth()->user()->name}}</span> --}}
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">#</span>
-                                {{-- <img class="img-profile rounded-circle"
-                                    src="{{ app('cloudfront') . (auth()->user()->settings->background_img_avatar ?? 'mine-setting/user.png')}}"> --}}
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{auth()->user()->name}}</span>
+                                <img class="img-profile rounded-circle"
+                                    src="{{asset('avatars/'.auth()->user()->profile->avatar)}}">
+                                    
+
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    {{auth()->user()->name}} <br>
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    {{auth()->user()->profile->job_title}} 
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 {{-- @foreach ($filteredLocales as $locale)
@@ -732,7 +511,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
+                                    {{__('Logout')}}
                                 </a>
                             </div>
                         </li>
@@ -777,15 +556,15 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">{{__('Ready to Leave?')}}</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-body">{{__('Select "Logout" below if you are ready to end your current session.')}}</div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="#">Logout</a>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">{{__('Cancel')}}</button>
+                    <a class="btn btn-primary" href="{{route('logout')}}">{{__('Logout')}}</a>
                 </div>
             </div>
         </div>
@@ -800,12 +579,12 @@
     <!-- Custom scripts for all pages-->
     <script src="{{asset('assets/dashboard/js/sb-admin-2.min.js')}}"></script>
     <!-- Page level plugins -->
-    <script src="{{asset('assets/dashboard/vendor/chart.js/Chart.min.js')}}"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    {{-- <script src="{{asset('assets/dashboard/vendor/chart.js/Chart.min.js')}}"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    @livewireScripts
     <script>
-        window.addEventListener('alert', event => {
+    window.addEventListener('alert', event => {
         toastr[event.detail.type](event.detail.message, event.detail.title ?? '');
         toastr.options = {
             "closeButton": true,
@@ -814,7 +593,7 @@
         });
     </script>
     
-
+    @livewireScripts
     @stack('cropper')
     @stack('drag')
     @stack('color');

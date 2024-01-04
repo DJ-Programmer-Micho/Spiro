@@ -185,7 +185,7 @@ class EmpTaskLivewire extends Component
         }
     }
 
-    public function editEdit(int $taskId){
+    public function editTask(int $taskId){
         try {
             $taskEdit = EmpTask::find($taskId);
             $this->taskUpdate = $taskId;

@@ -8,9 +8,9 @@
 @section('dash_script')
 <script>
     window.addEventListener('close-modal', event => {
-        $('#createClientModal').modal('hide');
-        $('#updateClientModal').modal('hide');
-        $('#deleteClientModal').modal('hide');
+        $('#createModal').modal('hide');
+        $('#updateModal').modal('hide');
+        $('#deleteModal').modal('hide');
     })
 </script>
 @endsection
