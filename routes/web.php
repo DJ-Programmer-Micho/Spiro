@@ -23,7 +23,7 @@ use App\Http\Controllers\DashboardController;
 Route::get('/', function () {
     return view('layouts.layout');
 });
-Route::get('/pdf', function () { return view('pdfInvoicer'); });
+Route::get('/pdf', function () { return view('pdfCr'); });
 
 Route::get('/client', [DashboardController::class, 'client'])->name('client');
 Route::get('/service', [DashboardController::class, 'service'])->name('service');

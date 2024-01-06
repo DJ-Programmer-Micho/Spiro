@@ -9,13 +9,15 @@ use App\Models\Service;
 use Livewire\Component;
 use App\Models\Quotation;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\Own\TelegramQuotationNew;
-use App\Notifications\Own\TelegramQuotationUpdate;
-use App\Notifications\Own\TelegramQuotationDelete;
-use App\Notifications\Own\TelegramQuotationShort;
-use App\Notifications\Own\TelegramInvoiceNew;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\File;
 use App\Notifications\Own\TelegramClientNew;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\Own\TelegramInvoiceNew;
+use App\Notifications\Own\TelegramQuotationNew;
+use App\Notifications\Own\TelegramQuotationShort;
+use App\Notifications\Own\TelegramQuotationDelete;
+use App\Notifications\Own\TelegramQuotationUpdate;
 
 class QuotationLivewire extends Component
 {
@@ -101,6 +103,94 @@ class QuotationLivewire extends Component
         $this->quotation_status = 'Sent';
         $this->initializeServicesArray();
     } // END FUNCTION OF PAGE LOAD
+
+    public function printCustomPdf(int $quotationId){
+        // try {
+            $quotationEditasd = Quotation::where('id',$quotationId)->first();
+
+            $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
+            $imageData = base64_encode(File::get($imagePath));
+            $base64Image = 'data:image/jpeg;base64,' . $imageData;
+            
+            $data = [
+                "img" => $base64Image,
+
+                "quotationId" => $quotationEditasd->id,
+                "client" => $quotationEditasd->client->client_name ?? 'UnKnown',
+                "email" => $quotationEditasd->client->email ?? 'UnKnown',
+                "country" => $quotationEditasd->client->country ?? 'UnKnown',
+                "city" => $quotationEditasd->client->city ?? 'UnKnown',
+                "phoneOne" => $quotationEditasd->client->phone_one ?? 'UnKnown',
+                "phoneTwo" => $quotationEditasd->client->phone_two ?? 'UnKnown',
+                
+                "date" => $quotationEditasd->qoutation_date ?? 'UnKnown',
+                "total" => $quotationEditasd->grand_total_dollar ?? 'UnKnown',
+                "clientId" => $quotationEditasd->client->id ?? 'UnKnown',
+
+                "serviceData" => json_decode($quotationEditasd->services,true) ?? 'XXX',
+
+                "amountDollar" => $quotationEditasd->total_amount_dollar ?? '$XXXX',
+                "discount" => $quotationEditasd->discount_dollar ?? '$XXXX',
+                "grandDollar" => $quotationEditasd->grand_total_dollar ?? '$XXXX',
+
+                "notes" => $quotationEditasd->notes ?? '$XXXX',
+            ];
+
+            $pdfContent = PDF::loadView('dashboard.pdf.pdfQuotation', $data)->output();
+            return response()->streamDownload(
+                function () use ($pdfContent) {
+                    echo $pdfContent;
+                },
+                $quotationEditasd->id.'_'.$quotationEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
+            );
+        // } catch (\Exception $e) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Something Went Wrong.')]);
+        // }
+        
+    } 
+   
+
+    // Direct Print
+    public function printDirectPdf(int $quotationId){
+        
+        $quotationEditasd = Quotation::where('id',$quotationId)->first();
+
+        $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
+        $imageData = base64_encode(File::get($imagePath));
+        $base64Image = 'data:image/jpeg;base64,' . $imageData;
+        
+        $data = [
+            "img" => $base64Image,
+
+            "quotationId" => $quotationEditasd->id,
+            "client" => $quotationEditasd->client->client_name ?? 'UnKnown',
+            "email" => $quotationEditasd->client->email ?? 'UnKnown',
+            "country" => $quotationEditasd->client->country ?? 'UnKnown',
+            "city" => $quotationEditasd->client->city ?? 'UnKnown',
+            "phoneOne" => $quotationEditasd->client->phone_one ?? 'UnKnown',
+            "phoneTwo" => $quotationEditasd->client->phone_two ?? 'UnKnown',
+            
+            "date" => $quotationEditasd->qoutation_date ?? 'UnKnown',
+            "total" => $quotationEditasd->grand_total_dollar ?? 'UnKnown',
+            "clientId" => $quotationEditasd->client->id ?? 'UnKnown',
+
+            "serviceData" => json_decode($quotationEditasd->services,true) ?? 'XXX',
+
+            "amountDollar" => $quotationEditasd->total_amount_dollar ?? '$XXXX',
+            "discount" => $quotationEditasd->discount_dollar ?? '$XXXX',
+            "grandDollar" => $quotationEditasd->grand_total_dollar ?? '$XXXX',
+
+            "notes" => $quotationEditasd->notes ?? '$XXXX',
+        ];
+
+        $pdfContent = PDF::loadView('dashboard.pdf.pdfQuotation', $data)->output();
+
+
+        $this->dispatchBrowserEvent('printPdf', [
+            'pdfContent' => base64_encode($pdfContent),
+            'filename' => $quotationEditasd->id . '_' . $quotationEditasd->client->client_name . '_' . now()->format('Y-m-d') . '.pdf',
+        ]);
+    } 
 
     public function createEmptyService() {
         return [
@@ -367,6 +457,14 @@ class QuotationLivewire extends Component
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
                 }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+                }
+            }
+
+            if($this->telegram_channel_status == 1){
+                try{
+                    $this->printDirectPdf($quotation->id);
+                }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while Printing Invoice.')]);
                 }
             }
 
@@ -776,14 +874,16 @@ class QuotationLivewire extends Component
                         $itemState->description,
                         $itemState->exchange_rate,
                         json_decode($itemState->services, true),
-                        $itemState->tax_dollar,
+                        0,
                         $itemState->discount_dollar,
                         $itemState->first_pay_dollar,
                         $itemState->due_dollar,
-                        $itemState->tax_iraqi,
+                        0,
                         $itemState->discount_iraqi,
                         $itemState->first_pay_iraqi,
                         $itemState->due_iraqi,
+                        $itemState->total_amount_dollar,
+                        $itemState->total_amount_iraqi,
                         $itemState->grand_total_dollar,
                         $itemState->grand_total_iraqi,
                         

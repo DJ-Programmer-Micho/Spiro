@@ -103,12 +103,9 @@
                                 wire:click="editCash({{ $item->id }})" class="btn btn-primary m-1">
                                 <i class="fas fa-hand-holding-usd"></i>
                             </button>
-                            {{-- <button type="button" wire:click="approved({{ $item->id }})" class="btn {{ $item->invoice_status == 'Approved' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
-                                <i class="{{ $item->invoice_status == 'Approved' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up' }}"></i>
+                            <button type="button" wire:click="printCustomPdf('{{ $item->id }}')" class="btn btn-dark btn-icon m-1">
+                                <i class="fas fa-print"></i>
                             </button>
-                            <button type="button" wire:click="rejected({{ $item->id }})" class="btn {{ $item->invoice_status == 'Rejected' ? 'btn-light' : 'btn-dark' }} btn-icon m-1">
-                                <i class="{{ $item->invoice_status == 'Rejected' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down' }}"></i>
-                            </button> --}}
                             <button type="button" data-toggle="modal" data-target="#deleteCashModal" wire:click="deleteCash({{ $item->id }})" class="btn btn-danger m-1" {{ $item->invoice_status == 'Approved' ? 'disabled' : '' }}>
                                 <i class="far fa-trash-alt"></i>
                             </button>
@@ -164,5 +161,51 @@ $(function() {
 
 });
 </script>
+<script>
+    window.addEventListener('printPdf', function (data) {
+        console.log('printing');
+        console.log(data);
+        console.log(data.detail.pdfContent);
+        const pdfDataDirectPrint = data.detail.pdfContent;
+    
+        // Create a blob from the base64 PDF content
+        const blob = b64toBlob(pdfDataDirectPrint, 'application/pdf');
+    
+        // Create a data URL for the blob
+        const pdfUrl = URL.createObjectURL(blob);
+    
+        // Open the PDF in a new window or tab
+        let pdfWindow = window.open(pdfUrl, '_blank');
+    
+        // Wait for the window to fully load, then trigger the print
+        pdfWindow.onload = function () {
+            setTimeout(function () {
+                pdfWindow.print();
+            }, 1000); // Adjust the delay as needed
+        };
+    });
+    
+    // Function to convert base64 to Blob
+    function b64toBlob(base64, contentType = '', sliceSize = 512) {
+        const byteCharacters = atob(base64);
+        const byteArrays = [];
+    
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+            const byteNumbers = new Array(slice.length);
+    
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+    
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+    
+        const blob = new Blob(byteArrays, { type: contentType });
+        return blob;
+    }
+    
+    </script>
 @endpush
 </div>

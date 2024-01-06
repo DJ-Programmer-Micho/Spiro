@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Invoice Print</title>
     <style>
         @page { margin:0px; }
         .invoice-box { max-width: 800px; margin: auto; padding: 20px; font-size: 0.8rem; font-family: 'Roboto', sans-serif;}
@@ -63,8 +63,8 @@
                     {{-- <img src="{{asset('assets/dashboard/img/mainlogopdfc.jpg')}}" alt="logo" width="80px"> --}}
                   </div>
                   <div class="headerinvoicediv">
-                    <h2 class="companyheading"> OTO-9171</h2>
-                    <h3 class="header-subheading">16 May, 2019</h3>
+                    {{-- <h2 class="companyheading"> OTO-9171</h2> --}}
+                    <h3 class="header-subheading">{{__('Invoice')}}</h3>
                   </div>
                 </div>
               </td>
@@ -81,7 +81,7 @@
               </td>
               <td style="padding-top: 15px; vertical-align: top;">
                 <div class="ng-star-inserted">
-                  <div class="date ng-star-inserted" style="text-align: right;"><b>Date: #CR-{{$date}}</b></div>
+                  <div class="date ng-star-inserted" style="text-align: right;"><b>Invoice Date: {{$date}}</b></div>
                   <div class="date" style="text-align: right;">Invoice ID: #INV-{{$invoiceId}}</div>
                   <div class="date" style="text-align: right;">Client ID: #CL-{{$clientId}}</div>
                 </div>
@@ -176,10 +176,11 @@
     
               <tr>
                 <h3 class="disclaimer-text">{{__('NOTES:')}}</h3>
-                <ul>
+                <textarea name="note" id="note" rows="18" style="width: 100%">{{$notes}}</textarea>
+                                {{-- <ul>
                     <li>Payment in Advance</li>
                     <li>No Refunds</li>
-                </ul>
+                </ul> --}}
     
                 {{-- <img src="http://barcode.pinonclick.com/barcode?code=413075" /> --}}
               </tr>

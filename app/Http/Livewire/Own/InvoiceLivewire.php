@@ -103,7 +103,7 @@ class InvoiceLivewire extends Component
     public $phoneOne;
     public $phoneTwo;
 
-    protected $listeners = ['dateRangeSelected' => 'applyDateRangeFilter'];
+    protected $listeners = [ 'dateRangeSelected' => 'applyDateRangeFilter' ];
 
     public function mount() {
         $this->formDate = now()->format('Y-m-d');
@@ -114,13 +114,62 @@ class InvoiceLivewire extends Component
         $this->service_data = Service::get();
         $this->initializeServicesArray();
     } // END FUNCTION OF PAGE LOAD
-    public function printCustomPdf(int $invoiceId){
-              $invoiceEditasd = Invoice::where('id',$invoiceId)->first();
 
-              $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
-                $imageData = base64_encode(File::get($imagePath));
-                $base64Image = 'data:image/jpeg;base64,' . $imageData;
-                // public/assets/dashboard/img/mainlogopdf.png
+    // Show before Print
+    public function printCustomPdf(int $invoiceId){
+        try {
+            $invoiceEditasd = Invoice::where('id',$invoiceId)->first();
+
+            $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
+            $imageData = base64_encode(File::get($imagePath));
+            $base64Image = 'data:image/jpeg;base64,' . $imageData;
+            
+            $data = [
+                "img" => $base64Image,
+
+                "invoiceId" => $invoiceEditasd->id,
+                "client" => $invoiceEditasd->client->client_name ?? 'UnKnown',
+                "email" => $invoiceEditasd->client->email ?? 'UnKnown',
+                "country" => $invoiceEditasd->client->country ?? 'UnKnown',
+                "city" => $invoiceEditasd->client->city ?? 'UnKnown',
+                "phoneOne" => $invoiceEditasd->client->phone_one ?? 'UnKnown',
+                "phoneTwo" => $invoiceEditasd->client->phone_two ?? 'UnKnown',
+                
+                "date" =>$invoiceEditasd->invoice_date ?? 'UnKnown',
+                "total" => $invoiceEditasd->grand_total_dollar ?? 'UnKnown',
+                "clientId" => $invoiceEditasd->client->id ?? 'UnKnown',
+
+                "serviceData" => json_decode($invoiceEditasd->services,true) ?? 'XXX',
+
+                "amountDollar" => $invoiceEditasd->total_amount_dollar ?? '$XXXX',
+                "discount" => $invoiceEditasd->discount_dollar ?? '$XXXX',
+                "grandDollar" => $invoiceEditasd->grand_total_dollar ?? '$XXXX',
+
+                "notes" => $invoiceEditasd->notes ?? '$XXXX',
+            ];
+
+            $pdfContent = PDF::loadView('dashboard.pdf.pdfInvoice', $data)->output();
+            return response()->streamDownload(
+                function () use ($pdfContent) {
+                    echo $pdfContent;
+                },
+                $invoiceEditasd->id.'_'.$invoiceEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
+            );
+        } catch (\Exception $e) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Something Went Wrong.')]);
+        }
+        
+    } 
+   
+
+    // Direct Print
+    public function printDirectPdf(int $invoiceId){
+        $invoiceEditasd = Invoice::where('id',$invoiceId)->first();
+
+        $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
+            $imageData = base64_encode(File::get($imagePath));
+            $base64Image = 'data:image/jpeg;base64,' . $imageData;
+            // public/assets/dashboard/img/mainlogopdf.png
         $data = [
             "img" => $base64Image,
 
@@ -129,8 +178,8 @@ class InvoiceLivewire extends Component
             "email" => $invoiceEditasd->client->email ?? 'UnKnown',
             "country" => $invoiceEditasd->client->country ?? 'UnKnown',
             "city" => $invoiceEditasd->client->city ?? 'UnKnown',
-            "phoneOne" => $invoiceEditasd->client->phoneOne ?? 'UnKnown',
-            "phoneTwo" => $invoiceEditasd->client->phoneTwo ?? 'UnKnown',
+            "phoneOne" => $invoiceEditasd->client->phone_one ?? 'UnKnown',
+            "phoneTwo" => $invoiceEditasd->client->phone_two ?? 'UnKnown',
             
             "date" =>$invoiceEditasd->invoice_date ?? 'UnKnown',
             "total" => $invoiceEditasd->grand_total_dollar ?? 'UnKnown',
@@ -141,19 +190,18 @@ class InvoiceLivewire extends Component
             "amountDollar" => $invoiceEditasd->total_amount_dollar ?? '$XXXX',
             "discount" => $invoiceEditasd->discount_dollar ?? '$XXXX',
             "grandDollar" => $invoiceEditasd->grand_total_dollar ?? '$XXXX',
+
+            "notes" => $invoiceEditasd->notes ?? '$XXXX',
         ];
 
-        $pdfContent = PDF::loadView('pdfInvoice', $data)->output();
-        return response()->streamDownload(
-            function () use ($pdfContent) {
-                echo $pdfContent;
-            },
-            $invoiceEditasd->id.'_'.$invoiceEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
-        );
+        $pdfContent = PDF::loadView('dashboard.pdf.pdfInvoice', $data)->output();
 
-        dd('done');
+
+        $this->dispatchBrowserEvent('printPdf', [
+            'pdfContent' => base64_encode($pdfContent),
+            'filename' => $invoiceEditasd->id . '_' . $invoiceEditasd->client->client_name . '_' . now()->format('Y-m-d') . '.pdf',
+        ]);
     } 
-   
     
     public function createEmptyService() {
         return [
@@ -365,7 +413,7 @@ class InvoiceLivewire extends Component
     
     public function addInvoice(){
 
-        // try {
+        try {
             $validatedData = $this->validate();
             $invoice = Invoice::create([
                 'quotation_id' => null,
@@ -377,7 +425,7 @@ class InvoiceLivewire extends Component
                 'services' => json_encode($validatedData['arr_service_by_date']),
                 'total_amount_dollar' => $validatedData['totalDollar'],
                 'tax_dollar' => 0,
-                'discoun_dollart' => $validatedData['discountDollar'],
+                'discount_dollar' => $validatedData['discountDollar'],
                 'first_pay_dollar' => $validatedData['fisrtPayDollar'],
                 'due_dollar' => $validatedData['dueDollar'],
                 'grand_total_dollar' => $validatedData['grandTotalDollar'],
@@ -403,26 +451,9 @@ class InvoiceLivewire extends Component
                 'paymentAmountDollar' => $validatedData['fisrtPayDollar'],
                 'paymentAmountIraqi' => $validatedData['fisrtPayIraqi'],
             ]], false);
-            if(isset($validatedData['fisrtPayDollar']) && $validatedData['fisrtPayDollar'] > 0){
-                $cash = Cash::create([
-                    'invoice_id' => $invoice->id,
-                    'cash_date' => now()->format('Y-m-d'),
-                    // 'payments' => json_encode($validatedData['arr_payments']),
-                    'payments' => $fisrt_payment_arr,
-    
-                    'grand_total_dollar' => $validatedData['grandTotalDollar'],
-                    'due_dollar' => $validatedData['dueDollar'],
-    
-                    'grand_total_iraqi' => $validatedData['grandTotalIraqi'],
-                    'due_iraqi' => $validatedData['dueIraqi'],
-    
-                    'cash_status' => $cash_status,
-                ]);
-            }
-
-
+            
             if($this->telegram_channel_status == 1){
-                // try{
+                try{
                     Notification::route('toTelegram', null)
                     ->notify(new TelegramInvoiceNew(
                         $invoice->id,
@@ -449,38 +480,65 @@ class InvoiceLivewire extends Component
                         $this->tele_id
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                // }  catch (\Exception $e) {
+                }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending INV Notification.')]);
-                // }
+                }
+            }
+
+            if(isset($validatedData['fisrtPayDollar']) && $validatedData['fisrtPayDollar'] > 0){
+                $cash = Cash::create([
+                    'invoice_id' => $invoice->id,
+                    'cash_date' => now()->format('Y-m-d'),
+                    // 'payments' => json_encode($validatedData['arr_payments']),
+                    'payments' => $fisrt_payment_arr,
+    
+                    'grand_total_dollar' => $validatedData['grandTotalDollar'],
+                    'due_dollar' => $validatedData['dueDollar'],
+    
+                    'grand_total_iraqi' => $validatedData['grandTotalIraqi'],
+                    'due_iraqi' => $validatedData['dueIraqi'],
+    
+                    'cash_status' => $cash_status,
+                ]);
+
+                if($this->telegram_channel_status == 1){
+                    try{
+                        Notification::route('toTelegram', null)
+                        ->notify(new TelegramCashNew(
+                            $cash->id,
+                            now()->format('Y-m-d'),
+                            $invoice->id,
+                            json_decode($fisrt_payment_arr, true),
+                            $validatedData['dueDollar'],
+                            $validatedData['dueIraqi'],
+                            $validatedData['grandTotalDollar'],
+                            $validatedData['grandTotalIraqi'],
+    
+                            $this->tele_id
+                        ));
+                        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+                    }  catch (\Exception $e) {
+                        $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Invoice Notification.')]);
+                    }
+                }
             }
 
             if($this->telegram_channel_status == 1){
-                // try{
-                    Notification::route('toTelegram', null)
-                    ->notify(new TelegramCashNew(
-                        $cash->id,
-                        now()->format('Y-m-d'),
-                        $invoice->id,
-                        json_decode($fisrt_payment_arr, true),
-                        $validatedData['dueDollar'],
-                        $validatedData['dueIraqi'],
-                        $validatedData['grandTotalDollar'],
-                        $validatedData['grandTotalIraqi'],
-
-                        $this->tele_id
-                    ));
-                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                // }  catch (\Exception $e) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending CR Notification.')]);
-                // }
+                try{
+                    $this->printDirectPdf($invoice->id);
+                }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while Printing Invoice.')]);
+                }
             }
 
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Invoice Added Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        // } catch (\Exception $e){
+        } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        // }
+        }
+
+        
     }
 
     public function editInvoice(int $invoiceId){
