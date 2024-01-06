@@ -50,7 +50,7 @@
                 <thead>
                     <tr>
                         @foreach ($cols_th as $col)
-                        <th>{{ __($col) }}</th>
+                        <th style="font-size: 14px">{{ __($col) }}</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -58,7 +58,7 @@
                     @forelse ($items as $item)
                     <tr>
                         @foreach ($cols_td as $col)
-                        <td class="align-middle">
+                        <td class="align-middle" style="font-size: 14px">
                             @if ($col === 'id')
                                 <b>#INV-{{ $item->id }}</b>
                             @elseif ($col === 'quotation_id')

@@ -50,7 +50,7 @@
                 <thead>
                     <tr>
                         @foreach ($cols_th as $col)
-                        <th>{{ __($col) }}</th>
+                        <th style="font-size: 14px">{{ __($col) }}</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -60,31 +60,37 @@
                         @foreach ($cols_td as $col)
                         <td class="align-middle">
                             @if ($col === 'id')
-                                <b>#QUI-{{ $item->id }}</b>
+                                <b style="font-size: 14px">#QUI-{{ $item->id }}</b>
                             @elseif ($col === 'status')        
-                            <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
+                            <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}" style="font-size: 14px">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                             </span>
                             @elseif ($col === 'grand_total_dollar')        
+                            <div style="font-size: 14px">
                                 $ {{number_format($item->grand_total_dollar)}}
+                            </div>
                             @elseif ($col === 'grand_total_iraqi')        
+                            <div  style="font-size: 14px">
                                 {{number_format($item->grand_total_iraqi)}} IQD
+                            </div>
                             @elseif ($col === 'quotation_status')
                                 @if($item->quotation_status == 'Sent') 
-                                    <span class="text-info">
+                                    <span class="text-info" style="font-size: 14px">
                                         <b>{{__('Sent')}}</b>
                                     </span>
                                 @elseif ($item->quotation_status == 'Approved') 
-                                    <span class="text-success">
+                                    <span class="text-success" style="font-size: 14px">
                                         <b>{{__('Approved')}}</b>
                                     </span>
                                 @else 
-                                    <span class="text-danger">
+                                    <span class="text-danger" style="font-size: 14px">
                                         <b>{{__('Rejected')}}</b>
                                     </span>
                                 @endif
                             @else
-                            {{ data_get($item, $col) }}
+                            <div style="font-size: 14px">
+                                {{ data_get($item, $col) }}
+                            </div>
                             @endif
                         </td>
                         @endforeach

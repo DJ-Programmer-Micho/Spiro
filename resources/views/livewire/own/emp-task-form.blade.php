@@ -101,7 +101,7 @@
                                 <table class="table table-dark table-striped table-bordered border-dark align-middle">
 
                                     <thead>
-                                      <tr>
+                                      <tr style="font-size: 14px">
                                         <th scope="col">#</th>
                                         <th scope="col">Employee</th> 
                                         <th scope="col">Task</th> 
@@ -113,7 +113,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($arr_tasks as $index => $task)
-                                        <tr>
+                                        <tr style="font-size: 14px">
                                             <td class="align-middle" scope="row">{{$index + 1}}</td>
                                             <td class="align-middle">
                                                 <select

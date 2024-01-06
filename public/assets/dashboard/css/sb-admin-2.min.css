@@ -10457,3 +10457,6 @@ opacity: 1;
 .met-table-panding .table td, .table th {
     padding: 0.25rem;
 }
+button i {
+    font-size: 15px;
+}

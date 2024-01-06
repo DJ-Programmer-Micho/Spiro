@@ -41,13 +41,13 @@
                 <thead>
                     <tr>
                         @foreach ($cols_th as $col)
-                        <th>{{ __($col) }}</th>
+                        <th style="font-size: 14px">{{ __($col) }}</th>
                         @endforeach
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($items as $item)
-                    <tr>
+                    <tr style="font-size: 14px">
                         @foreach ($cols_td as $col)
                         <td class="align-middle">
                             @if ($col === 'id')
