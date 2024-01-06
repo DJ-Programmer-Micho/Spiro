@@ -6,10 +6,8 @@ use App\Models\EmpTask;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Notification;
-// use App\Notifications\Dashboard\TelegramBranchNew;
-// use App\Notifications\Dashboard\TelegramBranchUpdate;
+use App\Notifications\Emp\TelegramMyTaskShort;
 // use App\Notifications\Dashboard\TelegramBranchDelete;
-
 
 class MyTaskLivewire extends Component
 {
@@ -17,8 +15,13 @@ class MyTaskLivewire extends Component
     // protected $paginationTheme = 'bootstrap';
 
     public $groupedTasks;
-
+    //TELEGRAM
+    public $tele_id;
+    public $telegram_channel_status;
+    
     public function mount() {
+        $this->telegram_channel_status = 1;
+        $this->tele_id = env('TELEGRAM_GROUP_ID');
        $this->initializeFilteredTasks();
     } // END FUNCTION OF PAGE LOAD
     
@@ -63,12 +66,35 @@ class MyTaskLivewire extends Component
             $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
         }
     }
+
+
     public function updateTask($id_index, $sub_index)
     {
-        try {
+        // try {
             $empTask = EmpTask::find($id_index);
             $tasks = json_decode($empTask->tasks, true);
+
+            $emp_name = $tasks[$sub_index]['name'];
+            $old_progress = $tasks[$sub_index]['progress'];
+
             $tasks[$sub_index]['progress'] = $this->progress_[$id_index . '_' . $sub_index];
+            if($this->telegram_channel_status == 1){
+                // try{
+                    Notification::route('toTelegram', null)
+                    ->notify(new TelegramMyTaskShort(
+                        $empTask->id,
+                        $empTask->invoice->description,
+                        $emp_name,
+                        $old_progress,
+                        $tasks[$sub_index]['progress'],
+                        $this->tele_id,
+                    ));
+                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+                // }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
+                // }
+            }
+
             $empTask->tasks = json_encode($tasks);
             $empTask->save();
             ///////////////////////////
@@ -92,9 +118,9 @@ class MyTaskLivewire extends Component
             $empTask->save();
             $this->initializeFilteredTasks();
             $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => __('Task Progress Updated.')]);
-        }  catch (\Exception $e) {
+        // }  catch (\Exception $e) {
             $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Task Progress Did Not Update.')]);
-        }
+    // }
 
     }
     

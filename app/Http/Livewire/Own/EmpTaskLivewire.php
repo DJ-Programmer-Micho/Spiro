@@ -2,16 +2,17 @@
 
 namespace App\Http\Livewire\Own;
 
-use App\Models\EmpTask;
-use App\Models\Invoice;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\EmpTask;
+use App\Models\Invoice;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\Own\TelegramEmpTaskNew;
-use App\Notifications\Own\TelegramEmpTaskUpdate;
+use App\Notifications\Own\TelegramEmpTaskShort;
 use App\Notifications\Own\TelegramEmpTaskDelete;
+use App\Notifications\Own\TelegramEmpTaskUpdate;
 
 class EmpTaskLivewire extends Component
 {
@@ -31,6 +32,7 @@ class EmpTaskLivewire extends Component
     public $description;
     //FILTERS
     public $search;
+    public $taskStatus = '';
     public $dateRange = null;
     public $rangeViewValue = null;
     //TELEGRAM
@@ -154,6 +156,7 @@ class EmpTaskLivewire extends Component
                 'tasks' => json_encode($validatedData['arr_tasks']),
                 'progress' => $this->gProgress ?? 0,
                 'task_status' => $this->tempStatus,
+                'approved' => 0,
                 'status' => 1,
             ]);
 
@@ -211,7 +214,7 @@ class EmpTaskLivewire extends Component
     } // END FUNCTION OF EDIT INVOICE
 
     public function updateTask(){
-        // try {
+        try {
             $validatedData = $this->validate();
             $this->calculateProgress();
 
@@ -250,9 +253,9 @@ class EmpTaskLivewire extends Component
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Tasks Updated Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        // } catch (\Exception $e){
+        } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        // }
+        }
     } // END FUNCTION OF UPDATE INVOICE
 
     public function deleteTask(int $selected_task_id){
@@ -302,31 +305,31 @@ class EmpTaskLivewire extends Component
     public function approved(int $item){
         $EmpApprovment = EmpTask::find($item);
         // Toggle the status (0 to 1 and 1 to 0)
+        $this->old_task_data = [
+            'status' => $EmpApprovment->approved
+        ];
+
         $EmpApprovment->approved = $EmpApprovment->approved == 0 ? 1 : 0;
 
-        // if($this->telegram_channel_status == 1){
-        //     try{
-        //         $this->editFood($food_id);
-        //         Notification::route('toTelegram', null)
-        //         ->notify(new TelegramFoodShort(
-        //             $this->old_food_data,
-        //             $foodState->id,
-        //             $foodState->cat_id,
-        //             $this->names,
-        //             $foodState->status,
-        //             $this->priority,
-        //             $this->special,
-        //             $this->telegram_channel_link,
-        //             $this->view_business_name,
-        //         ));
-        //         $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-        //     }  catch (\Exception $e) {
-        //         $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
-        //     }
-        // }
+        if($this->telegram_channel_status == 1){
+            try{
+                Notification::route('toTelegram', null)
+                ->notify(new TelegramEmpTaskShort(
+                    $EmpApprovment->id,
+                    $EmpApprovment->invoice->description,
+                    $EmpApprovment->approved,
+
+                    $this->old_task_data,
+                    $this->tele_id,
+                ));
+                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
+            }  catch (\Exception $e) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
+            }
+        }
 
         $EmpApprovment->save();
-        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Task Has Been Approved')]);
+        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Task Has Been Updated')]);
     }// END FUNCTION OF UPDATING PRIOEITY
 
 
@@ -383,21 +386,26 @@ class EmpTaskLivewire extends Component
                 
         $data = EmpTask::with(['invoice'])
         ->when($this->search, function ($query) {
-            $query->whereHas('invoice.client', function ($subQuery) {
-                $subQuery->where('client_name', 'like', '%' . $this->search . '%');
-            })
-            ->orWhereHas('invoice', function ($subQuery) {
-                $subQuery->where('description', 'like', '%' . $this->search . '%');
-            })
-            ->orWhere('invoice_id', 'like', '%' . $this->search . '%');
+            $query->where('id', 'like', '%' . $this->search . '%')
+                ->orWhereHas('invoice', function ($subQuery) {
+                    $subQuery->where('description', 'like', '%' . $this->search . '%');
+                })
+                ->orWhere('invoice_id', 'like', '%' . $this->search . '%');
         })
         ->when($this->startDate && $this->endDate, function ($query) {
             $query->join('invoices', 'invoices.id', '=', 'emp_tasks.invoice_id')
                 ->whereBetween('invoices.invoice_date', [$this->startDate, $this->endDate])
                 ->select('emp_tasks.*');
         })
+        ->when($this->taskStatus !== '' && $this->taskStatus !== 'null', function ($query) {
+            $query->where(function ($query) {
+                $query->where('task_status', $this->taskStatus)
+                    ->orWhereNull('task_status');
+            });
+        })
         ->orderBy('emp_tasks.progress', 'ASC')
         ->paginate(15);
+    
         
         return view('livewire.own.emp-task-table',[
             'items' => $data,

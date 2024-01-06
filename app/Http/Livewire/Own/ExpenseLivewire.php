@@ -434,6 +434,8 @@ class ExpenseLivewire extends Component
         $this->search = null;
         $this->dateRange = null;
         $this->rangeViewValue = null;
+        $this->startDate = null;
+        $this->endDate = null;
     }
 
 

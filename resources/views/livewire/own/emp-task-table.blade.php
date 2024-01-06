@@ -17,9 +17,10 @@
                 </h2>
 
                 <h2 class="text-lg font-medium mr-1">
-                    <select wire:model="CashDueFilter" name="CashDueFilter" id="CashDueFilter" class="form-control" style="width: 170px;" wire:change="applyFilter">
-                        <option value="" default>{{__('All')}}</option>
-                        <option value="Not Complete">{{__('Not Complete')}}</option>
+                    <select wire:model="taskStatus" name="taskStatus" id="taskStatus" class="form-control" style="width: 170px;" wire:change="applyFilter">
+                        <option value="null" default>{{__('All')}}</option>
+                        <option value="In Pending">{{__('In Pending')}}</option>
+                        <option value="In Process">{{__('In Process')}}</option>
                         <option value="Complete">{{__('Complete')}}</option>
                     </select>
                 </h2>
