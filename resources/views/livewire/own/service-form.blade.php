@@ -6,7 +6,7 @@
                 <form wire:submit.prevent="addService">
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="createClientModal" style="color: #31fbe2">{{__('Add Client')}}</h5>
+                            <h5 class="modal-title" id="createClientModal" style="color: #31fbe2">{{__('Add Service')}}</h5>
                             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span></button>
                         </div>
@@ -70,7 +70,7 @@
                 <form wire:submit.prevent="updateService">
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="createServiceModal" style="color: #31fbe2">{{__('Add Service')}}</h5>
+                            <h5 class="modal-title" id="createServiceModal" style="color: #31fbe2">{{__('Edit Service')}}</h5>
                             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span></button>
                         </div>

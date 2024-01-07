@@ -164,13 +164,13 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Code</th>
-                                            <th scope="col">Service</th>
-                                            <th scope="col">Description</th>
-                                            <th scope="col">Unit Price</th>
-                                            <th scope="col">QTY</th>
-                                            <th scope="col">Total</th>
-                                            <th scope="col">Action</th>
+                                            <th scope="col">{{__('Code')}}</th>
+                                            <th scope="col">{{__('Service')}}</th>
+                                            <th scope="col">{{__('Description')}}</th>
+                                            <th scope="col">{{__('Unit Price')}}</th>
+                                            <th scope="col">{{__('QTY')}}</th>
+                                            <th scope="col">{{__('Total')}}</th>
+                                            <th scope="col">{{__('Action')}}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -258,7 +258,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                <label aria-label="note">{{__('Note No.')}}</label>
+                                <label aria-label="note">{{__('Note')}}</label>
                                 <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
                                 <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>
@@ -512,13 +512,13 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Code</th>
-                                            <th scope="col">Service</th>
-                                            <th scope="col">Description</th>
-                                            <th scope="col">Unit Price</th>
-                                            <th scope="col">QTY</th>
-                                            <th scope="col">Total</th>
-                                            <th scope="col">Action</th>
+                                            <th scope="col">{{__('Code')}}</th>
+                                            <th scope="col">{{__('Service')}}</th>
+                                            <th scope="col">{{__('Description')}}</th>
+                                            <th scope="col">{{__('Unit Price')}}</th>
+                                            <th scope="col">{{__('QTY')}}</th>
+                                            <th scope="col">{{__('Total')}}</th>
+                                            <th scope="col">{{__('Action')}}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -607,7 +607,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                <label aria-label="note">{{__('Note No.')}}</label>
+                                <label aria-label="note">{{__('Note')}}</label>
                                 <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
                                 <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>
@@ -708,7 +708,7 @@
                 </div>
                 <form wire:submit.prevent="destroyQuotation">
                     <div class="modal-body">
-                        <p class="text-danger">{{ __('Are you sure you want to delete this Company?') }}</p>
+                        <p class="text-danger">{{ __('Are you sure you want to delete this Quotation?') }}</p>
                         <p>{{ __('Please enter the')}}<strong> "{{$del_quotation_name}}" </strong>{{__('to confirm:') }}</p>
                         <input type="text" wire:model="quotation_name_to_selete" class="form-control">
                     </div>

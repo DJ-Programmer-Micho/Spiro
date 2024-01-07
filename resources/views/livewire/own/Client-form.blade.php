@@ -148,8 +148,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" wire:click="closeModal"
-                            data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success submitJs">Save</button>
+                            data-dismiss="modal">{{__('Close')}}</button>
+                        <button type="submit" class="btn btn-success submitJs">{{__('Save')}}</button>
                     </div>
                 </form>
             </div>
@@ -161,19 +161,19 @@
         <div class="modal-dialog text-white">
             <div class="modal-content bg-dark">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteFoodModalLabel">Delete Company</h5>
+                    <h5 class="modal-title" id="deleteFoodModalLabel">{{__('Delete Client')}}</h5>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" wire:click="closeModal"
                         aria-label="Close"><i class="fas fa-times"></i></button>
                 </div>
                 <form wire:submit.prevent="destroyClient">
                     <div class="modal-body">
-                        <p>{{ __('Are you sure you want to delete this Company?') }}</p>
+                        <p>{{ __('Are you sure you want to delete this Client?') }}</p>
                         <p>{{ __('Please enter the')}}<strong> "{{$del_client_name}}" </strong>{{__('to confirm:') }}</p>
                         <input type="text" wire:model="client_name_to_selete" class="form-control">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" wire:click="closeModal"
-                            data-dismiss="modal">Cancel</button>
+                            data-dismiss="modal">{{__('Cancel')}}</button>
                             <button type="submit" class="btn btn-danger" wire:disabled="!confirmDelete || $foodNameToDelete !== $showTextTemp">
                                 {{ __('Yes! Delete') }}
                             </button>

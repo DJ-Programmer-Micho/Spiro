@@ -500,8 +500,14 @@
                                     {{auth()->user()->name}} <br>
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     {{auth()->user()->profile->job_title}} 
+                                    {{__('test')}}
                                 </a>
                                 <div class="dropdown-divider"></div>
+                                <div>
+                                    <a href="#" onclick="changeLanguage('en')" class="dropdown-item"><img src="{{asset('assets/dashboard/img/lang/uk.webp')}}" width="25px" class="mx-1">{{__('en')}}</a>
+                                    <a href="#" onclick="changeLanguage('ar')" class="dropdown-item"><img src="{{asset('assets/dashboard/img/lang/iraq.png')}}" width="25px" class="mx-1">{{__('ar')}}</a>
+                                </div>
+
                                 {{-- @foreach ($filteredLocales as $locale)
                                     <a class="dropdown-item" href="#" onclick="changeLanguage('{{ $locale }}')">
                                         <i class="fas fa-language fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -602,7 +608,7 @@
     @yield('dash_script')
     @stack('datePicker')
     @yield('datePicker')
-    <form id="languageForm" action="#" method="post">
+    <form id="languageForm" action="{{ route('setLocale') }}" method="post">
         @csrf
         <input type="hidden" name="locale" id="selectedLocale" value="{{ app()->getLocale() }}">
     </form>

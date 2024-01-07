@@ -103,12 +103,12 @@
                                     <thead>
                                       <tr style="font-size: 14px">
                                         <th scope="col">#</th>
-                                        <th scope="col">Employee</th> 
-                                        <th scope="col">Task</th> 
-                                        <th scope="col">Start Date</th>
-                                        <th scope="col">End Date</th>
-                                        <th scope="col">Progress</th>
-                                        <th scope="col">Action</th>
+                                        <th scope="col">{{__('Employee')}}</th>
+                                        <th scope="col">{{__('Task')}}</th>
+                                        <th scope="col">{{__('Start Date')}}</th>
+                                        <th scope="col">{{__('End Date')}}</th>
+                                        <th scope="col">{{__('Progress')}}</th>
+                                        <th scope="col">{{__('Action')}}</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -235,12 +235,12 @@
                                     <thead>
                                       <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">Employee</th> 
-                                        <th scope="col">Task</th> 
-                                        <th scope="col">Start Date</th>
-                                        <th scope="col">End Date</th>
-                                        <th scope="col">Progress</th>
-                                        <th scope="col">Action</th>
+                                        <th scope="col">{{__('Employee')}}</th>
+                                        <th scope="col">{{__('Task')}}</th>
+                                        <th scope="col">{{__('Start Date')}}</th>
+                                        <th scope="col">{{__('End Date')}}</th>
+                                        <th scope="col">{{__('Progress')}}</th>
+                                        <th scope="col">{{__('Action')}}</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -324,7 +324,7 @@
                 </div>
                 <form wire:submit.prevent="destroyTask">
                     <div class="modal-body">
-                        <p class="text-danger">{{ __('Are you sure you want to delete this Company?') }}</p>
+                        <p class="text-danger">{{ __('Are you sure you want to delete this Task?') }}</p>
                         <p>{{ __('Please enter the')}}<strong> "{{$del_task_name}}" </strong>{{__('to confirm:') }}</p>
                         <input type="text" wire:model="task_name_to_selete" class="form-control">
                     </div>

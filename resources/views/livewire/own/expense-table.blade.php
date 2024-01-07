@@ -13,7 +13,7 @@
                 </div>
 
                 <h2 class="text-lg font-medium mr-1">
-                    <input type="search" wire:model="search" class="form-control" placeholder="Search..." style="width: 250px; border: 1px solid var(--primary)" />
+                    <input type="search" wire:model="search" class="form-control" placeholder="{{__('Search...')}}" style="width: 250px; border: 1px solid var(--primary)" />
                 </h2>
 
                 <h6 class=" font-medium mr-auto">

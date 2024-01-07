@@ -49,7 +49,7 @@
                 <form wire:submit.prevent="updatePayment">
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="createPaymentModal" style="color: #31fbe2">{{__('Add Payment')}}</h5>
+                            <h5 class="modal-title" id="createPaymentModal" style="color: #31fbe2">{{__('Edit Payment')}}</h5>
                             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span></button>
                         </div>

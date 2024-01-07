@@ -7,7 +7,7 @@
         <div class="row d-flex justify-content-between m-0">
             <div>
                 <h2 class="text-lg font-medium mr-auto">
-                    <input type="search" wire:model="search" class="form-control" placeholder="Search..."
+                    <input type="search" wire:model="search" class="form-control" placeholder="{{__('Search...')}}"
                         style="width: 250px; border: 1px solid var(--primary)" />
                 </h2>
             </div>

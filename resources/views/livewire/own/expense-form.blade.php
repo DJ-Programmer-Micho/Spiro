@@ -304,7 +304,7 @@
                 </div>
                 <form wire:submit.prevent="destroyExpense">
                     <div class="modal-body">
-                        <p class="text-danger">{{ __('Are you sure you want to delete this Company?') }}</p>
+                        <p class="text-danger">{{ __('Are you sure you want to delete this Expense?') }}</p>
                         <p>{{ __('Please enter the')}}<strong> "{{$del_expense_name}}" </strong>{{__('to confirm:') }}</p>
                         <input type="text" wire:model="expense_name_to_selete" class="form-control">
                     </div>

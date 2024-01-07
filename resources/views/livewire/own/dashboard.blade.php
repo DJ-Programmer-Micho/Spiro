@@ -187,7 +187,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                 {{__('Total People')}}</div>
-                            <div class="h5 mb-0 font-weight-bold text-white">Total Emp: {{$totalUser}} <br> Total Clients: {{$totalClient}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-white">{{__('Total Emp:')}} {{$totalUser}} <br> {{__('Total Clients:')}} {{$totalClient}}</div>
                         </div>
                         <div class="col-auto">
                             <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
@@ -446,23 +446,23 @@
                 var myModal = new bootstrap.Modal(document.getElementById('quickViewModal'));
                 myModal.show();
 
-                let alertMessage = `Name: ${information.clientName}<br>`;
-                alertMessage += `Invoice Created Date: ${information.invoiceCreated}<br>`;
-                alertMessage += `Total Cost ($) : $ ${information.totalCostDollar}<br>`;
-                alertMessage += `Total Cost (IQD) : ${information.totalCostIraqi} IQD<br><br>`;
+                let alertMessage = `{{__('Name:')}} ${information.clientName}<br>`;
+                alertMessage += `{{__('Invoice Created Date:')}} ${information.invoiceCreated}<br>`;
+                alertMessage += `{{__('Total Cost ($) :')}} $ ${information.totalCostDollar}<br>`;
+                alertMessage += `{{__('Total Cost (IQD)')}} : ${information.totalCostIraqi} IQD<br><br>`;
 
                 // Display information for each service
                 information.services.forEach(data => {
-                    alertMessage += `Event Date: ${data.actionDate}<br>`;
-                    alertMessage += `Description: ${data.description}<br>`;
+                    alertMessage += `{{__('Event Date:')}} ${data.actionDate}<br>`;
+                    alertMessage += `{{__('Description:')}} ${data.description}<br>`;
                     data.services.forEach(service => {
-                    alertMessage += `Service Code: ${service.serviceCode}<br>`;
-                    alertMessage += `Service Description: ${service.serviceDescription}<br>`;
-                    alertMessage += `Service Default Cost (USD): ${service.serviceDefaultCostDollar}<br>`;
-                    alertMessage += `Service Default Cost (IQD): ${service.serviceDefaultCostIraqi}<br>`;
-                    alertMessage += `Service Quantity: ${service.serviceQty}<br>`;
-                    alertMessage += `Service Total Cost (USD): ${service.serviceTotalDollar}<br>`;
-                    alertMessage += `Service Total Cost (IQD): ${service.serviceTotalIraqi}<br>`;
+                    alertMessage += `{{__('Service Code:')}} ${service.serviceCode}<br>`;
+                    alertMessage += `{{__('Service Description:')}} ${service.serviceDescription}<br>`;
+                    alertMessage += `{{__('Service Default Cost (USD):')}}  ${service.serviceDefaultCostDollar}<br>`;
+                    alertMessage += `{{__('Service Default Cost (IQD):')}}  ${service.serviceDefaultCostIraqi}<br>`;
+                    alertMessage += `{{__('Service Quantity:')}} ${service.serviceQty}<br>`;
+                    alertMessage += `{{__('Service Total Cost (USD):')}} ${service.serviceTotalDollar}<br>`;
+                    alertMessage += `{{__('Service Total Cost (IQD):')}} ${service.serviceTotalIraqi}<br>`;
                 });
                 alertMessage += `<br>`;
 

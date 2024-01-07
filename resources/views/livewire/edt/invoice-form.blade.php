@@ -251,7 +251,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                <label aria-label="note">{{__('Note No.')}}</label>
+                                <label aria-label="note">{{__('Note')}}</label>
                                 <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
                                 <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>
@@ -593,7 +593,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                <label aria-label="note">{{__('Note No.')}}</label>
+                                <label aria-label="note">{{__('Note')}}</label>
                                 <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
                                 <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>

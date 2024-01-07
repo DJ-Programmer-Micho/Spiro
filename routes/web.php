@@ -34,6 +34,7 @@ Route::get('/branch', [DashboardController::class, 'branch'])->name('branch');
 //Quotation
 Route::get('/quotation', [DashboardController::class, 'quotation'])->name('quotation');
 
+Route::post('/set-locale', [Localization::class, 'setLocale'])->name('setLocale');
 Route::middleware([Localization::class])->group(function () {
 /*
 |--------------------------------------------------------------------------

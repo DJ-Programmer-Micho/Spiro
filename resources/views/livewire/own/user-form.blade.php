@@ -246,7 +246,7 @@
                 </div>
                 <form wire:submit.prevent="destroyUser">
                     <div class="modal-body">
-                        <p>{{ __('Are you sure you want to delete this Company?') }}</p>
+                        <p>{{ __('Are you sure you want to delete this User?') }}</p>
                         <p>{{ __('Please enter the')}}<strong> "{{$del_user_name}}" </strong>{{__('to confirm:') }}</p>
                         <input type="text" wire:model="user_name_to_selete" class="form-control">
                     </div>
