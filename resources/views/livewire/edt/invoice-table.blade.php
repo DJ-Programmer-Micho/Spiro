@@ -1,10 +1,10 @@
 <div>
-    @include('livewire.fin.emp-task-form')
+    @include('livewire.edt.invoice-form')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <div class="m-4">
         <h2 class="text-lg font-medium mr-auto">
-            <b style="color: #31fbe2">{{__('EMPLOYEE TASKS TABLE')}}</b>
+            <b style="color: #31fbe2">{{__('INVOICE TABLE')}}</b>
         </h2>
         <div class="row d-flex justify-content-between m-0">
             <div class="d-flex">
@@ -17,11 +17,10 @@
                 </h2>
 
                 <h2 class="text-lg font-medium mr-1">
-                    <select wire:model="taskStatus" name="taskStatus" id="taskStatus" class="form-control" style="width: 170px;" wire:change="applyFilter">
-                        <option value="null" default>{{__('All')}}</option>
-                        <option value="In Pending">{{__('In Pending')}}</option>
-                        <option value="In Process">{{__('In Process')}}</option>
-                        <option value="Complete">{{__('Complete')}}</option>
+                    <select wire:model="statusFilter" class="form-control" style="width: 170px;">
+                        <option value="" default>{{__('All')}}</option>
+                        <option value="1">{{__('Active')}}</option>
+                        <option value="0">{{__('Non-Active')}}</option>
                     </select>
                 </h2>
 
@@ -30,7 +29,7 @@
                 </h6>
             </div>
             <div>
-                <button class="btn btn-info" data-toggle="modal" data-target="#newEmpTaskModal">{{__('Add New Task')}}</button>
+                <button class="btn btn-info" data-toggle="modal" data-target="#createInvoiceModal">{{__('Add New Invoice')}}</button>
             </div>
         </div>
         @if (session()->has('message'))
@@ -48,50 +47,56 @@
                 </thead>
                 <tbody>
                     @forelse ($items as $item)
-                    <tr style="font-size: 14px">
+                    <tr>
                         @foreach ($cols_td as $col)
-                        <td class="align-middle">
+                        <td class="align-middle" style="font-size: 14px">
                             @if ($col === 'id')
-                            <b>#TS-{{ $item->id }}</b>
-                            @elseif ($col === 'invoice.id')
-                            <b>#INV-{{ $item->invoice_id }}</b>
+                                <b>#INV-{{ $item->id }}</b>
+                            @elseif ($col === 'quotation_id')
+                                @if(isset($item->quotation_id))
+                                    <b>#QUO-{{ $item->quotation_id }}</b>
+                                @else
+                                    <b>-</b>
+                                @endif   
                             @elseif ($col === 'status')
                             <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                             </span>
-                            @elseif ($col === 'task_status')        
-                                @if($item->task_status == 'In Pending')
-                                <span class="text-danger">{{$item->task_status}}</span>
-                                @elseif ($item->task_status == 'In Process')
-                                <span class="text-warning">{{$item->task_status}}</span>
-                                @else
-                                <span class="text-success">{{$item->task_status}}</span>
+                            @elseif ($col === 'grand_total_dollar')        
+                                $ {{number_format($item->grand_total_dollar)}}
+                            @elseif ($col === 'grand_total_iraqi')        
+                                {{number_format($item->grand_total_iraqi)}} IQD
+                            @elseif ($col === 'invoice_status')
+                                @if($item->invoice_status == 'Sent') 
+                                    <span class="text-info">
+                                        <b>{{__('Sent')}}</b>
+                                    </span>
+                                @elseif ($item->invoice_status == 'Approved') 
+                                    <span class="text-success">
+                                        <b>{{__('Approved')}}</b>
+                                    </span>
+                                @else 
+                                    <span class="text-danger">
+                                        <b>{{__('Rejected')}}</b>
+                                    </span>
                                 @endif
-                            @elseif ($col === 'progress')        
-                                @if($item->progress == 0 && $item->progress <= 24)
-                                <span class="text-dark">{{$item->progress}} %</span>
-                                @elseif ($item->progress >= 25 && $item->progress <= 49)
-                                <span class="text-danger">{{$item->progress}} %</span>
-                                @elseif ($item->progress >= 50 && $item->progress <= 74)
-                                <span class="text-warning">{{$item->progress}} %</span>
-                                @elseif ($item->progress >= 75 && $item->progress <= 99)
-                                <span class="text-info">{{$item->progress}} %</span>
-                                @elseif ($item->progress == 100)
-                                <span class="text-success">{{$item->progress}} %</span>
-                                @endif 
                             @else
                             {{ data_get($item, $col) }}
                             @endif
                         </td>
                         @endforeach
                         <td class="align-middle">
-                            <button type="button" data-toggle="modal" data-target="#updateTaskModal" wire:click="editTask({{ $item->id }})" class="btn btn-primary m-1">
+                            <button type="button" data-toggle="modal" data-target="#editInvoiceModal"
+                                wire:click="editInvoice({{ $item->id }})" class="btn btn-primary m-1">
                                 <i class="far fa-edit"></i>
                             </button>
-                            <button type="button" wire:click="approved({{ $item->id }})" class="btn {{ $item->approved == 1 ? 'btn-success text-dark' : 'btn-dark' }} btn-icon m-1">
-                                <i class="{{ $item->approved == 1 ? 'fas fa-thumbs-up' : 'far fa-thumbs-down' }}"></i>
+                            <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon m-1">
+                                <i class="far {{ $item->status == 1 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
                             </button>
-                            <button type="button" data-toggle="modal" data-target="#deleteTaskModal" wire:click="deleteTask({{ $item->id }})" class="btn btn-danger m-1">
+                            <button type="button" wire:click="printCustomPdf('{{ $item->id }}')" class="btn btn-dark btn-icon m-1">
+                                <i class="fas fa-print"></i>
+                            </button>
+                            <button type="button" wire:click="deleteMessage" class="btn btn-danger m-1" disabled>
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </td>
@@ -146,5 +151,62 @@ $(function() {
 
 });
 </script>
+<script>
+window.addEventListener('printPdf', function (data) {
+    console.log('printing');
+    console.log(data);
+    console.log(data.detail.pdfContent);
+    const pdfDataDirectPrint = data.detail.pdfContent;
+
+    // Create a blob from the base64 PDF content
+    const blob = b64toBlob(pdfDataDirectPrint, 'application/pdf');
+
+    // Create a data URL for the blob
+    const pdfUrl = URL.createObjectURL(blob);
+
+    // Open the PDF in a new window or tab
+    let pdfWindow = window.open(pdfUrl, '_blank');
+
+    // Wait for the window to fully load, then trigger the print
+    pdfWindow.onload = function () {
+        setTimeout(function () {
+            pdfWindow.print();
+        }, 1000); // Adjust the delay as needed
+    };
+});
+
+// Function to convert base64 to Blob
+function b64toBlob(base64, contentType = '', sliceSize = 512) {
+    const byteCharacters = atob(base64);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
+
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: contentType });
+    return blob;
+}
+
+</script>
+
+<script>
+    document.addEventListener('focusDiscountDollar', function () {
+    document.getElementById('discountDollarAdd').focus();
+});
+
+document.addEventListener('focusDiscountDollar', function () {
+    document.getElementById('discountDollarEdit').focus();
+});
+</script>
+
 @endpush
 </div>

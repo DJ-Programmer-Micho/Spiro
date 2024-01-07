@@ -25,7 +25,7 @@ class Finance
         }
         $user = Auth::user();
         if($user->role == 2){
-            return redirect('/editor');
+            return redirect('/edt');
         }
         $user = Auth::user();
         if($user->role == 1){

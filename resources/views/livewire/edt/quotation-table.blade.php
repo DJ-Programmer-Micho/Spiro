@@ -1,10 +1,10 @@
 <div>
-    @include('livewire.fin.invoice-form')
+    @include('livewire.edt.quotation-form')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <div class="m-4">
         <h2 class="text-lg font-medium mr-auto">
-            <b style="color: #31fbe2">{{__('INVOICE TABLE')}}</b>
+            <b style="color: #31fbe2">{{__('QUOTATION TABLE')}}</b>
         </h2>
         <div class="row d-flex justify-content-between m-0">
             <div class="d-flex">
@@ -14,6 +14,15 @@
 
                 <h2 class="text-lg font-medium mr-1">
                     <input type="search" wire:model="search" class="form-control" placeholder="Search..." style="width: 250px; border: 1px solid var(--primary)" />
+                </h2>
+
+                <h2 class="text-lg font-medium mr-1">
+                    <select wire:model="quotationStatusFilter" name="quotationStatusFilter" id="quotationStatusFilter" class="form-control" style="width: 170px;">
+                        <option value="" default>{{__('All')}}</option>
+                        <option value="Sent">{{__('Sent')}}</option>
+                        <option value="Approved">{{__('Approved')}}</option>
+                        <option value="Rejected">{{__('Rejected')}}</option>
+                    </select>
                 </h2>
 
                 <h2 class="text-lg font-medium mr-1">
@@ -29,7 +38,7 @@
                 </h6>
             </div>
             <div>
-                <button class="btn btn-info" data-toggle="modal" data-target="#createInvoiceModal">{{__('Add New Invoice')}}</button>
+                <button class="btn btn-info" data-toggle="modal" data-target="#createQuotationModal">{{__('Add New Quotation')}}</button>
             </div>
         </div>
         @if (session()->has('message'))
@@ -49,49 +58,55 @@
                     @forelse ($items as $item)
                     <tr>
                         @foreach ($cols_td as $col)
-                        <td class="align-middle" style="font-size: 14px">
+                        <td class="align-middle">
                             @if ($col === 'id')
-                                <b>#INV-{{ $item->id }}</b>
-                            @elseif ($col === 'quotation_id')
-                                @if(isset($item->quotation_id))
-                                    <b>#QUO-{{ $item->quotation_id }}</b>
-                                @else
-                                    <b>-</b>
-                                @endif   
-                            @elseif ($col === 'status')
-                            <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
+                                <b style="font-size: 14px">#QUI-{{ $item->id }}</b>
+                            @elseif ($col === 'status')        
+                            <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}" style="font-size: 14px">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                             </span>
                             @elseif ($col === 'grand_total_dollar')        
+                            <div style="font-size: 14px">
                                 $ {{number_format($item->grand_total_dollar)}}
+                            </div>
                             @elseif ($col === 'grand_total_iraqi')        
+                            <div  style="font-size: 14px">
                                 {{number_format($item->grand_total_iraqi)}} IQD
-                            @elseif ($col === 'invoice_status')
-                                @if($item->invoice_status == 'Sent') 
-                                    <span class="text-info">
+                            </div>
+                            @elseif ($col === 'quotation_status')
+                                @if($item->quotation_status == 'Sent') 
+                                    <span class="text-info" style="font-size: 14px">
                                         <b>{{__('Sent')}}</b>
                                     </span>
-                                @elseif ($item->invoice_status == 'Approved') 
-                                    <span class="text-success">
+                                @elseif ($item->quotation_status == 'Approved') 
+                                    <span class="text-success" style="font-size: 14px">
                                         <b>{{__('Approved')}}</b>
                                     </span>
                                 @else 
-                                    <span class="text-danger">
+                                    <span class="text-danger" style="font-size: 14px">
                                         <b>{{__('Rejected')}}</b>
                                     </span>
                                 @endif
                             @else
-                            {{ data_get($item, $col) }}
+                            <div style="font-size: 14px">
+                                {{ data_get($item, $col) }}
+                            </div>
                             @endif
                         </td>
                         @endforeach
                         <td class="align-middle">
-                            <button type="button" data-toggle="modal" data-target="#editInvoiceModal"
-                                wire:click="editInvoice({{ $item->id }})" class="btn btn-primary m-1">
+                            <button type="button" data-toggle="modal" data-target="#editQuotationModal"
+                                wire:click="editQuotation({{ $item->id }})" class="btn btn-primary m-1">
                                 <i class="far fa-edit"></i>
                             </button>
                             <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon m-1">
                                 <i class="far {{ $item->status == 1 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
+                            </button>
+                            <button type="button" wire:click="notAllowed" class="btn {{ $item->quotation_status == 'Approved' ? 'btn-light' : 'btn-dark' }} btn-icon m-1" disabled>
+                                <i class="{{ $item->quotation_status == 'Approved' ? 'fas fa-thumbs-up' : 'far fa-thumbs-up' }}"></i>
+                            </button>
+                            <button type="button" wire:click="notAllowed" class="btn {{ $item->quotation_status == 'Rejected' ? 'btn-light' : 'btn-dark' }} btn-icon m-1" disabled>
+                                <i class="{{ $item->quotation_status == 'Rejected' ? 'fas fa-thumbs-down' : 'far fa-thumbs-down' }}"></i>
                             </button>
                             <button type="button" wire:click="printCustomPdf('{{ $item->id }}')" class="btn btn-dark btn-icon m-1">
                                 <i class="fas fa-print"></i>
@@ -144,7 +159,7 @@ $(function() {
            'This Month': [moment().startOf('month'), moment().endOf('month')],
            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
            'This Year': [moment().startOf('year'), moment().endOf('year')],
-           'All Time': [moment().subtract(25, 'year'), moment()]
+           'All Time': [moment().subtract(10, 'years'), moment()]
         }
     }, cb);
     cb(start, end);
@@ -152,60 +167,58 @@ $(function() {
 });
 </script>
 <script>
-window.addEventListener('printPdf', function (data) {
-    console.log('printing');
-    console.log(data);
-    console.log(data.detail.pdfContent);
-    const pdfDataDirectPrint = data.detail.pdfContent;
-
-    // Create a blob from the base64 PDF content
-    const blob = b64toBlob(pdfDataDirectPrint, 'application/pdf');
-
-    // Create a data URL for the blob
-    const pdfUrl = URL.createObjectURL(blob);
-
-    // Open the PDF in a new window or tab
-    let pdfWindow = window.open(pdfUrl, '_blank');
-
-    // Wait for the window to fully load, then trigger the print
-    pdfWindow.onload = function () {
-        setTimeout(function () {
-            pdfWindow.print();
-        }, 1000); // Adjust the delay as needed
-    };
-});
-
-// Function to convert base64 to Blob
-function b64toBlob(base64, contentType = '', sliceSize = 512) {
-    const byteCharacters = atob(base64);
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
-        const byteNumbers = new Array(slice.length);
-
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
+    window.addEventListener('printPdf', function (data) {
+        const pdfDataDirectPrint = data.detail.pdfContent;
+    
+        // Create a blob from the base64 PDF content
+        const blob = b64toBlob(pdfDataDirectPrint, 'application/pdf');
+    
+        // Create a data URL for the blob
+        const pdfUrl = URL.createObjectURL(blob);
+    
+        // Open the PDF in a new window or tab
+        let pdfWindow = window.open(pdfUrl, '_blank');
+    
+        // Wait for the window to fully load, then trigger the print
+        pdfWindow.onload = function () {
+            setTimeout(function () {
+                pdfWindow.print();
+            }, 1000); // Adjust the delay as needed
+        };
+    });
+    
+    // Function to convert base64 to Blob
+    function b64toBlob(base64, contentType = '', sliceSize = 512) {
+        const byteCharacters = atob(base64);
+        const byteArrays = [];
+    
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+            const byteNumbers = new Array(slice.length);
+    
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+    
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
         }
-
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
+    
+        const blob = new Blob(byteArrays, { type: contentType });
+        return blob;
     }
-
-    const blob = new Blob(byteArrays, { type: contentType });
-    return blob;
-}
-
-</script>
+    
+    </script>
 
 <script>
-    document.addEventListener('focusDiscountDollar', function () {
-    document.getElementById('discountDollarAdd').focus();
-});
+        document.addEventListener('focusDiscountDollar', function () {
+        document.getElementById('discountDollarAdd').focus();
+    });
 
-document.addEventListener('focusDiscountDollar', function () {
-    document.getElementById('discountDollarEdit').focus();
-});
+    document.addEventListener('focusDiscountDollar', function () {
+        document.getElementById('discountDollarEdit').focus();
+    });
 </script>
+
 @endpush
 </div>

@@ -1,24 +1,24 @@
 
 <div>
-    <!-- Insert Invoice Modal -->
-    <div wire:ignore.self class="modal fade overflow-auto" id="createInvoiceModal" tabindex="-1" aria-labelledby="createInvoiceModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <!-- Insert Quotation Modal -->
+    <div wire:ignore.self class="modal fade overflow-auto" id="createQuotationModal" tabindex="-1" aria-labelledby="createQuotationModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl text-white mx-1 mx-lg-auto" style="max-width: 1140px;">
             <div class="modal-content bg-dark">
-                <form wire:submit.prevent="addInvoice">
+                <form wire:submit.prevent="addQuotation">
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="createQuotationModal" style="color: #31fbe2">{{__('Add New Invoice')}}</h5>
+                            <h5 class="modal-title" id="createQuotationModal" style="color: #31fbe2">{{__('Add New Quotation')}}</h5>
                             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span>
                             </button>
                         </div>
                         <div class="row d-flex justify-content-between m-0 mt-1">
-                            <h5 class="mt-4 mb-1"><b>{{__('Invoice Date')}}</b></h5>
+                            <h5 class="mt-4 mb-1"><b>{{__('Quotation Date')}}</b></h5>
                         </div>
                         <div class="row">
                             <div class="col-12 col-sm-4">
                                 <div class="mb-3">
-                                    <label>{{__('Invoice Created Date')}}</label>
+                                    <label>{{__('Quotation Created Date')}}</label>
                                     <input type="date" name="formDate" wire:model="formDate" class="form-control" id="formDate" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
@@ -32,6 +32,13 @@
                                             <option value="0">{{__('Non-Active')}}</option>
                                     </select>
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="mb-3">
+                                    <label>{{__('Quotation State')}}</label>
+                                    <input type="text" name="quotation_status" wire:model="quotation_status" class="form-control" id="quotation_status" disabled>
+                                    <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
                             </div>
                         </div>
@@ -134,7 +141,7 @@
                             <h5 class="mt-4"><b>{{__('Service Section')}}</b></h5>
                             <button class="btn btn-success mt-3 mb-3" type="button" wire:click="addNewDate">{{__('Add New Date')}}</button>
                         </div>
-<div>  
+                        <div>  
                         @foreach ($arr_service_by_date as $dateIndex => $services)
                         <div class="mb-3 mt-3">
                             <div class="d-flex justify-content-between">
@@ -281,15 +288,15 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label>{{__('First Pay:')}} ($)</label>
-                                    <input type="number" name="fisrtPayDollar" wire:model="fisrtPayDollar" class="form-control" id="fisrtPayDollar" wire:change="calculateTotals">
-                                    <small class="text-info">{{__('(Read & Write)')}}</small>
+                                    {{-- <label>{{__('First Pay:')}} ($)</label> --}}
+                                    <input type="hidden" name="fisrtPayDollar" wire:model="fisrtPayDollar" class="form-control" id="fisrtPayDollar" wire:change="calculateTotals">
+                                    {{-- <small class="text-info">{{__('(Read & Write)')}}</small> --}}
                                 </div>
 
                                 <div class="mb-3">
-                                    <label>{{__('Due:')}} ($)</label>
-                                    <input type="number" name="dueDollar" wire:model="dueDollar" class="form-control" id="dueDollar" disabled>
-                                    <small class="text-danger">{{__('(Read Only)')}}</small>
+                                    {{-- <label>{{__('Due:')}} ($)</label> --}}
+                                    <input type="hidden" name="dueDollar" wire:model="dueDollar" class="form-control" id="dueDollar" disabled>
+                                    {{-- <small class="text-danger">{{__('(Read Only)')}}</small> --}}
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -318,15 +325,15 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label>{{__('First Pay:')}} (IQD)</label>
-                                    <input type="number" name="fisrtPayIraqi" wire:model="fisrtPayIraqi" class="form-control" id="fisrtPayIraqi" disabled>
-                                    <small class="text-danger">{{__('(Read Only)')}}</small>
+                                    {{-- <label>{{__('First Pay:')}} (IQD)</label> --}}
+                                    <input type="hidden" name="fisrtPayIraqi" wire:model="fisrtPayIraqi" class="form-control" id="fisrtPayIraqi" disabled>
+                                    {{-- <small class="text-danger">{{__('(Read Only)')}}</small> --}}
                                 </div>
 
                                 <div class="mb-3">
-                                    <label>{{__('Due:')}} (IQD)</label>
-                                    <input type="number" name="dueIraqi" wire:model="dueIraqi" class="form-control" id="dueIraqi" disabled>
-                                    <small class="text-danger">{{__('(Read Only)')}}</small>
+                                    {{-- <label>{{__('Due:')}} (IQD)</label> --}}
+                                    <input type="hidden" name="dueIraqi" wire:model="dueIraqi" class="form-control" id="dueIraqi" disabled>
+                                    {{-- <small class="text-danger">{{__('(Read Only)')}}</small> --}}
                                 </div>
                             </div>
                             
@@ -341,25 +348,25 @@
         </div>
     </div>
 
-    <!-- Update Invoice Modal  -->
-    <div wire:ignore.self class="modal fade overflow-auto" id="editInvoiceModal" tabindex="-1" aria-labelledby="editInvoiceModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <!-- Update Quotation Modal  -->
+    <div wire:ignore.self class="modal fade overflow-auto" id="editQuotationModal" tabindex="-1" aria-labelledby="editQuotationModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl text-white mx-1 mx-lg-auto" style="max-width: 1140px;">
             <div class="modal-content bg-dark">
-                <form wire:submit.prevent="updateInvoice">
+                <form wire:submit.prevent="updateQuotation">
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="editQuotationModal" style="color: #31fbe2">{{__('Update Invoice')}}</h5>
+                            <h5 class="modal-title" id="editQuotationModal" style="color: #31fbe2">{{__('Update Quotation')}}</h5>
                             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span>
                             </button>
                         </div>
                         <div class="row d-flex justify-content-between m-0 mt-1">
-                            <h5 class="mt-4 mb-1"><b>{{__('Invoice Date')}}</b></h5>
+                            <h5 class="mt-4 mb-1"><b>{{__('Quotation Date')}}</b></h5>
                         </div>
                         <div class="row">
                             <div class="col-12 col-sm-4">
                                 <div class="mb-3">
-                                    <label>{{__('Invoice Created Date')}}</label>
+                                    <label>{{__('Quotation Created Date')}}</label>
                                     <input type="date" name="formDate" wire:model="formDate" class="form-control" id="formDate" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
@@ -373,6 +380,13 @@
                                             <option value="0">{{__('Non-Active')}}</option>
                                     </select>
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="mb-3">
+                                    <label>{{__('Quotation State')}}</label>
+                                    <input type="text" name="quotation_status" wire:model="quotation_status" class="form-control" id="quotation_status" disabled>
+                                    <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
                             </div>
                         </div>
@@ -623,15 +637,15 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label>{{__('First Pay:')}} ($)</label>
-                                    <input type="number" name="fisrtPayDollar" wire:model="fisrtPayDollar" class="form-control" id="fisrtPayDollar" wire:change="calculateTotals">
-                                    <small class="text-info">{{__('(Read & Write)')}}</small>
+                                    {{-- <label>{{__('First Pay:')}} ($)</label> --}}
+                                    <input type="hidden" name="fisrtPayDollar" wire:model="fisrtPayDollar" class="form-control" id="fisrtPayDollar" wire:change="calculateTotals">
+                                    {{-- <small class="text-info">{{__('(Read & Write)')}}</small> --}}
                                 </div>
 
                                 <div class="mb-3">
-                                    <label>{{__('Due:')}} ($)</label>
-                                    <input type="number" name="dueDollar" wire:model="dueDollar" class="form-control" id="dueDollar" disabled>
-                                    <small class="text-danger">{{__('(Read Only)')}}</small>
+                                    {{-- <label>{{__('Due:')}} ($)</label> --}}
+                                    <input type="hidden" name="dueDollar" wire:model="dueDollar" class="form-control" id="dueDollar" disabled>
+                                    {{-- <small class="text-danger">{{__('(Read Only)')}}</small> --}}
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -660,18 +674,17 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label>{{__('First Pay:')}} (IQD)</label>
-                                    <input type="number" name="fisrtPayIraqi" wire:model="fisrtPayIraqi" class="form-control" id="fisrtPayIraqi" disabled>
-                                    <small class="text-danger">{{__('(Read Only)')}}</small>
+                                    {{-- <label>{{__('First Pay:')}} (IQD)</label> --}}
+                                    <input type="hidden" name="fisrtPayIraqi" wire:model="fisrtPayIraqi" class="form-control" id="fisrtPayIraqi" disabled>
+                                    {{-- <small class="text-danger">{{__('(Read Only)')}}</small> --}}
                                 </div>
 
                                 <div class="mb-3">
-                                    <label>{{__('Due:')}} (IQD)</label>
-                                    <input type="number" name="dueIraqi" wire:model="dueIraqi" class="form-control" id="dueIraqi" disabled>
-                                    <small class="text-danger">{{__('(Read Only)')}}</small>
+                                    {{-- <label>{{__('Due:')}} (IQD)</label> --}}
+                                    <input type="hidden" name="dueIraqi" wire:model="dueIraqi" class="form-control" id="dueIraqi" disabled>
+                                    {{-- <small class="text-danger">{{__('(Read Only)')}}</small> --}}
                                 </div>
                             </div>
-                            
                         </div>
                     </div>
                     <div class="modal-footer">

@@ -3,10 +3,11 @@
 use App\Http\Middleware\Own;
 use App\Http\Middleware\Localization;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OwnController;
 use App\Http\Controllers\FinController;
+use App\Http\Controllers\EdtController;
 use App\Http\Controllers\EmpController;
-use App\Http\Controllers\AuthController;
 use App\Http\Middleware\CheckUserStatus;
 use App\Http\Controllers\DashboardController;
 
@@ -47,7 +48,7 @@ Route::middleware([Localization::class])->group(function () {
 | MET ROUTE SUPER ADMIN
 |--------------------------------------------------------------------------
 */  
-    Route::prefix('/own')->middleware(['CheckUserStatus', 'Own'])->group(function () {
+    Route::prefix('/own')->middleware(['CheckUserStatus', 'Own','CheckUserStatus'])->group(function () {
         Route::get('/', [OwnController::class, 'dashboardOwn'])->name('own.dashboard');
         Route::get('/user', [OwnController::class, 'user'])->name('own.user');
         Route::get('/client', [OwnController::class, 'client'])->name('own.client');
@@ -65,7 +66,7 @@ Route::middleware([Localization::class])->group(function () {
         Route::get('/top8', [OwnController::class, 'topEight'])->name('topEight');
     });
 
-    Route::prefix('/fin')->middleware(['CheckUserStatus', 'Fin'])->group(function () {
+    Route::prefix('/fin')->middleware(['CheckUserStatus', 'Fin','CheckUserStatus'])->group(function () {
         Route::get('/', [FinController::class, 'dashboardFin'])->name('fin.dashboard');
         Route::get('/user', [FinController::class, 'user'])->name('fin.user');
         Route::get('/client', [FinController::class, 'client'])->name('fin.client');
@@ -79,8 +80,17 @@ Route::middleware([Localization::class])->group(function () {
         Route::get('/mytask', [FinController::class, 'myTask'])->name('fin.mytask'); 
     });
 
+    Route::prefix('/edt')->middleware(['CheckUserStatus', 'Edt','CheckUserStatus'])->group(function () {
+        Route::get('/', [EdtController::class, 'dashboardEdt'])->name('edt.dashboard');
+        Route::get('/client', [EdtController::class, 'client'])->name('edt.client');
+        Route::get('/quotation', [EdtController::class, 'quotation'])->name('edt.quotation');
+        Route::get('/invoice', [EdtController::class, 'invoice'])->name('edt.invoice');
+        Route::get('/cash', [EdtController::class, 'cash'])->name('edt.cash');
+        Route::get('/mytask', [EdtController::class, 'myTask'])->name('edt.mytask'); 
+    });
 
-    Route::prefix('/emp')->middleware(['CheckUserStatus', 'Emp'])->group(function () {
+
+    Route::prefix('/emp')->middleware(['CheckUserStatus', 'Emp','CheckUserStatus'])->group(function () {
         Route::get('/', [EmpController::class, 'dashboardEmp'])->name('emp.dashboard');
         Route::get('/mytask', [EmpController::class, 'myTask'])->name('emp.mytask'); 
     });

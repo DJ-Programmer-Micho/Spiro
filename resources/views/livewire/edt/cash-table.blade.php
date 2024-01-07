@@ -1,10 +1,10 @@
 <div>
-    @include('livewire.fin.invoice-form')
+    @include('livewire.edt.cash-form')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <div class="m-4">
         <h2 class="text-lg font-medium mr-auto">
-            <b style="color: #31fbe2">{{__('INVOICE TABLE')}}</b>
+            <b style="color: #31fbe2">{{__('CASH RECEIPT TABLE')}}</b>
         </h2>
         <div class="row d-flex justify-content-between m-0">
             <div class="d-flex">
@@ -17,10 +17,10 @@
                 </h2>
 
                 <h2 class="text-lg font-medium mr-1">
-                    <select wire:model="statusFilter" class="form-control" style="width: 170px;">
+                    <select wire:model="CashDueFilter" name="CashDueFilter" id="CashDueFilter" class="form-control" style="width: 170px;" wire:change="applyFilter">
                         <option value="" default>{{__('All')}}</option>
-                        <option value="1">{{__('Active')}}</option>
-                        <option value="0">{{__('Non-Active')}}</option>
+                        <option value="Not Complete">{{__('Not Complete')}}</option>
+                        <option value="Complete">{{__('Complete')}}</option>
                     </select>
                 </h2>
 
@@ -29,7 +29,8 @@
                 </h6>
             </div>
             <div>
-                <button class="btn btn-info" data-toggle="modal" data-target="#createInvoiceModal">{{__('Add New Invoice')}}</button>
+                {{-- <button class="btn btn-info" data-toggle="modal" data-target="#createCashModal">{{__('Add New Cash Receipt')}}</button> --}}
+                <button class="btn btn-info" data-toggle="modal" data-target="#selectNewCashModal">{{__('Add New Cash Receipt')}}</button>
             </div>
         </div>
         @if (session()->has('message'))
@@ -47,37 +48,49 @@
                 </thead>
                 <tbody>
                     @forelse ($items as $item)
-                    <tr>
+                    <tr style="font-size: 14px">
                         @foreach ($cols_td as $col)
-                        <td class="align-middle" style="font-size: 14px">
+                        <td class="align-middle">
                             @if ($col === 'id')
-                                <b>#INV-{{ $item->id }}</b>
-                            @elseif ($col === 'quotation_id')
-                                @if(isset($item->quotation_id))
-                                    <b>#QUO-{{ $item->quotation_id }}</b>
-                                @else
-                                    <b>-</b>
-                                @endif   
+                            <b>#CR-{{ $item->id }}</b>
+                            @elseif ($col === 'invoice_id')
+                            <b>#INV-{{ $item->invoice_id }}</b>
                             @elseif ($col === 'status')
                             <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                             </span>
                             @elseif ($col === 'grand_total_dollar')        
-                                $ {{number_format($item->grand_total_dollar)}}
+                                @if($item->due_dollar > 0)
+                                <span class="text-success">$ {{number_format($item->grand_total_dollar)}}</span>
+                                @else
+                                <span class="text-info">$ {{number_format($item->grand_total_dollar)}}</span>
+                                @endif 
                             @elseif ($col === 'grand_total_iraqi')        
-                                {{number_format($item->grand_total_iraqi)}} IQD
-                            @elseif ($col === 'invoice_status')
-                                @if($item->invoice_status == 'Sent') 
-                                    <span class="text-info">
-                                        <b>{{__('Sent')}}</b>
-                                    </span>
-                                @elseif ($item->invoice_status == 'Approved') 
+                                @if($item->due_iraqi > 0)
+                                <span class="text-success">{{number_format($item->grand_total_iraqi)}} IQD</span>
+                                @else
+                                <span class="text-info">{{number_format($item->grand_total_iraqi)}} IQD</span>
+                                @endif  
+                            @elseif ($col === 'due_dollar')        
+                                @if($item->due_dollar > 0)
+                                <span class="text-danger">$ {{number_format($item->due_dollar)}}</span>
+                                @else
+                                <span class="text-info">$ {{number_format($item->due_dollar)}}</span>
+                                @endif 
+                            @elseif ($col === 'due_iraqi')   
+                                @if($item->due_iraqi > 0)
+                                <span class="text-danger">{{number_format($item->due_iraqi)}} IQD</span>
+                                @else
+                                <span class="text-info">{{number_format($item->due_iraqi)}} IQD</span>
+                                @endif     
+                            @elseif ($col === 'cash_status')
+                                @if($item->cash_status == 'Complete') 
                                     <span class="text-success">
-                                        <b>{{__('Approved')}}</b>
+                                        <b>{{__('Complete')}}</b>
                                     </span>
                                 @else 
                                     <span class="text-danger">
-                                        <b>{{__('Rejected')}}</b>
+                                        <b>{{__('Not Complete')}}</b>
                                     </span>
                                 @endif
                             @else
@@ -86,12 +99,9 @@
                         </td>
                         @endforeach
                         <td class="align-middle">
-                            <button type="button" data-toggle="modal" data-target="#editInvoiceModal"
-                                wire:click="editInvoice({{ $item->id }})" class="btn btn-primary m-1">
-                                <i class="far fa-edit"></i>
-                            </button>
-                            <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon m-1">
-                                <i class="far {{ $item->status == 1 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
+                            <button type="button" data-toggle="modal" data-target="#updateCashModal"
+                                wire:click="editCash({{ $item->id }})" class="btn btn-primary m-1">
+                                <i class="fas fa-hand-holding-usd"></i>
                             </button>
                             <button type="button" wire:click="printCustomPdf('{{ $item->id }}')" class="btn btn-dark btn-icon m-1">
                                 <i class="fas fa-print"></i>
@@ -152,60 +162,50 @@ $(function() {
 });
 </script>
 <script>
-window.addEventListener('printPdf', function (data) {
-    console.log('printing');
-    console.log(data);
-    console.log(data.detail.pdfContent);
-    const pdfDataDirectPrint = data.detail.pdfContent;
-
-    // Create a blob from the base64 PDF content
-    const blob = b64toBlob(pdfDataDirectPrint, 'application/pdf');
-
-    // Create a data URL for the blob
-    const pdfUrl = URL.createObjectURL(blob);
-
-    // Open the PDF in a new window or tab
-    let pdfWindow = window.open(pdfUrl, '_blank');
-
-    // Wait for the window to fully load, then trigger the print
-    pdfWindow.onload = function () {
-        setTimeout(function () {
-            pdfWindow.print();
-        }, 1000); // Adjust the delay as needed
-    };
-});
-
-// Function to convert base64 to Blob
-function b64toBlob(base64, contentType = '', sliceSize = 512) {
-    const byteCharacters = atob(base64);
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
-        const byteNumbers = new Array(slice.length);
-
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
+    window.addEventListener('printPdf', function (data) {
+        console.log('printing');
+        console.log(data);
+        console.log(data.detail.pdfContent);
+        const pdfDataDirectPrint = data.detail.pdfContent;
+    
+        // Create a blob from the base64 PDF content
+        const blob = b64toBlob(pdfDataDirectPrint, 'application/pdf');
+    
+        // Create a data URL for the blob
+        const pdfUrl = URL.createObjectURL(blob);
+    
+        // Open the PDF in a new window or tab
+        let pdfWindow = window.open(pdfUrl, '_blank');
+    
+        // Wait for the window to fully load, then trigger the print
+        pdfWindow.onload = function () {
+            setTimeout(function () {
+                pdfWindow.print();
+            }, 1000); // Adjust the delay as needed
+        };
+    });
+    
+    // Function to convert base64 to Blob
+    function b64toBlob(base64, contentType = '', sliceSize = 512) {
+        const byteCharacters = atob(base64);
+        const byteArrays = [];
+    
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+            const byteNumbers = new Array(slice.length);
+    
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+    
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
         }
-
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
+    
+        const blob = new Blob(byteArrays, { type: contentType });
+        return blob;
     }
-
-    const blob = new Blob(byteArrays, { type: contentType });
-    return blob;
-}
-
-</script>
-
-<script>
-    document.addEventListener('focusDiscountDollar', function () {
-    document.getElementById('discountDollarAdd').focus();
-});
-
-document.addEventListener('focusDiscountDollar', function () {
-    document.getElementById('discountDollarEdit').focus();
-});
-</script>
+    
+    </script>
 @endpush
 </div>

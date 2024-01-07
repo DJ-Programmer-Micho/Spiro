@@ -1,8 +1,8 @@
 <div>
-    @include('livewire.own.task-form')
+    @include('livewire.edt.client-form')
     <div class="m-4">
         <h2 class="text-lg font-medium mr-auto">
-            <b style="color: #31fbe2">{{__('TASKS OPTIONS TABLE')}}</b>
+            <b style="color: #31fbe2">{{__('CLIENTS TABLE')}}</b>
         </h2>
         <div class="row d-flex justify-content-between m-0">
             <div>
@@ -12,7 +12,7 @@
             </div>
             <div>
                 <div class="">
-                    <button class="btn btn-info" data-toggle="modal" data-target="#createTaskModal">{{__('Add New Task')}}</button>
+                    <button class="btn btn-info" data-toggle="modal" data-target="#createClientModal">{{__('Add New Client')}}</button>
                 </div>
             </div>
         </div>
@@ -38,10 +38,6 @@
                                 <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
                                    <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>
                                 </span>
-                            @elseif ($col === 'price_dollar')        
-                                $ {{number_format($item->price_dollar)}}
-                            @elseif ($col === 'price_iraqi')        
-                                {{number_format($item->price_iraqi)}} IQD
                             @elseif ($col === 'priority')        
                                 <input type="number" id="priority_{{ $item->id }}" value="{{ $item->priority }}" class="form-control bg-dark text-white">
                             @else
@@ -50,12 +46,11 @@
                         </td>
                         @endforeach
                         <td>
-                            <button type="button" data-toggle="modal" data-target="#updateTaskModal"
-                                wire:click="editTask({{ $item->id }})" class="btn btn-primary m-1">
+                            <button type="button" data-toggle="modal" data-target="#updateClientModal"
+                                wire:click="editClient({{ $item->id }})" class="btn btn-primary m-1">
                                 <i class="far fa-edit"></i>
                             </button>
-                            <button type="button" data-toggle="modal" data-target="#deleteTaskModal"
-                                wire:click="deleteTask({{ $item->id }})" class="btn btn-danger m-1">
+                            <button type="button" wire:click="deleteMessage" class="btn btn-danger m-1" disabled>
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </td>

@@ -1,5 +1,5 @@
 <div>
-    @include('livewire.fin.emp-task-form')
+    @include('livewire.edt.emp-task-form')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <div class="m-4">

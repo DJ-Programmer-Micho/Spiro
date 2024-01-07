@@ -48,13 +48,13 @@ class AuthController extends Controller
                     ]);
                     break;
                 case 2:
-                    return redirect('/editor')->with('alert', [
+                    return redirect('/edt')->with('alert', [
                         'type' => 'warning',
                         'message' => __('Please Contact Support Team COD_3663'),
                     ]);
                     break;
                 case 3:
-                    return redirect('/finance')->with('alert', [
+                    return redirect('/fin')->with('alert', [
                         'type' => 'success',
                         'message' => __('Welcome Mr/Mrs') . $user->profile->fullname,
                     ]);

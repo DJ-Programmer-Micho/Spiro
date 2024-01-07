@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Fin;
+namespace App\Notifications\Edt;
 
 use App\Models\Invoice;
 use Illuminate\Notifications\Notification;
@@ -81,7 +81,7 @@ class TelegramCashNew extends Notification
         $content = "*" . 'Cash Reciept ADDED' . "*\n"
         . "*" .'-----------------'."*\n" 
         . "*" .'Added & Updated By: ' . $this->addBy . "*\n"
-        . "*" .'Cash Reciept-ID #CR-' . $this->c_id . "*\n"
+        . "*" .'Cash Reciept-ID #CR: ' . $this->c_id . "*\n"
         . "*" .'-----------------'."*\n"
         . "*" .'Date: '.  $this->dateCash . "*\n"
         . "*" .'Client: '. $this->clientName . "*\n"

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Fin;
+namespace App\Notifications\Edt;
 
 use Illuminate\Notifications\Notification;
 use Illuminate\Validation\Rules\Exists;

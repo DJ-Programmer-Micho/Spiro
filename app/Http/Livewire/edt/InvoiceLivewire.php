@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Fin;
+namespace App\Http\Livewire\Edt;
 
 use App\Models\Cash;
 use App\Models\Client;
@@ -53,7 +53,7 @@ class InvoiceLivewire extends Component
     public $arr_service_by_date = [];
     // Form Final Section
     public $description;
-    public $note = [];
+    public $note = null;
     public $dicountLower;
     public $totalDollar = 0;
     public $taxDollar = 0;
@@ -888,7 +888,7 @@ class InvoiceLivewire extends Component
         ->orderBy('invoice_date', 'DESC')
         ->paginate(15);
         
-        return view('livewire.fin.invoice-table',[
+        return view('livewire.edt.invoice-table',[
             'items' => $data,
             'cols_th' => $cols_th,
             'cols_td' => $cols_td,
