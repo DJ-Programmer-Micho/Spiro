@@ -9,6 +9,7 @@ use NotificationChannels\Telegram\TelegramMessage;
 
 class TelegramMyTaskShort extends Notification
 {
+    protected $addBy;
     protected $e_id;
     protected $title;
     protected $name;
@@ -18,8 +19,9 @@ class TelegramMyTaskShort extends Notification
 
     protected $tele_id;
 
-    public function __construct($e_id, $title, $name, $old_progress, $new_progress, $tele_id)
+    public function __construct($addBy, $e_id, $title, $name, $old_progress, $new_progress, $tele_id)
     {
+        $this->addBy = $addBy;
         $this->e_id = $e_id;
         $this->title = $title;
         
@@ -37,12 +39,10 @@ class TelegramMyTaskShort extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#MYT-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
-
         $content = "*" . 'EMP TASKS PROGRESS UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'EMP TASKS-ID: '. $registrationId . '-'. $this->e_id .'-' . $registration3Id . "*\n"
+        . "*" .'Updated Task By: ' . $this->addBy . "*\n"
+        . "*" .'EMP TASKS-ID: #MYT-' . $this->e_id . "*\n"        
         . "*" .'-----------------'."*\n";
 
         $content .= "*" . 'Invoice Title: '. $this->title . "*\n";

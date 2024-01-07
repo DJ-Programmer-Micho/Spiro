@@ -63,7 +63,7 @@
                                 <b>#INV-{{ $item->id }}</b>
                             @elseif ($col === 'quotation_id')
                                 @if(isset($item->quotation_id))
-                                    <b>#QUO-{{ $item->id }}</b>
+                                    <b>#QUO-{{ $item->quotation_id }}</b>
                                 @else
                                     <b>-</b>
                                 @endif   

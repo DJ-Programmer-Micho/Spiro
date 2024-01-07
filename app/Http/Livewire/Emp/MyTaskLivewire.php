@@ -82,6 +82,7 @@ class MyTaskLivewire extends Component
                 // try{
                     Notification::route('toTelegram', null)
                     ->notify(new TelegramMyTaskShort(
+                        auth()->user()->name,
                         $empTask->id,
                         $empTask->invoice->description,
                         $emp_name,

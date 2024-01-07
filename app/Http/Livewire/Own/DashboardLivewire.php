@@ -6,27 +6,16 @@ use Carbon\Carbon;
 use App\Models\Cash;
 use App\Models\Task;
 use App\Models\User;
-use App\Models\Branch;
 use App\Models\Client;
 use App\Models\EmpTask;
 use App\Models\Expense;
 use App\Models\Invoice;
 use Livewire\Component;
 use App\Models\Quotation;
-use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
-// use App\Notifications\Dashboard\TelegramBranchNew;
-// use App\Notifications\Dashboard\TelegramBranchUpdate;
-// use App\Notifications\Dashboard\TelegramBranchDelete;
-
 
 class DashboardLivewire extends Component
 {
-    // use WithPagination; 
-    // protected $paginationTheme = 'bootstrap';
-
-
     public $availableYears;
     public $selectedYear;
     public $chartDataUsrtCount;

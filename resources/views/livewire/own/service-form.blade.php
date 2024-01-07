@@ -126,35 +126,31 @@
             </div>
         </div>
     </div>
-     
+
     <div wire:ignore.self class="modal fade" id="deleteServiceModal" tabindex="-1" aria-labelledby="deleteServiceModalLabel"
-        aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog text-white">
-            <div class="modal-content bg-dark">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteFoodModalLabel">{{__('Delete Service')}}</h5>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" wire:click="closeModal"
-                        aria-label="Close"><i class="fas fa-times"></i></button>
-                </div>
-                <form wire:submit.prevent="destroyService">
-                    <div class="modal-body">
-                        <p>{{ __('Are you sure you want to delete this Service?') }}</p>
-                        <p>{{ __('Please enter the')}}<strong> "{{$del_service_name}}" </strong>{{__('to confirm:') }}</p>
-                        <input type="text" wire:model="service_name_to_selete" class="form-control">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" wire:click="closeModal"
-                            data-dismiss="modal">{{__('Cancel')}}</button>
-                            <button type="submit" class="btn btn-danger" wire:disabled="!confirmDelete || $foodNameToDelete !== $showTextTemp">
-                                {{ __('Yes! Delete') }}
-                            </button>
-                    </div>
-                </form>
+    aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog text-white">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteFoodModalLabel">{{__('Delete Service')}}</h5>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" wire:click="closeModal"
+                    aria-label="Close"><i class="fas fa-times"></i></button>
             </div>
+            <form wire:submit.prevent="destroyService">
+                <div class="modal-body">
+                    <p>{{ __('Are you sure you want to delete this Service?') }}</p>
+                    <p>{{ __('Please enter the')}}<strong> "{{$del_service_name}}" </strong>{{__('to confirm:') }}</p>
+                    <input type="text" wire:model="service_name_to_selete" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" wire:click="closeModal"
+                        data-dismiss="modal">{{__('Cancel')}}</button>
+                        <button type="submit" class="btn btn-danger" wire:disabled="!confirmDelete || $foodNameToDelete !== $showTextTemp">
+                            {{ __('Yes! Delete') }}
+                        </button>
+                </div>
+            </form>
         </div>
     </div>
-    
-    </div>
-    
-    
-    
+</div>
+</div>

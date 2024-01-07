@@ -54,7 +54,7 @@
                             @if ($col === 'id')
                             <b>#CR-{{ $item->id }}</b>
                             @elseif ($col === 'invoice_id')
-                            <b>#INV-{{ $item->id }}</b>
+                            <b>#INV-{{ $item->invoice_id }}</b>
                             @elseif ($col === 'status')
                             <span class="{{ $item->status == 1 ? 'text-success' : 'text-danger' }}">
                                 <b>{{ $item->status == 1 ? __('Active') : __('Non-Active') }}</b>

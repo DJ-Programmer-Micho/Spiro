@@ -29,7 +29,7 @@ class Own
         }
         $user = Auth::user();
         if($user->role == 3){
-            return redirect('/finance');
+            return redirect('/fin');
         }
         $user = Auth::user();
         if($user->role == 4){

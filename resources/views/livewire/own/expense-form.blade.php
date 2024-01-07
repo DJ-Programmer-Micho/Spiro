@@ -1,26 +1,5 @@
 
 <div>
-<!-- Image Crop -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.5/cropper.min.css" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.5/cropper.min.js"></script>
-{{-- inline style for modal --}}
-<style>
-    .image_area { position: relative; }
-    img { display: block; max-width: 100%; }
-    .preview { overflow: hidden; width: 160px;  height: 160px; margin: 10px; border: 1px solid red;}
-    .modal-lg{max-width: 1000px !important;}
-    .overlay { position: absolute; bottom: 10px; left: 0; right: 0; background-color: rgba(255, 255, 255, 0.5); overflow: hidden; height: 0; transition: .5s ease; width: 100%;}
-    .image_area:hover .overlay { height: 50%; cursor: pointer; }
-    .text { color: #333; font-size: 20px; position: absolute; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%); text-align: center;}
-    .switch input { display:none; }
-    .switch { display:inline-block; width:60px; height:20px; margin:8px; position:relative; }
-    .slider { position:absolute; top:0; bottom:0; left:0; right:0; border-radius:30px; box-shadow:0 0 0 2px #cc0022, 0 0 4px #cc0022; cursor:pointer; border:4px solid transparent; overflow:hidden; transition:.4s; }
-    .slider:before { position:absolute; content:""; width:100%; height:100%; background:#cc0022; border-radius:30px; transform:translateX(-30px); transition:.4s; }
-    input:checked + .slider:before { transform:translateX(30px); background:limeGreen; }
-    input:checked + .slider { box-shadow:0 0 0 2px limeGreen,0 0 2px limeGreen; }
-</style>
-
     <!-- Select Modal  -->
     <div wire:ignore.self class="modal fade overflow-auto" id="selectExpenseModal" tabindex="-1" aria-labelledby="selectExpenseModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog text-white mx-1 mx-lg-auto">
