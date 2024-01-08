@@ -79,7 +79,7 @@ class MyTaskLivewire extends Component
 
             $tasks[$sub_index]['progress'] = $this->progress_[$id_index . '_' . $sub_index];
             if($this->telegram_channel_status == 1){
-                // try{
+                // try{Edashboard
                     Notification::route('toTelegram', null)
                     ->notify(new TelegramMyTaskShort(
                         auth()->user()->name,

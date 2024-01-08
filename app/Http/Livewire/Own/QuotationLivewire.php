@@ -464,7 +464,7 @@ class QuotationLivewire extends Component
                 try{
                     $this->printDirectPdf($quotation->id);
                 }  catch (\Exception $e) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while Printing Invoice.')]);
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while Printing Quotation.')]);
                 }
             }
 
@@ -695,7 +695,7 @@ class QuotationLivewire extends Component
             $this->confirmDelete = false;
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Deleted Successfully')]);
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Deleted Successfully')]);
         } else {
             $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Operation Failed, Make sure of the name CODE...DEL-NAME, The name:') . ' ' . $this->del_quotation_name]);
         }

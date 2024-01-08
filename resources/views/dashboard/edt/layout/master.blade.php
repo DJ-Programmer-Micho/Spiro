@@ -155,7 +155,7 @@
                     colors="primary:#ffffff,secondary:#cc0022"
                     style="width:48px;height:48px">
                 </lord-icon>
-                    <span>{{__('cash')}}</span></a>
+                    <span>{{__('Cash Receipt')}}</span></a>
             </li>
 
             <!-- Divider -->
@@ -191,9 +191,9 @@
 
             <!-- Sidebar Message -->
             <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-2" src="img/undraw_rocket.svg" alt="...">
-                <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features, components, and more!</p>
-                <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a>
+                <img class="sidebar-card-illustration mb-2" src="https://i.ibb.co/PrD6md2/MET-Circle.png" alt="metiraq">
+                <p class="text-center mb-2"><strong>MET IRAQ</strong> - Pro Vesrion Of Managment System</p>
+                <a class="btn btn-danger btn-sm" href="https://metiraq.com/" target="_blank">Contact Us</a>
             </div>
 
         </ul>
@@ -213,46 +213,8 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <!-- Topbar Search -->
-                    {{-- <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form> --}}
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        {{-- <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a> --}}
-                            <!-- Dropdown - Messages -->
-                            {{-- <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li> --}}
 
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
@@ -268,40 +230,6 @@
                                     {{__('Alerts Center')}}
                                 </h6>
                                 <a class="ropdown-item text-center small text-gray-500">{{__('Empty')}}</a>
-                                {{-- <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a> --}}
                             </div>
                         </li>
 
@@ -319,54 +247,7 @@
                                 <h6 class="dropdown-header">
                                     {{__('Message Center')}}
                                 </h6>
-                                {{-- <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src=""
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a> --}}
+    
                                 <a class="dropdown-item text-center small text-gray-500">{{__('No Messages')}}</a>
                                 {{-- <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a> --}}
                             </div>
@@ -395,6 +276,10 @@
                                     {{auth()->user()->profile->job_title}} 
                                 </a>
                                 <div class="dropdown-divider"></div>
+                                <div>
+                                    <a href="#" onclick="changeLanguage('en')" class="dropdown-item"><img src="{{asset('assets/dashboard/img/lang/uk.webp')}}" width="25px" class="mx-1">{{__('en')}}</a>
+                                    <a href="#" onclick="changeLanguage('ar')" class="dropdown-item"><img src="{{asset('assets/dashboard/img/lang/iraq.png')}}" width="25px" class="mx-1">{{__('ar')}}</a>
+                                </div>
                                 {{-- @foreach ($filteredLocales as $locale)
                                     <a class="dropdown-item" href="#" onclick="changeLanguage('{{ $locale }}')">
                                         <i class="fas fa-language fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -454,7 +339,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">{{__('Select "Logout" below if you are ready to end your current session.')}}</div>
+                <div class="modal-body">{{__('Select Logout below if you are ready to end your current session.')}}</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">{{__('Cancel')}}</button>
                     <a class="btn btn-primary" href="{{route('logout')}}">{{__('Logout')}}</a>
@@ -495,7 +380,7 @@
     @yield('dash_script')
     @stack('datePicker')
     @yield('datePicker')
-    <form id="languageForm" action="#" method="post">
+    <form id="languageForm" action="{{ route('setLocale') }}" method="post">
         @csrf
         <input type="hidden" name="locale" id="selectedLocale" value="{{ app()->getLocale() }}">
     </form>

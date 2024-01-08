@@ -151,7 +151,7 @@
                     colors="primary:#cc0022,secondary:#eee"
                     style="width:48px;height:48px">
                 </lord-icon>
-                    <span>{{__('Payment')}}</span></a>
+                    <span>{{__('Payments')}}</span></a>
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider my-1">
@@ -237,7 +237,7 @@
                     colors="primary:#ffffff,secondary:#cc0022"
                     style="width:48px;height:48px">
                 </lord-icon>
-                    <span>{{__('cash')}}</span></a>
+                    <span>{{__('Cash Receipt')}}</span></a>
             </li>
 
             <!-- Divider -->
@@ -298,9 +298,9 @@
 
             <!-- Sidebar Message -->
             <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-2" src="img/undraw_rocket.svg" alt="...">
-                <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features, components, and more!</p>
-                <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a>
+                <img class="sidebar-card-illustration mb-2" src="https://i.ibb.co/PrD6md2/MET-Circle.png" alt="metiraq">
+                <p class="text-center mb-2"><strong>MET IRAQ</strong> - Pro Vesrion Of Managment System</p>
+                <a class="btn btn-danger btn-sm" href="https://metiraq.com/" target="_blank">Contact Us</a>
             </div>
 
         </ul>
@@ -567,7 +567,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">{{__('Select "Logout" below if you are ready to end your current session.')}}</div>
+                <div class="modal-body">{{__('Select Logout below if you are ready to end your current session.')}}</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">{{__('Cancel')}}</button>
                     <a class="btn btn-primary" href="{{route('logout')}}">{{__('Logout')}}</a>

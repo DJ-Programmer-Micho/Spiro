@@ -67,12 +67,12 @@
                                 <thead>
                                   <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Task</th> 
-                                    <th scope="col">Start Date</th> 
-                                    <th scope="col">End Date</th> 
-                                    <th scope="col">Progress</th> 
-                                    <th scope="col">Status</th> 
-                                    <th scope="col">Action</th>
+                                    <th scope="col">{{__('Task')}}</th>
+                                    <th scope="col">{{__('Start Date')}}</th>
+                                    <th scope="col">{{__('End Date')}}</th>
+                                    <th scope="col">{{__('Progress')}}</th>
+                                    <th scope="col">{{__('Status')}}</th>
+                                    <th scope="col">{{__('Action')}}</th>
                                   </tr>
                                 </thead>
                                 <tbody>

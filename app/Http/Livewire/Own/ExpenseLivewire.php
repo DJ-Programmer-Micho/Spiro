@@ -332,7 +332,7 @@ class ExpenseLivewire extends Component
                 }
             }
 
-            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Service Updated Successfully')]);
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Expense Updated Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
         } catch (\Exception $e){

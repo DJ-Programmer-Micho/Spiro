@@ -192,7 +192,7 @@ class ServiceLivewire extends Component
             $this->confirmDelete = false;
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Deleted Successfully')]);
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Service Deleted Successfully')]);
         } else {
             $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Operation Failed, Make sure of the name CODE...DEL-NAME, The name:') . ' ' . $this->del_service_name]);
         }

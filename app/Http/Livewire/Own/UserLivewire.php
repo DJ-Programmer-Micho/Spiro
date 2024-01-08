@@ -94,7 +94,7 @@ public function handleCroppedImage($img)
                 $this->img_public = preg_replace('/^data:image\/\w+;base64,/', '', $this->img_public);
                 $this->decodedImage = base64_decode($this->img_public);
                 if ($this->decodedImage === false) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Imade did not Encoded, please check the file or file format!')]);
+                    $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Image did not Encoded, please check the file or file format!')]);
                 }
 
                 $filename = 'user_' . now()->format('YmdHis') . '.jpg';
@@ -356,7 +356,7 @@ public function handleCroppedImage($img)
             $this->dispatchBrowserEvent('close-modal');
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('User Deleted Successfully')]);
         } else {
-            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Operation Failed, Make sure of the name CODE...DEL-NAME, The name:') . ' ' . $this->del_client_name]);
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Operation Failed, Make sure of the name CODE...DEL-NAME, The name:') . ' ' . $this->del_user_name]);
         }
     } // END FUNCTION OF DESTROY CLIENT
 

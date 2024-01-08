@@ -167,7 +167,7 @@ class PaymentLivewire extends Component
             $this->confirmDelete = false;
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Deleted Successfully')]);
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Payment Deleted Successfully')]);
         } else {
             $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Operation Failed, Make sure of the name CODE...DEL-NAME, The name:') . ' ' . $this->del_payment_name]);
         }
