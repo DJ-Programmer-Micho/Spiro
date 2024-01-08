@@ -500,7 +500,6 @@
                                     {{auth()->user()->name}} <br>
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     {{auth()->user()->profile->job_title}} 
-                                    {{__('test')}}
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <div>
