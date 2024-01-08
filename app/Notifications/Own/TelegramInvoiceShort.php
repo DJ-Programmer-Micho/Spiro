@@ -38,12 +38,12 @@ class TelegramInvoiceShort extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#INV-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#INV-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
         $content = "*" . 'INVOICE UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'INVOICE-ID: '. $registrationId . '-'. $this->q_id .'-' . $registration3Id . "*\n"
+        . "*" .'INVOICE-ID: #INV-' . $this->q_id . "*\n"
         . "*" .'-----------------'."*\n";
 
         $content .= "*" . 'Client Name: '. $this->clentName . "*\n";

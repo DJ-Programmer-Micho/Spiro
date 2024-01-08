@@ -27,14 +27,14 @@ class TelegramPaymentDelete extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#PAY -" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#PAY -" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
-       ->content("*" . 'SERVICE DELETED' . "*\n"
+       ->content("*" . 'PAYMENT DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'SERVICE-ID: '. $registrationId . '-'. $this->p_id .'-' . $registration3Id . "*\n"
+       . "*" .'PAYMENT-ID: #PAY-' . $this->p_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'Name: '. $this->paymentType . "*\n"
         );

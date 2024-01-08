@@ -35,12 +35,12 @@ class TelegramPaymentUpdate extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#PAY-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#PAY-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
         $content = "*" . 'PAYMENT UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'PAYMENT-ID: '. $registrationId . '-'. $this->s_id .'-' . $registration3Id . "*\n"
+        . "*" .'PAYMENT-ID: #PAY-'. $this->s_id . "*\n"
         . "*" .'-----------------'."*\n";
 
 

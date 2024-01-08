@@ -25,6 +25,12 @@ class AuthController extends Controller
         //Get Info
         $credentials = $request->only('email', 'password');
         $user = User::where('email', $credentials['email'])->first();
+        if(!$user){
+            return redirect('/login')->with('alert', [
+                'type' => 'error',
+                'message' => __('Invalid credentials or user is inactive.'),
+            ]);
+        }
         $flag = false;
         if ($credentials['password'] === $user->password) {
             $flag = true;

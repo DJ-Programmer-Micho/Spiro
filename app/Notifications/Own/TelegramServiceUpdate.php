@@ -37,12 +37,12 @@ class TelegramServiceUpdate extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#SER-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#SER-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
         $content = "*" . 'SERVICE UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'SERVICE-ID: '. $registrationId . '-'. $this->s_id .'-' . $registration3Id . "*\n"
+        . "*" .'SERVICE-ID: #SER-'. $this->s_id . "*\n"
         . "*" .'-----------------'."*\n";
 
 
@@ -55,11 +55,11 @@ class TelegramServiceUpdate extends Notification
         }
 
         if ($this->priceDollar !== $this->old_service_data['priceDollar']) {
-            $content .= "*" . 'Cost Changed: $'. $this->old_service_data['priceDollar'] . ' ➡️ $' . $this->priceDollar . "*\n";
+            $content .= "*" . 'Cost Changed: $'. number_format($this->old_service_data['priceDollar']) . ' ➡️ $ ' . number_format($this->priceDollar) . "*\n";
         }
 
         if ($this->priceIraqi !== $this->old_service_data['priceIraqi']) {
-            $content .= "*" . 'Cost Changed: '. $this->old_service_data['priceIraqi'] . 'IQD ➡️ ' . $this->priceIraqi . 'IQD' . "*\n";
+            $content .= "*" . 'Cost Changed: '. number_format($this->old_service_data['priceIraqi']) . ' IQD ➡️ ' . number_format($this->priceIraqi) . ' IQD' . "*\n";
         }
         
         if ($this->serviceDescription !== $this->old_service_data['serviceDescription']) {

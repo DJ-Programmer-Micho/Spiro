@@ -86,12 +86,12 @@ class TelegramUserUpdate extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#USR-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#USR-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
         $content = "*" . 'USER UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'USER-ID: '. $registrationId . '-'. $this->u_id .'-' . $registration3Id . "*\n"
+        . "*" .'USER-ID: #USR-' . $this->u_id . "*\n"
         . "*" .'-----------------'."*\n";
         
         if ($this->name !== $this->old_user_data['name']) {

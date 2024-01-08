@@ -175,7 +175,7 @@
 
 <body>
 
-    <h1 class="logo-div">Spiros</h1>
+    <h1 class="logo-div" style="width: auto;">Glam Production</h1>
     <div class="container">
         <form id="loginForm" action="{{route('login')}}" method="post">
             @csrf

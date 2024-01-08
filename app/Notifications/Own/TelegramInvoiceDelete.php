@@ -24,14 +24,14 @@ class TelegramInvoiceDelete extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#INV-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#INV-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'INVOICE DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'INVOICE-ID: '. $registrationId . '-'. $this->i_id .'-' . $registration3Id . "*\n"
+       . "*" .'INVOICE-ID: #INV-' . $this->i_id . "*\n"
         );
     }
     

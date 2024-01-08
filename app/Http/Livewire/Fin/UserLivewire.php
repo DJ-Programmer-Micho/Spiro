@@ -46,12 +46,16 @@ class UserLivewire extends Component
     public $userUpdate;
     public $old_user_data;
 
+    public $baseAvatar;
+
     protected $listeners = [
         'updateCroppedAvatarImg' => 'handleCroppedImage',
         'simulationCompleteImgFood' => 'handlesimulationCompleteImg',
     ];
 
     public function mount(){
+        $this->baseAvatar = '/home/metiszec/arnews.metiraq.com/avatars/';
+
         $this->telegram_channel_status = 1;
         $this->tele_id = env('TELEGRAM_GROUP_ID');
         $this->default_avatarImg = asset('avatars/user.png');
@@ -93,6 +97,8 @@ public function handleCroppedImage($img)
 
                 $filename = 'user_' . now()->format('YmdHis') . '.jpg';
                 $success = File::put(public_path('avatars/' . $filename), $this->decodedImage);
+                // $success = File::put($this->baseAvatar . $filename, $this->decodedImage);
+
                 if ($success) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Avatar Uploaded Successfully')]);
                 } else {
@@ -227,7 +233,7 @@ public function handleCroppedImage($img)
                     if ($oldAvatarFilename && $oldAvatarFilename != 'user.png') {
                         // Use public_path() for files in the public directory
                         $filePath = public_path('avatars/' . $oldAvatarFilename);
-                    
+                    // $filePath = $this->baseAvatar . $oldAvatarFilename;
                         // Delete the old avatar file
                         if (file_exists($filePath)) {
                             unlink($filePath);
@@ -237,7 +243,7 @@ public function handleCroppedImage($img)
                     $filename = 'user_' . now()->format('YmdHis') . '.jpg';
                     // Save the new avatar file
                     File::put(public_path('avatars/' . $filename), $this->decodedImage);
-
+                    // File::put($this->baseAvatar . $filename, $this->decodedImage);
                     Profile::where('user_id', $this->userUpdate)->update([
                         'avatar' => $filename ?? null,
                     ]);

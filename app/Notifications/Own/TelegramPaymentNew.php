@@ -26,14 +26,14 @@ class TelegramPaymentNew extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#PAY-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#PAY-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'PAYMENT TYPE ADDED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'PAYMENT-ID: '. $registrationId . '-'. $this->p_id .'-' . $registration3Id . "*\n"
+       . "*" .'PAYMENT-ID: #PAY-' . $this->p_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'Type: '. $this->paymentType . "*\n"
         );

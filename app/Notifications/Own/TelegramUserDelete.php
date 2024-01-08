@@ -27,14 +27,14 @@ class TelegramUserDelete extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#USR-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#USR-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'USER DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'USER-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
+       . "*" .'USER-ID: #USR-'. $this->c_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'User Name: '. $this->userName . "*\n"
         );

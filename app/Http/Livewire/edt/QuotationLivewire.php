@@ -109,6 +109,7 @@ class QuotationLivewire extends Component
             $quotationEditasd = Quotation::where('id',$quotationId)->first();
 
             $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
+            // $imagePath = "/home/metiszec/arnews.metiraq.com/assets/dashboard/img/mainlogopdf.jpg";
             $imageData = base64_encode(File::get($imagePath));
             $base64Image = 'data:image/jpeg;base64,' . $imageData;
             
@@ -156,6 +157,7 @@ class QuotationLivewire extends Component
         $quotationEditasd = Quotation::where('id',$quotationId)->first();
 
         $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
+        // $imagePath = "/home/metiszec/arnews.metiraq.com/assets/dashboard/img/mainlogopdf.jpg";
         $imageData = base64_encode(File::get($imagePath));
         $base64Image = 'data:image/jpeg;base64,' . $imageData;
         

@@ -9,7 +9,8 @@ use App\Models\Service;
 use Livewire\Component;
 use App\Models\Quotation;
 use Livewire\WithPagination;
-use Barryvdh\DomPDF\Facade\Pdf;
+// use Barryvdh\DomPDF\Facade\Pdf;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
 use Illuminate\Support\Facades\File;
 use App\Notifications\Own\TelegramClientNew;
 use Illuminate\Support\Facades\Notification;
@@ -108,12 +109,14 @@ class QuotationLivewire extends Component
         // try {
             $quotationEditasd = Quotation::where('id',$quotationId)->first();
 
-            $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
+            $imagePath = public_path('assets/dashboard/img/mainlogopdf.jpg');
+            // $imagePath = "/home/metiszec/arnews.metiraq.com/assets/dashboard/img/mainlogopdf.jpg";
             $imageData = base64_encode(File::get($imagePath));
             $base64Image = 'data:image/jpeg;base64,' . $imageData;
-            
+
+            // "img" => $base64Image,
             $data = [
-                "img" => $base64Image,
+                "img" => 'asd',
 
                 "quotationId" => $quotationEditasd->id,
                 "client" => $quotationEditasd->client->client_name ?? 'UnKnown',
@@ -127,7 +130,7 @@ class QuotationLivewire extends Component
                 "total" => $quotationEditasd->grand_total_dollar ?? 'UnKnown',
                 "clientId" => $quotationEditasd->client->id ?? 'UnKnown',
 
-                "serviceData" => json_decode($quotationEditasd->services,true) ?? 'XXX',
+                "serviceData" => json_decode($quotationEditasd->services,true) ?: [],
 
                 "amountDollar" => $quotationEditasd->total_amount_dollar ?? '$XXXX',
                 "discount" => $quotationEditasd->discount_dollar ?? '$XXXX',
@@ -136,7 +139,8 @@ class QuotationLivewire extends Component
                 "notes" => $quotationEditasd->notes ?? '$XXXX',
             ];
 
-            $pdfContent = PDF::loadView('dashboard.pdf.pdfQuotation', $data)->output();
+            $pdfContent = LaravelMpdf::loadView('dashboard.pdf.pdfQuotation', $data)->output();
+            return $pdfContent->stream('document.pdf');
             return response()->streamDownload(
                 function () use ($pdfContent) {
                     echo $pdfContent;
@@ -146,7 +150,6 @@ class QuotationLivewire extends Component
         // } catch (\Exception $e) {
             $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Something Went Wrong.')]);
         // }
-        
     } 
    
 
@@ -156,6 +159,7 @@ class QuotationLivewire extends Component
         $quotationEditasd = Quotation::where('id',$quotationId)->first();
 
         $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
+        // $imagePath = "/home/metiszec/arnews.metiraq.com/assets/dashboard/img/mainlogopdf.jpg";
         $imageData = base64_encode(File::get($imagePath));
         $base64Image = 'data:image/jpeg;base64,' . $imageData;
         

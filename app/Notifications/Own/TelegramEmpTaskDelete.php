@@ -24,14 +24,14 @@ class TelegramEmpTaskDelete extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#TSK-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#TSK-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'TASK DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'TASK-ID: '. $registrationId . '-'. $this->t_id .'-' . $registration3Id . "*\n"
+       . "*" .'TASK-ID: #TSK-' . $this->t_id . "*\n"
         );
     }
     

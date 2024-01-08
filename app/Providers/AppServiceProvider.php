@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->app->singleton('baseUrlNameCheap', function () {
+            return '/home/metiszec/arnews.metiraq.com/'; // Replace "abc" with your desired value or logic to fetch the data.
+        });
     }
 }

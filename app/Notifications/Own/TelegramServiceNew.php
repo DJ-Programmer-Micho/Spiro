@@ -32,14 +32,14 @@ class TelegramServiceNew extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#SER-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#SER-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'SERVICE ADDED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'SERVICE-ID: '. $registrationId . '-'. $this->s_id .'-' . $registration3Id . "*\n"
+       . "*" .'SERVICE-ID: #SER-'. $this->s_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'Code: '. $this->serviceCode . "*\n"
        . "*" .'Name: '. $this->serviceName . "*\n"

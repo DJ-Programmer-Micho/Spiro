@@ -84,12 +84,12 @@ class TelegramInvoiceUpdate extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#INV-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#INV-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
         $content = "*" . 'INVOICE UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'INVOICE-ID: '. $registrationId . '-'. $this->i_id .'-' . $registration3Id . "*\n"
+        . "*" .'INVOICE-ID: #INV-' . $this->i_id  . "*\n"
         . "*" .'-----------------'."*\n";
 
         if ($this->clientId !== $this->old_invoice_data['clientName']) {

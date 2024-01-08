@@ -77,11 +77,11 @@ class TelegramCashNew extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#CR-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#CR-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
         $content = "*" . 'Cash Reciept ADDED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'Cash Reciept-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
+        . "*" .'Cash Reciept-ID: #CR-' . $this->c_id . "*\n"
         . "*" .'-----------------'."*\n"
         . "*" .'Date: '.  $this->dateCash . "*\n"
         . "*" .'Client: '. $this->clientName . "*\n"

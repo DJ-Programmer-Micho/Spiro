@@ -23,7 +23,7 @@ use App\Http\Controllers\DashboardController;
 */
 
 Route::get('/', function () {
-    return view('layouts.layout');
+    return view('auth.login');
 });
 Route::get('/pdf', function () { return view('pdfCr'); });
 

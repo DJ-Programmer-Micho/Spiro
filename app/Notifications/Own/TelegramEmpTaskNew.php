@@ -94,11 +94,11 @@ class TelegramEmpTaskNew extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#TSK-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#TSK-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
         $content = "*" . 'TASK ADDED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'TASK-ID: '. $registrationId . '-'. $this->t_id .'-' . $registration3Id . "*\n"
+        . "*" .'TASK-ID: #TSK-' . $this->t_id . "*\n"
         . "*" .'-----------------'."*\n"
         . "*" .'Title: '. $this->title . "*\n"
         . "*" .'Client: '. $this->clientName . "*\n"

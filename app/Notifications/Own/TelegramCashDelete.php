@@ -24,14 +24,14 @@ class TelegramCashDelete extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#CR-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#CR-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'CASH RECIEPT DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'CASH RECIEPT-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
+       . "*" .'CASH RECIEPT-ID: #CR-' . $this->c_id . "*\n"
         );
     }
     

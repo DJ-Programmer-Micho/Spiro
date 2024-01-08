@@ -31,7 +31,7 @@ class TelegramQuotationDelete extends Notification
        ->to($this->tele_id)
        ->content("*" . 'QUOTATION DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'QUOTATION-ID: '. $registrationId . '-'. $this->q_id .'-' . $registration3Id . "*\n"
+       . "*" .'QUOTATION-ID: #QUO-'. $this->q_id . "*\n"
         );
     }
     

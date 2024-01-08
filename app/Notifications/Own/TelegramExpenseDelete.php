@@ -27,14 +27,14 @@ class TelegramExpenseDelete extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#USR-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#USR-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
-       ->content("*" . 'USER DELETED' . "*\n"
+       ->content("*" . 'EXPENSE DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'USER-ID: '. $registrationId . '-'. $this->e_id .'-' . $registration3Id . "*\n"
+       . "*" .'EXPENSE -ID: #EXP-' . $this->e_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'User Name: '. $this->billItem . "*\n"
         );

@@ -30,14 +30,14 @@ class TelegramBillNew extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#BIL-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#BIL-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'Bill ADDED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'BILL-ID: '. $registrationId . '-'. $this->b_id .'-' . $registration3Id . "*\n"
+       . "*" .'BILL-ID: #BIL-' . $this->b_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'Name: '. $this->billName . "*\n"
        . "*" .'Dollar Cost: $'. number_format($this->costDollar). "*\n"

@@ -26,14 +26,14 @@ class TelegramTaskNew extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#TSK-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#TSK-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'TASK OPTION ADDED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'TASK-ID: '. $registrationId . '-'. $this->p_id .'-' . $registration3Id . "*\n"
+       . "*" .'TASK-ID: #TSK-'. $this->p_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'Type: '. $this->taskOption . "*\n"
         );

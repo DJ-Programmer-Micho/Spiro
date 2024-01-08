@@ -36,12 +36,12 @@ class TelegramEmpTaskShort extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#EMP-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#EMP-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
         $content = "*" . 'EMP TASKS UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'EMP TASKS-ID: '. $registrationId . '-'. $this->e_id .'-' . $registration3Id . "*\n"
+        . "*" .'EMP TASKS-ID: #TSK-' . $this->e_id . "*\n"
         . "*" .'-----------------'."*\n";
 
         $content .= "*" . 'Invoice Title: '. $this->title . "*\n";

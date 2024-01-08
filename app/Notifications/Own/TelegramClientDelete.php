@@ -28,14 +28,14 @@ class TelegramClientDelete extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#CLI-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#CLI-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'CLIENT DELETED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'CLIENT-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
+       . "*" .'CLIENT-ID: #CLI-' . $this->c_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'Client Name: '. $this->clientName . "*\n"
         );

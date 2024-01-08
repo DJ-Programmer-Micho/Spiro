@@ -34,14 +34,14 @@ class TelegramExpenseNew extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#EXP-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#EXP-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'Expense ADDED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'EXPENSE-ID: '. $registrationId . '-'. $this->e_id .'-' . $registration3Id . "*\n"
+       . "*" .'EXPENSE-ID: #EXP-' . $this->e_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'Bill Name: '. $this->billName . "*\n"
        . "*" .'expense Type: '. $this->type . "*\n"

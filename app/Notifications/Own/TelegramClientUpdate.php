@@ -43,12 +43,12 @@ class TelegramClientUpdate extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#CLI-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#CLI-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
         $content = "*" . 'CLIENT UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'CLIENT-ID: '. $registrationId . '-'. $this->c_id .'-' . $registration3Id . "*\n"
+        . "*" .'CLIENT-ID: #CLI-' . $this->c_id . "*\n"
         . "*" .'-----------------'."*\n";
         
         if ($this->clientName !== $this->old_client_data['clientName']) {

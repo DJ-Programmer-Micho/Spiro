@@ -150,14 +150,14 @@ class TelegramQuotationNew extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#QUO-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#QUO-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
        return TelegramMessage::create()
        ->to($this->tele_id)
        ->content("*" . 'QUOTATION ADDED' . "*\n"
        . "*" .'-----------------'."*\n" 
-       . "*" .'QUOTATION-ID: '. $registrationId . '-'. $this->q_id .'-' . $registration3Id . "*\n"
+       . "*" .'QUOTATION-ID: #QUO-'. $this->q_id . "*\n"
        . "*" .'-----------------'."*\n"
        . "*" .'Date: '. $this->date . "*\n"
        . "*" .'Client: '. $this->clientName . "*\n"

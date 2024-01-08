@@ -35,12 +35,12 @@ class TelegramTaskUpdate extends Notification
 
     public function toTelegram($notifiable)
     {
-        $registrationId = "#TSK-" . rand(10, 99);
-        $registration3Id = rand(100, 999);
+        // $registrationId = "#TSK-" . rand(10, 99);
+        // $registration3Id = rand(100, 999);
 
         $content = "*" . 'TASK OPTION UPDATED' . "*\n"
         . "*" .'-----------------'."*\n" 
-        . "*" .'TASK-ID: '. $registrationId . '-'. $this->s_id .'-' . $registration3Id . "*\n"
+        . "*" .'TASK-ID: #TSK-'. $this->s_id . "*\n"
         . "*" .'-----------------'."*\n";
 
         if ($this->taskOption !== $this->old_payment_data['taskOption']) {
