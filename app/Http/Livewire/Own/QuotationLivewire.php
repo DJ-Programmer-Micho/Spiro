@@ -6,14 +6,11 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Service;
-use Livewire\Component;
 use App\Models\Quotation;
+use Livewire\Component;
 use Livewire\WithPagination;
-// use Barryvdh\DomPDF\Facade\Pdf;
-use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
-use Illuminate\Support\Facades\File;
-use App\Notifications\Own\TelegramClientNew;
 use Illuminate\Support\Facades\Notification;
+use App\Notifications\Own\TelegramClientNew;
 use App\Notifications\Own\TelegramInvoiceNew;
 use App\Notifications\Own\TelegramQuotationNew;
 use App\Notifications\Own\TelegramQuotationShort;
@@ -106,94 +103,20 @@ class QuotationLivewire extends Component
     } // END FUNCTION OF PAGE LOAD
 
     public function printCustomPdf(int $quotationId){
-        // try {
-            $quotationEditasd = Quotation::where('id',$quotationId)->first();
-
-            $imagePath = public_path('assets/dashboard/img/mainlogopdf.jpg');
-            // $imagePath = "/home/metiszec/arnews.metiraq.com/assets/dashboard/img/mainlogopdf.jpg";
-            $imageData = base64_encode(File::get($imagePath));
-            $base64Image = 'data:image/jpeg;base64,' . $imageData;
-
-            // "img" => $base64Image,
-            $data = [
-                "img" => 'asd',
-
-                "quotationId" => $quotationEditasd->id,
-                "client" => $quotationEditasd->client->client_name ?? 'UnKnown',
-                "email" => $quotationEditasd->client->email ?? 'UnKnown',
-                "country" => $quotationEditasd->client->country ?? 'UnKnown',
-                "city" => $quotationEditasd->client->city ?? 'UnKnown',
-                "phoneOne" => $quotationEditasd->client->phone_one ?? 'UnKnown',
-                "phoneTwo" => $quotationEditasd->client->phone_two ?? 'UnKnown',
-                
-                "date" => $quotationEditasd->qoutation_date ?? 'UnKnown',
-                "total" => $quotationEditasd->grand_total_dollar ?? 'UnKnown',
-                "clientId" => $quotationEditasd->client->id ?? 'UnKnown',
-
-                "serviceData" => json_decode($quotationEditasd->services,true) ?: [],
-
-                "amountDollar" => $quotationEditasd->total_amount_dollar ?? '$XXXX',
-                "discount" => $quotationEditasd->discount_dollar ?? '$XXXX',
-                "grandDollar" => $quotationEditasd->grand_total_dollar ?? '$XXXX',
-
-                "notes" => $quotationEditasd->notes ?? '$XXXX',
-            ];
-
-            $pdfContent = LaravelMpdf::loadView('dashboard.pdf.pdfQuotation', $data)->output();
-            return $pdfContent->stream('document.pdf');
-            return response()->streamDownload(
-                function () use ($pdfContent) {
-                    echo $pdfContent;
-                },
-                $quotationEditasd->id.'_'.$quotationEditasd->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
-            );
-        // } catch (\Exception $e) {
-            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Something Went Wrong.')]);
-        // }
+        try {
+            $this->dispatchBrowserEvent('openPdfInNewTab', ['quotationId' => $quotationId]);
+        } catch (\Exception $e) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('PDF Error')]);
+        }
     } 
-   
 
     // Direct Print
     public function printDirectPdf(int $quotationId){
-        
-        $quotationEditasd = Quotation::where('id',$quotationId)->first();
-
-        $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
-        // $imagePath = "/home/metiszec/arnews.metiraq.com/assets/dashboard/img/mainlogopdf.jpg";
-        $imageData = base64_encode(File::get($imagePath));
-        $base64Image = 'data:image/jpeg;base64,' . $imageData;
-        
-        $data = [
-            "img" => $base64Image,
-
-            "quotationId" => $quotationEditasd->id,
-            "client" => $quotationEditasd->client->client_name ?? 'UnKnown',
-            "email" => $quotationEditasd->client->email ?? 'UnKnown',
-            "country" => $quotationEditasd->client->country ?? 'UnKnown',
-            "city" => $quotationEditasd->client->city ?? 'UnKnown',
-            "phoneOne" => $quotationEditasd->client->phone_one ?? 'UnKnown',
-            "phoneTwo" => $quotationEditasd->client->phone_two ?? 'UnKnown',
-            
-            "date" => $quotationEditasd->qoutation_date ?? 'UnKnown',
-            "total" => $quotationEditasd->grand_total_dollar ?? 'UnKnown',
-            "clientId" => $quotationEditasd->client->id ?? 'UnKnown',
-
-            "serviceData" => json_decode($quotationEditasd->services,true) ?? 'XXX',
-
-            "amountDollar" => $quotationEditasd->total_amount_dollar ?? '$XXXX',
-            "discount" => $quotationEditasd->discount_dollar ?? '$XXXX',
-            "grandDollar" => $quotationEditasd->grand_total_dollar ?? '$XXXX',
-
-            "notes" => $quotationEditasd->notes ?? '$XXXX',
-        ];
-
-        $pdfContent = PDF::loadView('dashboard.pdf.pdfQuotation', $data)->output();
-
-
-        $this->dispatchBrowserEvent('printPdf', [
-            'pdfContent' => base64_encode($pdfContent),
-            'filename' => $quotationEditasd->id . '_' . $quotationEditasd->client->client_name . '_' . now()->format('Y-m-d') . '.pdf',
-        ]);
+        try {
+            $this->dispatchBrowserEvent('openPdfInNewTab', ['quotationId' => $quotationId]);
+        } catch (\Exception $e) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('PDF Error')]);
+        }    
     } 
 
     public function createEmptyService() {
@@ -408,6 +331,13 @@ class QuotationLivewire extends Component
     public function addQuotation(){
         try {
             $validatedData = $this->validate();
+
+            if($validatedData['discountDollar'] > $validatedData['grandTotalDollar']) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Please Fix The Discount Amount, Is Larger than the Total!')]);
+                $this->dispatchBrowserEvent('focusDiscountDollar');
+               return;
+            } 
+
             $quotation = Quotation::create([
                 'client_id' => $validatedData['select_client_data'],
                 'payment_id' => $validatedData['select_payment_data'],
@@ -464,12 +394,10 @@ class QuotationLivewire extends Component
                 }
             }
 
-            if($this->telegram_channel_status == 1){
-                try{
-                    $this->printDirectPdf($quotation->id);
-                }  catch (\Exception $e) {
-                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while Printing Quotation.')]);
-                }
+            try{
+                $this->printDirectPdf($quotation->id);
+            }  catch (\Exception $e) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while Printing Quotation.')]);
             }
 
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Added Successfully')]);
@@ -569,8 +497,14 @@ class QuotationLivewire extends Component
     } // END FUNCTION OF EDIT CLIENT
 
     public function updateQuotation(){
-        // try {
+        try {
             $validatedData = $this->validate();
+
+            if($validatedData['discountDollar'] > $validatedData['grandTotalDollar']) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Please Fix The Discount Amount, Is Larger than the Total!')]);
+                $this->dispatchBrowserEvent('focusDiscountDollar');
+               return;
+            } 
 
             Quotation::where('id', $this->quotationUpdate)->update([
                 'client_id' => $validatedData['select_client_data'],
@@ -597,7 +531,7 @@ class QuotationLivewire extends Component
             ]);
 
             if($this->telegram_channel_status == 1){
-                // try{
+                try{
 
                     if ( $validatedData['select_client_data']) {
                         $client = Client::find( $validatedData['select_client_data']);
@@ -653,16 +587,22 @@ class QuotationLivewire extends Component
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                // }  catch (\Exception $e) {
+                }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
-                // }
+                }
+
+                try{
+                    $this->printDirectPdf($this->quotationUpdate);
+                }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while Printing Quotation.')]);
+                }
             }
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Updated Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        // } catch (\Exception $e){
+        } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
-        // }
+        }
     } // END FUNCTION OF UPDATE CLIENT
 
     public function deleteQuotation(int $selected_quotation_id){

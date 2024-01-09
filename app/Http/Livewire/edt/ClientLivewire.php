@@ -206,7 +206,7 @@ class ClientLivewire extends Component
         // ->orderBy('priority', 'ASC')
         ->paginate(15);
         
-        return view('livewire.edt.Client-table',[
+        return view('livewire.edt.client-table',[
             'items' => $data,
             'cols_th' => $cols_th,
             'cols_td' => $cols_td,

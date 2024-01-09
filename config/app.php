@@ -168,7 +168,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Mccarlosen\LaravelMpdf\LaravelMpdfServiceProvider::class,
+        // Mccarlosen\LaravelMpdf\LaravelMpdfServiceProvider::class,
         // Barryvdh\DomPDF\ServiceProvider::class,
 
         // Livewire\Providers\LivewireServiceProvider::class,

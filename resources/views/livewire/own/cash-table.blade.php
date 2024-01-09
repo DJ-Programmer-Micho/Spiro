@@ -162,50 +162,10 @@ $(function() {
 });
 </script>
 <script>
-    window.addEventListener('printPdf', function (data) {
-        console.log('printing');
+    window.addEventListener('openPdfInNewTab', function (data) {
         console.log(data);
-        console.log(data.detail.pdfContent);
-        const pdfDataDirectPrint = data.detail.pdfContent;
-    
-        // Create a blob from the base64 PDF content
-        const blob = b64toBlob(pdfDataDirectPrint, 'application/pdf');
-    
-        // Create a data URL for the blob
-        const pdfUrl = URL.createObjectURL(blob);
-    
-        // Open the PDF in a new window or tab
-        let pdfWindow = window.open(pdfUrl, '_blank');
-    
-        // Wait for the window to fully load, then trigger the print
-        pdfWindow.onload = function () {
-            setTimeout(function () {
-                pdfWindow.print();
-            }, 1000); // Adjust the delay as needed
-        };
+        window.open('/cashpdf/' + data.detail.cashId, '_blank');
     });
-    
-    // Function to convert base64 to Blob
-    function b64toBlob(base64, contentType = '', sliceSize = 512) {
-        const byteCharacters = atob(base64);
-        const byteArrays = [];
-    
-        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-            const slice = byteCharacters.slice(offset, offset + sliceSize);
-            const byteNumbers = new Array(slice.length);
-    
-            for (let i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
-            }
-    
-            const byteArray = new Uint8Array(byteNumbers);
-            byteArrays.push(byteArray);
-        }
-    
-        const blob = new Blob(byteArrays, { type: contentType });
-        return blob;
-    }
-    
-    </script>
+</script>
 @endpush
 </div>

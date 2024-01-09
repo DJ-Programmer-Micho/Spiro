@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'Localization' => \App\Http\Middleware\Localization::class,
         'CheckUserStatus' => \App\Http\Middleware\CheckUserStatus::class,
+        'PdfViewer' => \App\Http\Middleware\PdfViewer::class,
         'Own' => \App\Http\Middleware\Own::class,
         'Fin' => \App\Http\Middleware\Finance::class,
         'Edt' => \App\Http\Middleware\Editor::class,

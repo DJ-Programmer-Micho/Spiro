@@ -6,11 +6,8 @@ use App\Models\Cash;
 use App\Models\Invoice;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\File;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Notifications\Fin\TelegramCashNew;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\Fin\TelegramCashDelete;
 
 class CashLivewire extends Component
 {
@@ -72,101 +69,20 @@ class CashLivewire extends Component
     } // END FUNCTION OF PAGE LOAD
 
     public function printCustomPdf(int $cashId){
-        // try {
-            $cashEditasd = Cash::where('id',$cashId)->first();
-
-            $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
-            $imageData = base64_encode(File::get($imagePath));
-            $base64Image = 'data:image/jpeg;base64,' . $imageData;
-            
-            $lastPayment = json_decode($cashEditasd->payments,true);
-            $amount = end($lastPayment)['paymentAmountDollar'];
-
-
-
-            $data = [
-                "img" => $base64Image,
-
-                "cashId" => $cashEditasd->id,
-                "client" => $cashEditasd->invoice->client->client_name ?? 'UnKnown',
-                "email" => $cashEditasd->invoice->client->email ?? 'UnKnown',
-                "country" => $cashEditasd->invoice->client->country ?? 'UnKnown',
-                "city" => $cashEditasd->invoice->client->city ?? 'UnKnown',
-                "phoneOne" => $cashEditasd->invoice->client->phone_one ?? 'UnKnown',
-                "phoneTwo" => $cashEditasd->invoice->client->phone_two ?? 'UnKnown',
-
-                "invoice_id" => $cashEditasd->invoice->id ?? 'UnKnown',
-                "invoice_title" => $cashEditasd->invoice->description ?? 'UnKnown',
-                "invoice_date" => $cashEditasd->invoice->invoice_date ?? 'UnKnown',
-                "cash_date" => $cashEditasd->cash_date ?? 'UnKnown',
-                "total" => $amount ?? 'UnKnown',
-                "due" => $cashEditasd->due_dollar ?? 'UnKnown',
-                "clientId" => $cashEditasd->invoice->client->id ?? 'UnKnown',
-
-                "paymentData" => json_decode($cashEditasd->payments,true) ?? 'XXX',
-
-                "notes" => $cashEditasd->invoice->notes ?? '$XXXX',
-            ];
-
-            $pdfContent = PDF::loadView('dashboard.pdf.pdfCash', $data)->output();
-            return response()->streamDownload(
-                function () use ($pdfContent) {
-                    echo $pdfContent;
-                },
-                $cashEditasd->id.'_'.$cashEditasd->invoice->client->client_name.'_'.now()->format('Y-m-d').'.pdf'
-            );
-        // } catch (\Exception $e) {
-            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Something Went Wrong.')]);
-        // }
-        
+        try {
+            $this->dispatchBrowserEvent('openPdfInNewTab', ['cashId' => $cashId]);
+        } catch (\Exception $e) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('PDF Error')]);
+        }
     } 
 
-    // Direct Print
     public function printDirectPdf(int $cashId){
-        
-        $cashEditasd = Cash::where('id',$cashId)->first();
-
-        $imagePath = public_path('assets/dashboard/img/mainlogopdf.png');
-        $imageData = base64_encode(File::get($imagePath));
-        $base64Image = 'data:image/jpeg;base64,' . $imageData;
-        
-        $lastPayment = json_decode($cashEditasd->payments,true);
-        $amount = end($lastPayment)['paymentAmountDollar'];
-
-
-        $data = [
-            "img" => $base64Image,
-
-            "cashId" => $cashEditasd->id,
-            "client" => $cashEditasd->invoice->client->client_name ?? 'UnKnown',
-            "email" => $cashEditasd->invoice->client->email ?? 'UnKnown',
-            "country" => $cashEditasd->invoice->client->country ?? 'UnKnown',
-            "city" => $cashEditasd->invoice->client->city ?? 'UnKnown',
-            "phoneOne" => $cashEditasd->invoice->client->phone_one ?? 'UnKnown',
-            "phoneTwo" => $cashEditasd->invoice->client->phone_two ?? 'UnKnown',
-
-            "invoice_id" => $cashEditasd->invoice->id ?? 'UnKnown',
-            "invoice_title" => $cashEditasd->invoice->description ?? 'UnKnown',
-            "invoice_date" => $cashEditasd->invoice->invoice_date ?? 'UnKnown',
-            "cash_date" => $cashEditasd->cash_date ?? 'UnKnown',
-            "total" => $amount ?? 'UnKnown',
-            "due" => $cashEditasd->due_dollar ?? 'UnKnown',
-            "clientId" => $cashEditasd->invoice->client->id ?? 'UnKnown',
-
-            "paymentData" => json_decode($cashEditasd->payments,true) ?? 'XXX',
-
-            "notes" => $cashEditasd->invoice->notes ?? '$XXXX',
-        ];
-
-        $pdfContent = PDF::loadView('dashboard.pdf.pdfCash', $data)->output();
-
-
-        $this->dispatchBrowserEvent('printPdf', [
-            'pdfContent' => base64_encode($pdfContent),
-            'filename' => $cashEditasd->id . '_' . $cashEditasd->invoice->client->client_name . '_' . now()->format('Y-m-d') . '.pdf',
-        ]);
+        try {
+            $this->dispatchBrowserEvent('openPdfInNewTab', ['cashId' => $cashId]);
+        } catch (\Exception $e) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('PDF Error')]);
+        }
     } 
-
 
     public function initializeInvoiceSelection() {
         $attachedInvoiceIds = Cash::pluck('invoice_id')->toArray();
@@ -341,13 +257,11 @@ class CashLivewire extends Component
                 }
             }
 
-
             try{
                 $this->printDirectPdf($cash->id);
             }  catch (\Exception $e) {
                 $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while Printing Invoice.')]);
             }
-
 
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Cash Receipt Added Successfully')]);
             $this->resetModal();
@@ -454,7 +368,6 @@ class CashLivewire extends Component
     public function deleteMessage(){
         $this->dispatchBrowserEvent('alert', ['type' => 'info',  'message' => __('HA HA HA, Nice Try')]);
     } // END FUNCTION OF DELETE CLIENT
-
 
     // PRIVATE & PUBLIC FUNCTIONS
     private function resetModal(){

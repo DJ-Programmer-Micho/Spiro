@@ -1,15 +1,13 @@
 <?php
 
-use App\Http\Middleware\Own;
 use App\Http\Middleware\Localization;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\OwnController;
-use App\Http\Controllers\FinController;
+use App\Http\Controllers\ControllerPdf;
 use App\Http\Controllers\EdtController;
 use App\Http\Controllers\EmpController;
-use App\Http\Middleware\CheckUserStatus;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FinController;
+use App\Http\Controllers\OwnController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,16 +23,22 @@ use App\Http\Controllers\DashboardController;
 Route::get('/', function () {
     return view('auth.login');
 });
-Route::get('/pdf', function () { return view('pdfCr'); });
+// Route::get('/pdf', function () { return view('pdfCr'); });
+// Route::post('/pdf2', function () { return view('dashboard.pdf.pdfQuotation'); })->name('quotation.pdf');
 
-Route::get('/client', [DashboardController::class, 'client'])->name('client');
-Route::get('/service', [DashboardController::class, 'service'])->name('service');
-Route::get('/branch', [DashboardController::class, 'branch'])->name('branch');
+// Route::get('/client', [DashboardController::class, 'client'])->name('client');
+// Route::get('/service', [DashboardController::class, 'service'])->name('service');
+// Route::get('/branch', [DashboardController::class, 'branch'])->name('branch');
 
-//Quotation
-Route::get('/quotation', [DashboardController::class, 'quotation'])->name('quotation');
-
+// Route::get('/quotation', [DashboardController::class, 'quotation'])->name('quotation');
 Route::post('/set-locale', [Localization::class, 'setLocale'])->name('setLocale');
+
+Route::middleware(['PdfViewer'])->group(function () {
+    Route::get('/quotationpdf/{quotationId}', [ControllerPdf::class, 'quotationPdf'])->name('quotation.pdf');
+    Route::get('/invoicepdf/{invoiceId}', [ControllerPdf::class, 'invoicePdf'])->name('invoice.pdf');
+    Route::get('/cashpdf/{cashId}', [ControllerPdf::class, 'cashPdf'])->name('cash.pdf');
+});
+
 Route::middleware([Localization::class])->group(function () {
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +69,8 @@ Route::middleware([Localization::class])->group(function () {
         Route::get('/plan/guestplanview', [OwnController::class, 'guestPlanView'])->name('guestPlanView');
         Route::get('/plan/plansetting', [OwnController::class, 'planSetting'])->name('planSetting');
         Route::get('/top8', [OwnController::class, 'topEight'])->name('topEight');
+
+
     });
 
     Route::prefix('/fin')->middleware(['CheckUserStatus', 'Fin','CheckUserStatus'])->group(function () {
