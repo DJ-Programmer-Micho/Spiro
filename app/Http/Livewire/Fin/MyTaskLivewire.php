@@ -20,7 +20,7 @@ class MyTaskLivewire extends Component
     
     public function mount() {
         $this->telegram_channel_status = 1;
-        $this->tele_id = env('TELEGRAM_GROUP_ID');
+        $this->tele_id = env('TELEGRAM_GROUP_WORK_ID');
        $this->initializeFilteredTasks();
     } // END FUNCTION OF PAGE LOAD
     

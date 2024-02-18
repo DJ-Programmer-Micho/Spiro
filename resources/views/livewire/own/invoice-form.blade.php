@@ -19,9 +19,8 @@
                             <div class="col-12 col-sm-4">
                                 <div class="mb-3">
                                     <label>{{__('Invoice Created Date')}}</label>
-                                    <input type="date" name="formDate" wire:model="formDate" class="form-control" id="formDate" disabled>
-                                    <small class="text-danger">{{__('(Read Only)')}}</small>
-                                </div>
+                                    <input type="date" name="formDate" wire:model="formDate" class="form-control" id="formDate">
+                                    <small class="text-info">{{__('(Read & Write)')}}</small>                                </div>
                             </div>
                             <div class="col-12 col-sm-4">
                                 <div class="mb-3">
@@ -360,8 +359,8 @@
                             <div class="col-12 col-sm-4">
                                 <div class="mb-3">
                                     <label>{{__('Invoice Created Date')}}</label>
-                                    <input type="date" name="formDate" wire:model="formDate" class="form-control" id="formDate" disabled>
-                                    <small class="text-danger">{{__('(Read Only)')}}</small>
+                                    <input type="date" name="formDate" wire:model="formDate" class="form-control" id="formDate">
+                                    <small class="text-info">{{__('(Read & Write)')}}</small>                                
                                 </div>
                             </div>
                             <div class="col-12 col-sm-4">

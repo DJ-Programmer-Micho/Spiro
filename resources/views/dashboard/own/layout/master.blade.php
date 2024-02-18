@@ -85,7 +85,7 @@
                 {{__('Statistics')}}
             </div>
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item {{(request()->path() == 'own/user') ? 'active' : ''}}">
+            <li class="nav-item {{(request()->path() == 'own') ? 'active' : ''}}">
                 <a class="nav-link" href="{{route('own.dashboard')}}">
                     <lord-icon
                     src="https://cdn.lordicon.com/gqdnbnwt.json"
@@ -601,7 +601,7 @@
     @livewireScripts
     @stack('cropper')
     @stack('drag')
-    @stack('color');
+    @stack('color')
     @yield('form_script')
     @stack('dash_script')
     @yield('dash_script')

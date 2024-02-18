@@ -12,15 +12,35 @@ use App\Models\Expense;
 use App\Models\Invoice;
 use Livewire\Component;
 use App\Models\Quotation;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardLivewire extends Component
 {
     public $availableYears;
     public $selectedYear;
+    public $selectedMonth = 'all';
     public $chartDataUsrtCount;
     public $chartDataTaskCount;
     public $singleData;
+
+    public $totalExpenseDollar = null;
+    public $totalExpenseIraqi = null;
+    public $totalProfitDollar = null;
+    public $totalProfitIraqi = null;
+    public $totalEarningDollar = null;
+    public $totalEarningIraqi = null;
+    public $totalPayedDollar = null;
+    public $totalPayedIraqi = null;
+    public $totalDueDollar = null;
+    public $totalDueIraqi = null;
+    public $totalNetProfitDollar = null;
+    public $totalNetProfitiraqi = null;
+    public $totalQuotation = null;
+    public $totalInvoice = null;
+    public $totalCash = null;
+    public $totalUser = null;
+    public $totalClient = null;
 
     protected $listeners = [
         'quickView' => 'quickView',
@@ -49,6 +69,7 @@ class DashboardLivewire extends Component
 
         if (Auth::check()) {
             $this->availableYears = $this->getAvailableYears();
+            $this->selectedYear = now()->year;
             $this->chartDataUsrtCount = $this->pieUserCount();
             $this->chartDataTaskCount = $this->pieTaskCount();
         }
@@ -135,42 +156,180 @@ class DashboardLivewire extends Component
         ];
     }
     
-    private function getTotalExpenseLifetimeDollar()
-    {
-        return Expense::sum('cost_dollar');
-    }
-    private function getTotalExpenseLifetimeIraqi()
-    {
-        return Expense::sum('cost_iraqi');
-    }
-    private function getTotalEarningLifetimeDollar()
-    {
-        return Invoice::sum('grand_total_dollar');
-    }
-    private function getTotalEarningLifetimeIraqi()
-    {
-        return Invoice::sum('grand_total_iraqi');
-    }
-    private function getTotalPayedLifetimeDollar()
-    {
-        $records = Cash::get();
-        $sumPaymentAmountIraqi = collect($records)->sum(function ($record) {
-            $payments = json_decode($record->payments, true);
-            return collect($payments)->sum('paymentAmountDollar');
-        });
+    // private function getTotalExpenseLifetimeDollar()
+    // {
+    //     return Expense::sum('cost_dollar');
+    // }
+    // private function getTotalExpenseLifetimeIraqi()
+    // {
+    //     return Expense::sum('cost_iraqi');
+    // }
+    // private function getTotalEarningLifetimeDollar()
+    // {
+    //     return Invoice::sum('grand_total_dollar');
+    // }
+    // private function getTotalEarningLifetimeIraqi()
+    // {
+    //     return Invoice::sum('grand_total_iraqi');
+    // }
+    // private function getTotalPayedLifetimeDollar()
+    // {
+    //     $records = Cash::get();
+    //     $sumPaymentAmountIraqi = collect($records)->sum(function ($record) {
+    //         $payments = json_decode($record->payments, true);
+    //         return collect($payments)->sum('paymentAmountDollar');
+    //     });
     
+    //     return $sumPaymentAmountIraqi;
+    // }
+    // private function getTotalPayedLifetimeIraqi()
+    // {
+    //     $records = Cash::get();
+    //     $sumPaymentAmountIraqi = collect($records)->sum(function ($record) {
+    //         $payments = json_decode($record->payments, true);
+    //         return collect($payments)->sum('paymentAmountIraqi');
+    //     });
+    
+    //     return $sumPaymentAmountIraqi;
+    // }
+
+    // PRIVATE FUNCTIONS
+    // START TOTAL EXPENSES IN DOLLAR
+    private function getTotalExpenseLifetimeDollar() {
+        $currentMonth = $this->selectedMonth;
+        if ($currentMonth !== 'month' && $currentMonth !== null && $currentMonth !== '' && $currentMonth !== 'all') {
+            $query = Expense::where('payed_date', 'like', $currentMonth . '%'); 
+        } else {
+            $query = Expense::whereYear('payed_date', $this->selectedYear);
+        }
+        return $query->sum('cost_dollar');
+    }
+    // END TOTAL EXPENSES IN DOLLAR
+
+    // START TOTAL EXPENSES IN IRAQI
+    private function getTotalExpenseLifetimeIraqi() {
+        $currentMonth = $this->selectedMonth;
+        if ($currentMonth !== 'month' && $currentMonth !== null && $currentMonth !== '' && $currentMonth !== 'all') {
+            $query = Expense::where('payed_date', 'like', $currentMonth . '%'); 
+        } else {
+            $query = Expense::whereYear('payed_date', $this->selectedYear);
+        }
+        return $query->sum('cost_iraqi');
+    }
+    // END TOTAL EXPENSES IN IRAQI
+
+    // START TOTAL EARNING IN DOLLAR
+    private function getTotalEarningLifetimeDollar() {
+        $currentMonth = $this->selectedMonth;
+        if ($currentMonth !== 'month' && $currentMonth !== null && $currentMonth !== '' && $currentMonth !== 'all') {
+            $query = Invoice::where('invoice_date', 'like', $currentMonth . '%'); 
+        } else {
+            $query = Invoice::whereYear('invoice_date', $this->selectedYear);
+        }
+    
+        return $query->sum('grand_total_dollar');
+    }
+    // END TOTAL EARNING IN DOLLAR
+
+    // START TOTAL EARNING IN IRAQI
+    private function getTotalEarningLifetimeIraqi() {
+        $currentMonth = $this->selectedMonth;
+        if ($currentMonth !== 'month' && $currentMonth !== null && $currentMonth !== '' && $currentMonth !== 'all') {
+            $query = Invoice::where('invoice_date', 'like', $currentMonth . '%'); 
+            // dd(  $query);
+        } else {
+            $query = Invoice::whereYear('invoice_date', $this->selectedYear);
+        }
+        return $query->sum('grand_total_iraqi');
+    }
+    // END TOTAL EARNING IN IRAQI
+    
+    // START PAID EARNING IN DOLLAR
+    private function getTotalPayedLifetimeDollar() {
+
+        $currentMonth = $this->selectedMonth;
+        if ($currentMonth !== 'month' && $currentMonth !== null && $currentMonth !== '' && $currentMonth !== 'all') {
+            $records = Cash::select('payments')
+            ->get()
+            ->filter(function ($record) use ($currentMonth) {
+                $payments = json_decode($record->payments, true);
+                return collect($payments)->pluck('payment_date')->contains(function ($paymentDate) use ($currentMonth) {
+                    return Str::startsWith($paymentDate, $currentMonth);
+                });
+            })
+            ->map(function ($record) use ($currentMonth) {
+                $payments = json_decode($record->payments, true);
+                return [
+                    'day_date' => collect($payments)->pluck('payment_date'),
+                    'paymentAmountDollar' => collect($payments)->pluck('paymentAmountDollar'),
+                    'filteredAmountDollar' => collect($payments)
+                        ->filter(function ($payment) use ($currentMonth) {
+                            return Str::startsWith($payment['payment_date'], $currentMonth);
+                        })
+                        ->pluck('paymentAmountDollar'),
+                ];
+            })
+            ->values();
+            $sumPaymentAmountDollar = $records->pluck('filteredAmountDollar')->flatten()->sum();
+            return $sumPaymentAmountDollar;
+        } else {
+            $records = Cash::whereYear('cash_date', $this->selectedYear)->get();
+            $sumPaymentAmountIraqi = collect($records)->sum(function ($record) {
+                $payments = json_decode($record->payments, true);
+                return collect($payments)->sum('paymentAmountDollar');
+            });
+        }
+
         return $sumPaymentAmountIraqi;
     }
-    private function getTotalPayedLifetimeIraqi()
-    {
-        $records = Cash::get();
-        $sumPaymentAmountIraqi = collect($records)->sum(function ($record) {
-            $payments = json_decode($record->payments, true);
-            return collect($payments)->sum('paymentAmountIraqi');
-        });
-    
+    // END PAID EARNING IN DOLLAR
+
+    // START PAID EARNING IN IRAQI
+    private function getTotalPayedLifetimeIraqi() {
+        $currentMonth = $this->selectedMonth;
+        if ($currentMonth !== 'month' && $currentMonth !== null && $currentMonth !== '' && $currentMonth !== 'all') {
+                    $records = Cash::select('payments')
+            ->get()
+            ->filter(function ($record) use ($currentMonth) {
+                $payments = json_decode($record->payments, true);
+                return collect($payments)->pluck('payment_date')->contains(function ($paymentDate) use ($currentMonth) {
+                    return Str::startsWith($paymentDate, $currentMonth);
+                });
+            })
+            ->map(function ($record) use ($currentMonth) {
+                $payments = json_decode($record->payments, true);
+                return [
+                    'day_date' => collect($payments)->pluck('payment_date'),
+                    'paymentAmountIraqi' => collect($payments)->pluck('paymentAmountIraqi'),
+                    'filteredAmountDollar' => collect($payments)
+                        ->filter(function ($payment) use ($currentMonth) {
+                            return Str::startsWith($payment['payment_date'], $currentMonth);
+                        })
+                        ->pluck('paymentAmountIraqi'),
+                ];
+            })
+            ->values();
+            $sumPaymentAmountDollar = $records->pluck('filteredAmountDollar')->flatten()->sum();
+            return $sumPaymentAmountDollar;
+        } else {
+            $records = Cash::whereYear('cash_date', $this->selectedYear)->get();
+            $sumPaymentAmountIraqi = collect($records)->sum(function ($record) {
+                $payments = json_decode($record->payments, true);
+                return collect($payments)->sum('paymentAmountIraqi');
+            });
+        }
+
         return $sumPaymentAmountIraqi;
+
+        // $records = Cash::get();
+        // $sumPaymentAmountIraqi = collect($records)->sum(function ($record) {
+        //     $payments = json_decode($record->payments, true);
+        //     return collect($payments)->sum('paymentAmountIraqi');
+        // });
+    
+        // return $sumPaymentAmountIraqi;
     }
+    // END PAID EARNING IN IRAQI
 
     private function getTotalQuotation()
     {
@@ -207,34 +366,36 @@ class DashboardLivewire extends Component
             ->toArray();
     }
 
+    public function updatedselectedMonth()
+    {
+        $this->getTotalEarningLifetimeDollar();
+        $this->getTotalExpenseLifetimeIraqi();
+        $this->getTotalPayedLifetimeDollar();
+        $this->getTotalPayedLifetimeIraqi();
+        $this->getTotalEarningLifetimeDollar();
+        $this->getTotalEarningLifetimeIraqi();
+        $this->getTotalPayedLifetimeDollar();
+        $this->getTotalPayedLifetimeIraqi();
+        $this->getTotalEarningLifetimeDollar();
+        $this->getTotalEarningLifetimeIraqi();
+    }
 
-    public $totalExpenseDollar = null;
-    public $totalExpenseIraqi = null;
-    public $totalEarningDollar = null;
-    public $totalEarningIraqi = null;
-    public $totalPayedDollar = null;
-    public $totalPayedIraqi = null;
-    public $totalDueDollar = null;
-    public $totalDueIraqi = null;
-
-    public $totalQuotation = null;
-    public $totalInvoice = null;
-    public $totalCash = null;
-
-    public $totalUser = null;
-    public $totalClient = null;
 
     public function render()
     {
         if (Auth::check()) {
             $this->totalExpenseDollar = $this->getTotalExpenseLifetimeDollar();
             $this->totalExpenseIraqi = $this->getTotalExpenseLifetimeIraqi();
-            $this->totalEarningDollar = $this->getTotalEarningLifetimeDollar();
-            $this->totalEarningIraqi = $this->getTotalEarningLifetimeIraqi();
+            $this->totalEarningDollar = $this->getTotalPayedLifetimeDollar()  - $this->totalExpenseDollar;
+            $this->totalEarningIraqi = $this->getTotalPayedLifetimeIraqi() - $this->totalExpenseIraqi;
+            $this->totalProfitDollar = $this->getTotalEarningLifetimeDollar();
+            $this->totalProfitIraqi = $this->getTotalEarningLifetimeIraqi() ;
             $this->totalPayedDollar = $this->getTotalPayedLifetimeDollar();
             $this->totalPayedIraqi = $this->getTotalPayedLifetimeIraqi();
-            $this->totalDueDollar = $this->totalEarningDollar - $this->totalPayedDollar;
-            $this->totalDueIraqi = $this->totalEarningIraqi - $this->totalPayedIraqi;
+            $this->totalDueDollar = $this->getTotalEarningLifetimeDollar() - $this->totalPayedDollar;
+            $this->totalDueIraqi = $this->getTotalEarningLifetimeIraqi() - $this->totalPayedIraqi;
+            $this->totalNetProfitDollar = $this->totalProfitDollar - $this->totalExpenseDollar;
+            $this->totalNetProfitiraqi = $this->totalProfitIraqi - $this->totalExpenseIraqi;
 
             $this->totalQuotation = $this->getTotalQuotation();
             $this->totalInvoice = $this->getTotalInvoice();

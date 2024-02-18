@@ -85,7 +85,7 @@
                 {{__('Statistics')}}
             </div>
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item {{(request()->path() == 'fin/dashboard') ? 'active' : ''}}">
+            <li class="nav-item {{(request()->path() == 'fin') ? 'active' : ''}}">
                 <a class="nav-link" href="{{route('fin.dashboard')}}">
                     <lord-icon
                     src="https://cdn.lordicon.com/gqdnbnwt.json"

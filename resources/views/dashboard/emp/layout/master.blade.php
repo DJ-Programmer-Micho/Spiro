@@ -85,7 +85,7 @@
                 {{__('Statistics')}}
             </div>
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item {{(request()->path() == 'emp/dashboard') ? 'active' : ''}}">
+            <li class="nav-item {{(request()->path() == 'emp') ? 'active' : ''}}">
                 <a class="nav-link" href="{{route('emp.dashboard')}}">
                     <lord-icon
                     src="https://cdn.lordicon.com/gqdnbnwt.json"
@@ -311,7 +311,7 @@
 
     @stack('cropper')
     @stack('drag')
-    @stack('color');
+    @stack('color')
     @yield('form_script')
     @stack('dash_script')
     @yield('dash_script')

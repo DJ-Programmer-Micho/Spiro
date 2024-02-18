@@ -1,26 +1,53 @@
 <div>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
-
+    <div class="row my-1">
+        <div class="col-12 col-md-6">
+            <label for="yearSelect">{{__('Select Year:')}}</label>
+            <select id="yearSelect" class="form-control" 
+            wire:model="selectedYear" 
+            style="background-color: #303541; color: #fff;">
+                @foreach ($availableYears as $year)
+                <option value="{{ $year }}">{{ $year }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="monthOption">Select Month:</label>
+            <select wire:model="selectedMonth" id="monthOption" class="form-control">
+                <option value="all">All Months</option>
+                <option value="{{$selectedYear.'-01'}}">{{__('January')}}</option>
+                <option value="{{$selectedYear.'-02'}}">{{__('February')}}</option>
+                <option value="{{$selectedYear.'-03'}}">{{__('March')}}</option>
+                <option value="{{$selectedYear.'-04'}}">{{__('April')}}</option>
+                <option value="{{$selectedYear.'-05'}}">{{__('May')}}</option>
+                <option value="{{$selectedYear.'-06'}}">{{__('June')}}</option>
+                <option value="{{$selectedYear.'-07'}}">{{__('July')}}</option>
+                <option value="{{$selectedYear.'-08'}}">{{__('Augest')}}</option>
+                <option value="{{$selectedYear.'-09'}}">{{__('Septemper')}}</option>
+                <option value="{{$selectedYear.'-10'}}">{{__('October')}}</option>
+                <option value="{{$selectedYear.'-11'}}">{{__('November')}}</option>
+                <option value="{{$selectedYear.'-12'}}">{{__('December')}}</option>
+            </select>
+        </div>
+    </div>
     <div class="row profile-box mt-5 p-0">
         <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2 dash-card">
                 <div class="card-body ">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                {{__('Total Earning')}}</div>
-                            <div class="h5 mb-0 font-weight-bold text-white">$ {{number_format($totalEarningDollar)}} <br> {{number_format($totalEarningIraqi)}} IQD</div>
+                                {{__('Contract Profit')}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-white">$ {{number_format($totalProfitDollar)}}
+                                <br> {{number_format($totalProfitIraqi)}} IQD</div>
                         </div>
                         <div class="col-auto">
                             <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-                            <lord-icon
-                                src="https://cdn.lordicon.com/ziynmnyj.json"
-                                trigger="loop"
-                                colors="primary:#4e73df,secondary:#fff"
-                                state="in-reveal"
-                                delay="2000"
+                            <lord-icon src="https://cdn.lordicon.com/ziynmnyj.json" trigger="loop"
+                                colors="primary:#4e73df,secondary:#fff" state="in-reveal" delay="2000"
                                 style="width:48px;height:48px">
                             </lord-icon>
                         </div>
@@ -30,73 +57,110 @@
         </div>
 
         <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2 dash-card">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                {{__('Total Payed')}}</div>
-                            <div class="h5 mb-0 font-weight-bold text-white">$ {{number_format($totalPayedDollar)}} <br> {{number_format($totalPayedIraqi)}} IQD</div>
-                        </div>
-                        <div class="col-auto">
-                            <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-                            <lord-icon
-                                src="https://cdn.lordicon.com/kxockqqi.json"
-                                trigger="loop"
-                                delay="2000"
-                                colors="primary:#1cc88a,secondary:#fff"
-                                style="width:48px;height:48px">
-                            </lord-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2 dash-card">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                {{__('Total Due')}}</div>
-                            <div class="h5 mb-0 font-weight-bold text-white">$ {{number_format($totalDueDollar)}} <br> {{number_format($totalDueIraqi)}} IQD</div>
-                        </div>
-                        <div class="col-auto">
-                            <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-                            <lord-icon
-                                src="https://cdn.lordicon.com/kndkiwmf.json"
-                                trigger="loop"
-                                delay="2000"
-                                colors="primary:#36b9cc,secondary:#fff"
-                                style="width:48px;height:48px">
-                            </lord-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2 dash-card">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                 {{__('Total Expense')}}</div>
-                            <div class="h5 mb-0 font-weight-bold text-white">$ {{number_format($totalExpenseDollar)}} <br> {{number_format($totalExpenseIraqi)}} IQD</div>
+                            <div class="h5 mb-0 font-weight-bold text-white">$
+                                {{number_format($totalExpenseDollar)}} <br> {{number_format($totalExpenseIraqi)}}
+                                IQD</div>
                         </div>
                         <div class="col-auto">
                             <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-                            <lord-icon
-                                src="https://cdn.lordicon.com/ofdfurqa.json"
-                                trigger="loop"
-                                delay="2000"
-                                colors="primary:#36b9cc,secondary:#fff"
+                            <lord-icon src="https://cdn.lordicon.com/ofdfurqa.json" trigger="loop" delay="2000"
+                                colors="primary:#36b9cc,secondary:#fff" style="width:48px;height:48px">
+                            </lord-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 dash-card">
+                <div class="card-body ">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                {{__('NET Profit')}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-white">$
+                                {{number_format($totalEarningDollar)}} <br> {{number_format($totalEarningIraqi)}}
+                                IQD</div>
+                        </div>
+                        <div class="col-auto">
+                            <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/nkfxhqqr.json" trigger="loop"
+                                colors="primary:#f6c23e,secondary:#fff" state="in-reveal" delay="2000"
                                 style="width:48px;height:48px">
+                            </lord-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 dash-card">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                {{__('Total Payed')}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-white">$ {{number_format($totalPayedDollar)}}
+                                <br> {{number_format($totalPayedIraqi)}} IQD</div>
+                        </div>
+                        <div class="col-auto">
+                            <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/kxockqqi.json" trigger="loop" delay="2000"
+                                colors="primary:#1cc88a,secondary:#fff" style="width:48px;height:48px">
+                            </lord-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2 dash-card">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                {{__('Total Due')}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-white">$ {{number_format($totalDueDollar)}}
+                                <br> {{number_format($totalDueIraqi)}} IQD</div>
+                        </div>
+                        <div class="col-auto">
+                            <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/kndkiwmf.json" trigger="loop" delay="2000"
+                                colors="primary:#e74a3b ,secondary:#fff" style="width:48px;height:48px">
+                            </lord-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-secondary shadow h-100 py-2 dash-card">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                {{__('Total Net Profit')}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-white">$ {{number_format($totalNetProfitDollar)}}
+                                <br> {{number_format($totalNetProfitiraqi)}} IQD</div>
+                        </div>
+                        <div class="col-auto">
+                            <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/wyqtxzeh.json" trigger="loop" delay="1500" state="in-reveal"
+                                colors="primary:#ffffff,secondary:#ffffff" style="width:48px;height:48px">
                             </lord-icon>
                         </div>
                     </div>

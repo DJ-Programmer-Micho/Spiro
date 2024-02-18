@@ -341,7 +341,7 @@ class InvoiceLivewire extends Component
                 'quotation_id' => null,
                 'client_id' => $validatedData['select_client_data'],
                 'payment_id' => $validatedData['select_payment_data'],
-                'invoice_date' => now()->format('Y-m-d'),
+                'invoice_date' => $validatedData['formDate'],
                 'exchange_rate' => $this->exchange_rate,
                 'status' => $validatedData['status'],
                 'services' => json_encode($validatedData['arr_service_by_date']),
