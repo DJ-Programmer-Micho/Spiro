@@ -416,7 +416,33 @@ class ExpenseLivewire extends Component
         // return $this->dateRange;
     }
 
-
+    private function getExpenseTotalDollar() {
+        $query =  Expense::query()->where(function ($query) {
+            $query->where('item', 'like', '%' . $this->search . '%')
+                ->orWhere('type', 'like', '%' . $this->search . '%')
+                ->orWhere('description', 'like', '%' . $this->search . '%')
+                ->orWhere('cost_dollar', 'like', '%' . $this->search . '%')
+                ->orWhere('cost_iraqi', 'like', '%' . $this->search . '%');
+        })
+        ->when($this->startDate && $this->endDate, function ($query) {
+            $query->whereBetween('payed_date', [$this->startDate, $this->endDate]);
+        });
+        return $query->sum('cost_dollar');
+    }
+    private function getExpenseTotalIraqi() {
+        $query =  Expense::query()->where(function ($query) {
+            $query->where('item', 'like', '%' . $this->search . '%')
+                ->orWhere('type', 'like', '%' . $this->search . '%')
+                ->orWhere('description', 'like', '%' . $this->search . '%')
+                ->orWhere('cost_dollar', 'like', '%' . $this->search . '%')
+                ->orWhere('cost_iraqi', 'like', '%' . $this->search . '%');
+        })
+        ->when($this->startDate && $this->endDate, function ($query) {
+            $query->whereBetween('payed_date', [$this->startDate, $this->endDate]);
+        });
+        return $query->sum('cost_iraqi');
+    }
+    
     public function render()
     {
         if ($this->dateRange) {
@@ -449,6 +475,8 @@ class ExpenseLivewire extends Component
             'cols_td' => $cols_td,
             'colspan' => $colspan,
             'rangeViewValue' => $this->rangeViewValue,
+            'dolTotal' => $this->getExpenseTotalDollar(),
+            'iqdTotal' => $this->getExpenseTotalIraqi(),
         ]);
     } // END FUNCTION OF RENDER
 }

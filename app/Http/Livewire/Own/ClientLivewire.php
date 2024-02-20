@@ -17,10 +17,10 @@ class ClientLivewire extends Component
 
     //FORM
     public $clientName;
-    public $country;
-    public $city;
+    // public $country;
+    // public $city;
     public $address;
-    public $email;
+    // public $email;
     public $phoneOne;
     public $phoneTwo;
     //FILTERS
@@ -47,8 +47,8 @@ class ClientLivewire extends Component
         $rules = [];
         $rules['clientName'] = ['required'];
         $rules['address'] = ['required'];
-        $rules['city'] = ['required'];
-        $rules['country'] = ['required'];
+        // $rules['city'] = ['required'];
+        // $rules['country'] = ['required'];
         $rules['phoneOne'] = ['required'];
         return $rules;
     } // END FUNCTION OF Rules
@@ -59,10 +59,10 @@ class ClientLivewire extends Component
 
             $client = Client::create([
                 'client_name' => $validatedData['clientName'],
-                'email' => $this->email,
+                // 'email' => $this->email,
                 'address' => $validatedData['address'],
-                'city' => $validatedData['city'],
-                'country' => $validatedData['country'],
+                // 'city' => $validatedData['city'],
+                // 'country' => $validatedData['country'],
                 'phone_one' => $validatedData['phoneOne'],
                 'phone_two' => $this->phoneTwo,
             ]);
@@ -101,20 +101,20 @@ class ClientLivewire extends Component
             if ($clientEdit) {
                 $this->old_client_data = null;
                 $this->clientName = $clientEdit->client_name;
-                $this->email = $clientEdit->email;
+                // $this->email = $clientEdit->email;
                 $this->address = $clientEdit->address;
-                $this->city = $clientEdit->city;
-                $this->country = $clientEdit->country;
+                // $this->city = $clientEdit->city;
+                // $this->country = $clientEdit->country;
                 $this->phoneOne = $clientEdit->phone_one;
                 $this->phoneTwo = $clientEdit->phone_two;
 
                 $this->old_client_data = [
                     'id' => $clientEdit->id,
                     'clientName' => $clientEdit->client_name,
-                    'email' => $clientEdit->email,
+                    // 'email' => $clientEdit->email,
                     'address' => $clientEdit->address,
-                    'city' => $clientEdit->city,
-                    'country' => $clientEdit->country,
+                    // 'city' => $clientEdit->city,
+                    // 'country' => $clientEdit->country,
                     'phoneOne' => $clientEdit->phone_one,
                     'phoneTwo' => $clientEdit->phone_two,
                 ];
@@ -132,10 +132,10 @@ class ClientLivewire extends Component
 
             Client::where('id', $this->clientUpdate)->update([
                 'client_name' => $validatedData['clientName'],
-                'email' => $this->email,
+                // 'email' => $this->email,
                 'address' => $validatedData['address'],
-                'city' => $validatedData['city'],
-                'country' => $validatedData['country'],
+                // 'city' => $validatedData['city'],
+                // 'country' => $validatedData['country'],
                 'phone_one' => $validatedData['phoneOne'],
                 'phone_two' => $this->phoneTwo,
             ]);
@@ -146,10 +146,10 @@ class ClientLivewire extends Component
                     ->notify(new TelegramClientUpdate(
                         $this->clientUpdate,
                         $this->clientName,
-                        $this->email,
+                        $this->email ?? "N/A",
                         $this->address,
-                        $this->city,
-                        $this->country,
+                        $this->city ?? "N/A",
+                        $this->country ?? "N/A",
                         $this->phoneOne,
                         $this->phoneTwo,
 
@@ -212,10 +212,10 @@ class ClientLivewire extends Component
     // PRIVATE & PUBLIC FUNCTIONS
     private function resetModal(){
         $this->clientName = '';
-        $this->email = '';
+        // $this->email = '';
         $this->address = '';
-        $this->city = '';
-        $this->country = '';
+        // $this->city = '';
+        // $this->country = '';
         $this->phoneOne = '';
         $this->phoneTwo = '';
         $this->del_client_id = null;
@@ -232,8 +232,8 @@ class ClientLivewire extends Component
     public function render()
     {
         $colspan = 6;
-        $cols_th = ['#','Client Name','Email Address', 'Phone Number','Country', 'Actions'];
-        $cols_td = ['id','client_name','email','phone_one','country'];
+        $cols_th = ['#','Client Name','Address', 'Phone Number 1','Phone Number 2', 'Actions'];
+        $cols_td = ['id','client_name','address','phone_one','phone_two'];
 
         $data = Client::query()
         ->where(function ($query) {
@@ -241,9 +241,9 @@ class ClientLivewire extends Component
                 ->orWhere('email', 'like', '%' . $this->search . '%')
                 ->orWhere('phone_one', 'like', '%' . $this->search . '%')
                 ->orWhere('phone_two', 'like', '%' . $this->search . '%')
-                ->orWhere('country', 'like', '%' . $this->search . '%');
+                ->orWhere('address', 'like', '%' . $this->search . '%');
         })
-        // ->orderBy('priority', 'ASC')
+        ->orderBy('id', 'DESC')
         ->paginate(15);
         
         return view('livewire.own.client-table',[

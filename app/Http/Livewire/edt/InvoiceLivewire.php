@@ -31,9 +31,9 @@ class InvoiceLivewire extends Component
     public $client_data;
     public $select_client_data;
     public $clientName;
-    public $clientEmail;
-    public $clientCountry;
-    public $clientCity;
+    // public $clientEmail;
+    // public $clientCountry;
+    // public $clientCity;
     public $clientAddress;
     public $clientPhoneOne;
     public $clientPhoneTwo;
@@ -48,7 +48,7 @@ class InvoiceLivewire extends Component
     public $arr_service_by_date = [];
     // Form Final Section
     public $description;
-    public $note = null;
+    public $note = "";
     public $dicountLower;
     public $totalDollar = 0;
     public $taxDollar = 0;
@@ -76,10 +76,10 @@ class InvoiceLivewire extends Component
     public $old_invoice_data;
     // Direct Forms Variables
     public $dClientName;
-    public $country;
-    public $city;
+    // public $country;
+    // public $city;
     public $address;
-    public $email;
+    // public $email;
     public $phoneOne;
     public $phoneTwo;
 
@@ -89,7 +89,7 @@ class InvoiceLivewire extends Component
         $this->formDate = now()->format('Y-m-d');
         $this->telegram_channel_status = 1;
         $this->tele_id = env('TELEGRAM_GROUP_ID');
-        $this->client_data = Client::get();
+        $this->client_data = Client::orderBy('client_name', 'ASC')->get();
         $this->payment_data = Payment::get();
         $this->service_data = Service::get();
         $this->initializeServicesArray();
@@ -250,9 +250,9 @@ class InvoiceLivewire extends Component
     public function selectClientStartup(){
         $client_selected = Client::where('id', $this->select_client_data)->first();
         $this->clientName = $client_selected->client_name;
-        $this->clientEmail = $client_selected->email;
-        $this->clientCountry = $client_selected->country;
-        $this->clientCity = $client_selected->city;
+        // $this->clientEmail = $client_selected->email;
+        // $this->clientCountry = $client_selected->country;
+        // $this->clientCity = $client_selected->city;
         $this->clientAddress = $client_selected->address;
         $this->clientPhoneOne = $client_selected->phone_one;
         $this->clientPhoneTwo = $client_selected->phone_two;
@@ -291,10 +291,10 @@ class InvoiceLivewire extends Component
 
             $client = Client::create([
                 'client_name' => $this->dClientName,
-                'email' => $this->email,
+                // 'email' => $this->email,
                 'address' => $this->address,
-                'city' => $this->city,
-                'country' => $this->country,
+                // 'city' => $this->city,
+                // 'country' => $this->country,
                 'phone_one' => $this->phoneOne,
                 'phone_two' => $this->phoneTwo,
             ]);
@@ -306,7 +306,7 @@ class InvoiceLivewire extends Component
                         auth()->user()->name,
                         $client->id,
                         $this->dClientName,
-                        $this->email,
+                        $this->email ?? "N/A",
                         $this->address,
                         $this->phoneOne,
                         $this->tele_id
@@ -320,7 +320,7 @@ class InvoiceLivewire extends Component
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Added Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal-direct');
-            $this->client_data = Client::get();
+            $this->client_data = Client::orderBy('client_name', 'ASC')->get();
         } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
         }
@@ -330,7 +330,7 @@ class InvoiceLivewire extends Component
         try {
             $validatedData = $this->validate();
 
-            if($validatedData['discountDollar'] > $validatedData['grandTotalDollar']) {
+            if($validatedData['discountDollar'] > $validatedData['totalDollar']) {
                 $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Please Fix The Discount Amount, Is Larger than the Total!')]);
                 $this->dispatchBrowserEvent('focusDiscountDollar');
                return;
@@ -481,9 +481,9 @@ class InvoiceLivewire extends Component
                 // Client Information
                 $this->select_client_data =  $invoiceEdit->client_id;
                 $this->clientName = $clientInfo->client_name;
-                $this->clientEmail = $clientInfo->country;
-                $this->clientCountry = $clientInfo->city;
-                $this->clientCity = $clientInfo->address;
+                // $this->clientEmail = $clientInfo->country;
+                // $this->clientCountry = $clientInfo->city;
+                // $this->clientCity = $clientInfo->address;
                 $this->clientAddress = $clientInfo->email;
                 $this->clientPhoneOne = $clientInfo->phone_one;
                 $this->clientPhoneTwo = $clientInfo->phone_two;
@@ -494,7 +494,7 @@ class InvoiceLivewire extends Component
                 $this->description = $invoiceEdit->description;
                 $this->arr_service_by_date = json_decode($invoiceEdit->services, true);
                 // final Section
-                $this->note = json_decode($invoiceEdit->notes, true);
+                $this->note = $invoiceEdit->notes;
                 $this->totalDollar = $invoiceEdit->total_amount_dollar;
                 $this->taxDollar = $invoiceEdit->tax_dollar;
                 $this->discountDollar = $invoiceEdit->discount_dollar;
@@ -556,7 +556,7 @@ class InvoiceLivewire extends Component
         try {
             $validatedData = $this->validate();
 
-            if($validatedData['discountDollar'] > $validatedData['grandTotalDollar']) {
+            if($validatedData['discountDollar'] > $validatedData['totalDollar']) {
                 $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Please Fix The Discount Amount, Is Larger than the Total!')]);
                 $this->dispatchBrowserEvent('focusDiscountDollar');
                return;
@@ -582,7 +582,7 @@ class InvoiceLivewire extends Component
                 'due_iraqi' => $validatedData['dueIraqi'],
                 'grand_total_iraqi' => $validatedData['grandTotalIraqi'],
                 'description' => $this->description,
-                'notes' => json_encode($this->note),
+                'notes' => $this->note,
             ]);
 
             if($this->telegram_channel_status == 1){
@@ -636,7 +636,7 @@ class InvoiceLivewire extends Component
                         $validatedData['grandTotalDollar'],
                         $validatedData['grandTotalIraqi'],
 
-                        json_encode($this->note),
+                        $this->note,
                         $validatedData['status'],
 
                         $this->old_invoice_data,
@@ -674,9 +674,9 @@ class InvoiceLivewire extends Component
         $this->client_data = '';
         $this->select_client_data = '';
         $this->clientName = '';
-        $this->clientEmail = '';
-        $this->clientCountry = '';
-        $this->clientCity = '';
+        // $this->clientEmail = '';
+        // $this->clientCountry = '';
+        // $this->clientCity = '';
         $this->clientAddress = '';
         $this->clientPhoneOne = '';
         $this->clientPhoneTwo = '';
@@ -687,7 +687,7 @@ class InvoiceLivewire extends Component
         $this->select_service_data = '';
         $this->arr_service_by_date = [];
         $this->description = '';
-        $this->note = null;
+        $this->note = "";
         $this->exchange_rate = 0;
         $this->totalDollar = 0;
         $this->taxDollar = 0;
@@ -702,7 +702,7 @@ class InvoiceLivewire extends Component
         $this->dueIraqi = 0;
         $this->grandTotalIraqi = 0;
 
-        $this->client_data = Client::get();
+        $this->client_data = Client::orderBy('client_name', 'ASC')->get();
         $this->payment_data = Payment::get();
         $this->service_data = Service::get();
 
@@ -794,6 +794,8 @@ class InvoiceLivewire extends Component
             ->orWhereHas('payment', function ($subQuery) {
                 $subQuery->where('payment_type', 'like', '%' . $this->search . '%');
             })
+            ->orWhere('id', 'like', '%' . $this->search . '%')
+            ->orWhere('quotation_id', 'like', '%' . $this->search . '%')
             ->orWhere('description', 'like', '%' . $this->search . '%')
             ->orWhere('status', 'like', '%' . $this->search . '%');
         })
@@ -809,7 +811,7 @@ class InvoiceLivewire extends Component
         // ->when($this->quotationStatusFilter === '', function ($query) {
         //     $query->orWhereNotNull('quotation_status');
         // })
-        ->orderBy('invoice_date', 'DESC')
+        ->orderBy('id', 'DESC')
         ->paginate(15);
         
         return view('livewire.edt.invoice-table',[

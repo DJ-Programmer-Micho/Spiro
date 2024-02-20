@@ -56,7 +56,7 @@
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-6">
+                            {{-- <div class="col-12 col-sm-6">
                                 <div class="mb-3">
                                     <label for="clientEmail">{{__('Client Email Address:')}}</label>
                                     <input type="email" name="clientEmail" wire:model="clientEmail" class="form-control" id="clientEmail" disabled>
@@ -76,8 +76,8 @@
                                     <input type="text" name="clientCity" wire:model="clientCity" class="form-control" id="clientCity" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
-                            </div>
-                            <div class="col-12 col-sm-4">
+                            </div> --}}
+                            <div class="col-12 col-sm-6">
                                 <div class="mb-3">
                                     <label for="clientAddress">{{__('Address:')}}</label>
                                     <input type="text" name="clientAddress" wire:model="clientAddress" class="form-control" id="clientAddress" disabled>
@@ -93,7 +93,7 @@
                             </div>
                             <div class="col-12 col-sm-6">
                                 <div class="mb-3">
-                                    <label for="clientPhoneTwo">{{__('Secondary:')}}</label>
+                                    <label for="clientPhoneTwo">{{__('Secondary Phone:')}}</label>
                                     <input type="tel" name="clientPhoneTwo" wire:model="clientPhoneTwo" class="form-control" id="clientPhoneTwo" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
@@ -134,7 +134,7 @@
                             <h5 class="mt-4"><b>{{__('Service Section')}}</b></h5>
                             <button class="btn btn-success mt-3 mb-3" type="button" wire:click="addNewDate">{{__('Add New Date')}}</button>
                         </div>
-<div>  
+                    <div>  
                         @foreach ($arr_service_by_date as $dateIndex => $services)
                         <div class="mb-3 mt-3">
                             <div class="d-flex justify-content-between">
@@ -244,7 +244,7 @@
                             </div>
                         </div>
                         @endforeach
-</div>
+                        </div>
 
                         <div class="row d-flex justify-content-between m-0">
                             <h5 class="mt-4 mb-1"><b>{{__('Final Section')}}</b></h5>
@@ -252,7 +252,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <label aria-label="note">{{__('Note')}}</label>
-                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
+                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%" required></textarea>
                                 <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>
                             <div class="col-sm-3">
@@ -280,7 +280,7 @@
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
                                 
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label>{{__('First Pay:')}} ($)</label>
                                     <input type="number" name="fisrtPayDollar" wire:model="fisrtPayDollar" class="form-control" id="fisrtPayDollar" wire:change="calculateTotals">
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
@@ -290,7 +290,7 @@
                                     <label>{{__('Due:')}} ($)</label>
                                     <input type="number" name="dueDollar" wire:model="dueDollar" class="form-control" id="dueDollar" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="col-sm-3">
                                 <div class="mb-3">
@@ -317,7 +317,7 @@
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
 
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label>{{__('First Pay:')}} (IQD)</label>
                                     <input type="number" name="fisrtPayIraqi" wire:model="fisrtPayIraqi" class="form-control" id="fisrtPayIraqi" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
@@ -327,7 +327,7 @@
                                     <label>{{__('Due:')}} (IQD)</label>
                                     <input type="number" name="dueIraqi" wire:model="dueIraqi" class="form-control" id="dueIraqi" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
-                                </div>
+                                </div> --}}
                             </div>
                             
                         </div>
@@ -397,7 +397,7 @@
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-6">
+                            {{-- <div class="col-12 col-sm-6">
                                 <div class="mb-3">
                                     <label for="clientEmail">{{__('Client Email Address:')}}</label>
                                     <input type="email" name="clientEmail" wire:model="clientEmail" class="form-control" id="clientEmail" disabled>
@@ -417,7 +417,7 @@
                                     <input type="text" name="clientCity" wire:model="clientCity" class="form-control" id="clientCity" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-12 col-sm-4">
                                 <div class="mb-3">
                                     <label for="clientAddress">{{__('Address:')}}</label>
@@ -434,7 +434,7 @@
                             </div>
                             <div class="col-12 col-sm-6">
                                 <div class="mb-3">
-                                    <label for="clientPhoneTwo">{{__('Secondary:')}}</label>
+                                    <label for="clientPhoneTwo">{{__('Secondary phone:')}}</label>
                                     <input type="tel" name="clientPhoneTwo" wire:model="clientPhoneTwo" class="form-control" id="clientPhoneTwo" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
@@ -594,7 +594,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <label aria-label="note">{{__('Note')}}</label>
-                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
+                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%" required></textarea>
                                 <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>
                             <div class="col-sm-3">
@@ -622,7 +622,7 @@
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
                                 
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label>{{__('First Pay:')}} ($)</label>
                                     <input type="number" name="fisrtPayDollar" wire:model="fisrtPayDollar" class="form-control" id="fisrtPayDollar" wire:change="calculateTotals">
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
@@ -632,7 +632,7 @@
                                     <label>{{__('Due:')}} ($)</label>
                                     <input type="number" name="dueDollar" wire:model="dueDollar" class="form-control" id="dueDollar" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="col-sm-3">
                                 <div class="mb-3">
@@ -659,7 +659,7 @@
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
 
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label>{{__('First Pay:')}} (IQD)</label>
                                     <input type="number" name="fisrtPayIraqi" wire:model="fisrtPayIraqi" class="form-control" id="fisrtPayIraqi" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
@@ -669,7 +669,7 @@
                                     <label>{{__('Due:')}} (IQD)</label>
                                     <input type="number" name="dueIraqi" wire:model="dueIraqi" class="form-control" id="dueIraqi" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
-                                </div>
+                                </div> --}}
                             </div>
                             
                         </div>
@@ -705,12 +705,12 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="country">{{__('Country:')}}</label>
-                                        <input type="text" name="country" wire:model="country" class="form-control" id="country">
+                                        <label for="address">{{__('Address:')}}</label>
+                                        <input type="text" name="address" wire:model="address" class="form-control" id="address">
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="city">{{__('City:')}}</label>
@@ -719,11 +719,11 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="address">{{__('Address:')}}</label>
-                                        <input type="text" name="address" wire:model="address" class="form-control" id="address">
+                                        <label for="country">{{__('Country:')}}</label>
+                                        <input type="text" name="country" wire:model="country" class="form-control" id="country">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row mt-5">
                             <h5 class="mb-4"><b>{{__('Secondary Information')}}</b></h5>
@@ -741,14 +741,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="email">{{__('Email Address:')}}</label>
                                         <input type="email" name="email" wire:model="email" class="form-control" id="email">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer">

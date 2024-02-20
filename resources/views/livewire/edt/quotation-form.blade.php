@@ -718,12 +718,12 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="country">{{__('Country:')}}</label>
-                                        <input type="text" name="country" wire:model="country" class="form-control" id="country">
+                                        <label for="address">{{__('Address:')}}</label>
+                                        <input type="text" name="address" wire:model="address" class="form-control" id="address">
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="city">{{__('City:')}}</label>
@@ -732,11 +732,11 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="address">{{__('Address:')}}</label>
-                                        <input type="text" name="address" wire:model="address" class="form-control" id="address">
+                                        <label for="country">{{__('Country:')}}</label>
+                                        <input type="text" name="country" wire:model="country" class="form-control" id="country">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row mt-5">
                             <h5 class="mb-4"><b>{{__('Secondary Information')}}</b></h5>
@@ -754,14 +754,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="email">{{__('Email Address:')}}</label>
                                         <input type="email" name="email" wire:model="email" class="form-control" id="email">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer">

@@ -311,9 +311,63 @@
                 <h6 class="mt-2">{{__('TOP TASKS USED')}}</h6>
                 <canvas id="pieChartTask" class="mx-auto" style="max-width: 400px;" height="200"></canvas>
             </div>
-           
-
         </div>
+    </div>
+
+    <div class="row profile-box mt-5 p-0">
+        <!-- Earnings (Monthly) Card Example -->
+        @foreach ($groupedTasksByUser as $mIndex => $taskUser)
+        @php
+            $taskData = App\Models\User::find($mIndex);
+        @endphp
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 dash-card" style="border-left-color: #7190eb">
+                <div class="card-body ">
+                    <div class="d-flex">
+                        <div>
+                            <img src="{{asset('avatars/'.$taskData->profile->avatar)}} "class="img-thumbnail rounded-circle" width="75px">
+                        </div>
+                        <div class="p-2">
+                            <h4 class="text-white m-0">{{$taskData->name}}</h4>
+                            <span class="text-white">{{$taskData->profile->job_title}}</span>
+                        </div>
+                    </div>
+                    <hr style="background-color: #7190eb ">
+                    @forelse ($taskUser as $index => $task)
+                    @php
+                        $taskSubData = App\Models\EmpTask::find($index);
+                    @endphp
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-md font-weight-bold text-uppercase mb-1" style="text-shadow:none; color: #7190eb;">
+                                #TS - {{$index}} | #INV - {{$taskSubData->invoice->id}}: {{$taskSubData->invoice->client->client_name}} | {{json_decode($taskSubData->invoice->services)['0']->actionDate}}
+                            </div>
+                    @foreach ($task as $per_task)
+                        @foreach ($per_task as $item)
+                        @php
+                            $taskNameData = App\Models\Task::find($item['task']);
+                        @endphp
+                        @if ($item['progress'] == 100)
+                        <div class="text-sm mb-0 font-weight-bold text-success" style="text-shadow:none">- {{$taskNameData->task_option}}: {{$item['progress']}}%</div>
+                        @elseif ($item['progress'] == 0)
+                        <div class="text-sm mb-0 font-weight-bold text-danger" style="text-shadow:none">- {{$taskNameData->task_option}}: {{$item['progress']}}%</div>
+                        @else
+                        <div class="text-sm mb-0 font-weight-bold text-white" style="text-shadow:none">- {{$taskNameData->task_option}}: {{$item['progress']}}%</div>
+                        @endif
+                        @endforeach
+                        ***
+                        @endforeach
+                        </div>
+                    </div>
+                    @empty
+                    <div class="text-sm mb-0 font-weight-bold text-danger" style="text-shadow:none">{{__('HAS NO TASK')}}</div>
+                    @endforelse
+
+                </div>
+            </div>
+        </div>
+        @endforeach
+
     </div>
 
     <div wire:ignore.self class="modal fade overflow-auto" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">

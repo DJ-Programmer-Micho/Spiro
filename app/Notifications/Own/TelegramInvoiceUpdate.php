@@ -165,8 +165,8 @@ class TelegramInvoiceUpdate extends Notification
             . "*" .'-----------------'."*\n";
         }
 
-        if ($this->date !== $this->old_invoice_data['note']) {
-            $content .= "*" . 'Notes Changed: ' . "\n" . json_decode($this->old_invoice_data['note'], true) .  "\n" .'         ↓'. "\n" . json_decode($this->notes, true) . "*\n";
+        if ($this->notes !== $this->old_invoice_data['note']) {
+            $content .= "*" . 'Notes Changed: ' . "\n" . $this->old_invoice_data['note'] .  "\n" .'         ↓'. "\n" . $this->notes . "*\n";
         }
 
         function compareServices($oldService, $newService) {

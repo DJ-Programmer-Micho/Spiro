@@ -63,7 +63,7 @@
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-6">
+                            {{-- <div class="col-12 col-sm-6">
                                 <div class="mb-3">
                                     <label for="clientEmail">{{__('Client Email Address:')}}</label>
                                     <input type="email" name="clientEmail" wire:model="clientEmail" class="form-control" id="clientEmail" disabled>
@@ -83,8 +83,8 @@
                                     <input type="text" name="clientCity" wire:model="clientCity" class="form-control" id="clientCity" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
-                            </div>
-                            <div class="col-12 col-sm-4">
+                            </div> --}}
+                            <div class="col-12 col-sm-6">
                                 <div class="mb-3">
                                     <label for="clientAddress">{{__('Address:')}}</label>
                                     <input type="text" name="clientAddress" wire:model="clientAddress" class="form-control" id="clientAddress" disabled>
@@ -259,7 +259,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <label aria-label="note">{{__('Note')}}</label>
-                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
+                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%" required></textarea>
                                 <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>
                             <div class="col-sm-3">
@@ -411,7 +411,7 @@
                                     <small class="text-info">{{__('(Read & Write)')}}</small>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-6">
+                            {{-- <div class="col-12 col-sm-6">
                                 <div class="mb-3">
                                     <label for="clientEmail">{{__('Client Email Address:')}}</label>
                                     <input type="email" name="clientEmail" wire:model="clientEmail" class="form-control" id="clientEmail" disabled>
@@ -431,8 +431,8 @@
                                     <input type="text" name="clientCity" wire:model="clientCity" class="form-control" id="clientCity" disabled>
                                     <small class="text-danger">{{__('(Read Only)')}}</small>
                                 </div>
-                            </div>
-                            <div class="col-12 col-sm-4">
+                            </div> --}}
+                            <div class="col-12 col-sm-6">
                                 <div class="mb-3">
                                     <label for="clientAddress">{{__('Address:')}}</label>
                                     <input type="text" name="clientAddress" wire:model="clientAddress" class="form-control" id="clientAddress" disabled>
@@ -608,7 +608,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <label aria-label="note">{{__('Note')}}</label>
-                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%"></textarea>
+                                <textarea name="note" id="note" rows="18" wire:model="note" style="width: 100%" required></textarea>
                                 <small class="text-info">{{__('(Read & Write)')}}</small>
                             </div>
                             <div class="col-sm-3">

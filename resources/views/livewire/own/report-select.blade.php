@@ -1,29 +1,29 @@
 
 <div>
     <!-- Select Modal  -->
-    <div wire:ignore.self class="modal fade overflow-auto" id="selectExpenseModal" tabindex="-1" aria-labelledby="selectExpenseModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div wire:ignore.self class="modal fade overflow-auto" id="selectReportModal" tabindex="-1" aria-labelledby="selectReportModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog text-white mx-1 mx-lg-auto">
             <div class="modal-content bg-dark">
                 <div class="modal-body">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="selectExpenseModal" style="color: #31fbe2">{{__('Select Expense Type')}}</h5>
+                        <h5 class="modal-title" id="selectReportModal" style="color: #f31900">{{__('Select Expense Type')}}</h5>
                         <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                             <span aria-hidden="true"><i class="fas fa-times"></i></span></button>
                     </div>
                     <div class="row">
                         <div class="col-12 col-sm-4">
                             <div class="my-3">
-                                <button class="btn btn-primary w-100" data-toggle="modal" data-target="#createExpenseBillModal" data-dismiss="modal" aria-label="Close" wire:click="addExpenseBillModalStartup"><b>{{__('Bills')}}</b></button>
+                                <button class="btn btn-primary w-100" data-toggle="modal" data-target="#createContractReportModal" data-dismiss="modal" aria-label="Close" wire:click="prepareContractReport"><b>{{__('Contracts')}}</b></button>
                             </div>
                         </div>
                         <div class="col-12 col-sm-4">
                             <div class="my-3">
-                                <button class="btn btn-primary w-100" data-toggle="modal" data-target="#createEmployeeModal" data-dismiss="modal" aria-label="Close" wire:click="addExpenseEmpModalStartup"><b>{{__('Employess')}}</b></button>
+                                <button class="btn btn-primary w-100" data-toggle="modal" data-target="#createCashReportModal" data-dismiss="modal" aria-label="Close" wire:click="prepareCashesReport"><b>{{__('Payments')}}</b></button>
                             </div>
                         </div>
                         <div class="col-12 col-sm-4">
                             <div class="my-3">
-                                <button class="btn btn-primary w-100" data-toggle="modal" data-target="#createExpenseOtherModal" data-dismiss="modal" aria-label="Close" wire:click="selectExpenseOthModalStartup"><b>{{__('Other')}}</b></button>
+                                <button class="btn btn-primary w-100" data-toggle="modal" data-target="#createExpenseReportModal" data-dismiss="modal" aria-label="Close" wire:click="prepareExpenseReport"><b>{{__('Expenses')}}</b></button>
                             </div>
                         </div>
                     </div>
@@ -36,76 +36,235 @@
     </div>
 
     <!-- Insert Modal - Bills -->
-    <div wire:ignore.self class="modal fade overflow-auto" id="createExpenseBillModal" tabindex="-1" aria-labelledby="createExpenseBillModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div wire:ignore.self class="modal fade overflow-auto" id="createContractReportModal" tabindex="-1" aria-labelledby="createContractReportModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl text-white mx-1 mx-lg-auto" style="max-width: 1140px;">
             <div class="modal-content bg-dark">
-                <form wire:submit.prevent="addBillExpense">
+                <form wire:submit.prevent="contractExport">
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="createExpenseBillModal" style="color: #31fbe2">{{__('Add Bill Expense')}}</h5>
+                            <h5 class="modal-title" id="createContractReportModal" style="color: #f31900">{{__('Contract Report')}}</h5>
                             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span>
                             </button>
                         </div>
-                        <h5 class="mt-4 mb-1"><b>{{__('Bill Information')}}</b></h5>
+                        <h5 class="mt-4 mb-1"><b>{{__('Filter Information')}}<br><small class="text-info">{{__('Optional')}}</small></b></h5>
                         <div class="row">
                             <div class="col-12 col-sm-6">
                                 <div class="mb-3">
-                                    <label>{{__('Bill Name')}}</label>
-                                    <select wire:model="select_bill_data" wire:change="selectExpenseBillModalStartup" name="select_bill_data" id="select_bill_data" class="form-control" required>
-                                        <option value="">{{__('Choose The Default Bill')}}</option>
-                                        @if($bill_data)
-                                        @foreach ($bill_data as $b_data)
-                                            <option value="{{$b_data->id}}">{{$b_data->bill_name}}</option>
+                                    <label for="date">{{__('Start Date:')}}</label>
+                                    <input type="date" name="date" wire:model="startDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label for="date">{{__('End Date:')}}</label>
+                                    <input type="date" name="date" wire:model="endDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label>{{__('Invoice ID')}}</label>
+                                    <select wire:model="invoiceId" wire:change="prepareSelectedInvoiceId" name="invoiceId" id="invoiceId" class="form-control" >
+                                        <option value="none">{{__('Select The Invoice ID')}}</option>
+                                        @if($getInvoiceIds)
+                                        @foreach ($getInvoiceIds as $inv_id)
+                                            <option value="{{$inv_id}}">#INV-{{$inv_id}}</option>
                                         @endforeach
                                         @endif
                                     </select>
                                 </div>
+                            </div>
+                            {{-- <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label>{{__('Company Name')}}</label>
+                                    <select wire:model="companyName" name="companyName" id="companyName" wire:change="prepareSelectedCompanyName" class="form-control">
+                                        <option value="none">{{__('Select The Client Name')}}</option>
+                                        @if($getCompanyNames && !empty($getCompanyNames))
+                                            @foreach ($getCompanyNames as $company_data)
+                                                <option value="{{$company_data['id']}}">{{$company_data['company_name'] ?? 'N/A'}}</option>
+                                            @endforeach
+                                        @else
+                                            <option value="none">{{__('NO COMPANIES DATA FOUND')}}</option>
+                                        @endif
+                                    </select>
                                 </div>
-                                <div class="col-12 col-sm-6">
-                                    <div class="mb-3">
-                                        <label for="date">{{__('Date:')}}</label>
-                                        <input type="date" name="date" wire:model="billDate" class="form-control" id="date" required>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-6">
-                                    <div class="mb-3">
-                                        <label for="cost_dollar">{{__('Cost in ($):')}}</label>
-                                        <input type="number" name="cost_dollar" wire:model="cost_dollar" class="form-control" id="cost_dollar" required>
-                                    </div>
-                                </div>
+                            </div> --}}
                             <div class="col-12 col-sm-6">
                                 <div class="mb-3">
-                                    <label for="cost_iraqi">{{__('Cost in (IQD):')}}</label>
-                                    <input type="number" name="cost_iraqi" wire:model="cost_iraqi" class="form-control" id="cost_iraqi" required>
+                                    <label>{{__('Client Name')}}</label>
+                                    <select wire:model="clientName" name="clientName" id="clientName" wire:change="prepareSelectedClientName" class="form-control">
+                                        <option value="none">{{__('Select The Client Name')}}</option>
+                                
+                                        @if($getClientNames && !empty($getClientNames))
+                                            @foreach ($getClientNames as $client_data)
+                                                <option value="{{$client_data['id']}}">{{$client_data['client_name']}}</option>
+                                            @endforeach
+                                        @else
+                                            <option value="">{{__('NO CLIENTS DATA FOUND')}}</option>
+                                        @endif
+                                    </select>
                                 </div>
                             </div>
-
                             <div class="col-12 col-sm-6">
-                                <label for="description">{{__('Description:')}}</label>
-                                <div class="col-12">
-                                    <textarea name="description" id="description"  wire:model="description" rows="3" class="w-100"></textarea>
+                                <div class="mb-3">
+                                    <label>{{__('Other Options')}}</label>
+                                    <select wire:model="option" name="option" id="option" class="form-control">
+                                        <option value="0">{{__('Options')}}</option>
+                                        <option value="0">{{__('No Due & Due')}}</option>
+                                        <option value="1">{{__('No Due')}}</option>
+                                        <option value="2">{{__('Due')}}</option>
+                                    </select>
                                 </div>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                            <label>{{__('Status')}}</label>
-                            <select wire:model="status" name="status" id="status" class="form-control" required>
-                                <option value="">{{__('Choose Status')}}</option>
-                                    <option value="1">{{__('Active')}}</option>
-                                    <option value="0">{{__('Non Active')}}</option>
-                            </select>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" wire:click="closeModal" data-dismiss="modal">{{__('Close')}}</button>
-                        <button type="submit" class="btn btn-success submitJs">{{__('Save')}}</button>
+                        <button type="submit" class="btn btn-success submitJs">{{__('Export')}}</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    <div wire:ignore.self class="modal fade overflow-auto" id="createExpenseReportModal" tabindex="-1" aria-labelledby="createExpenseReportModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-xl text-white mx-1 mx-lg-auto" style="max-width: 1140px;">
+            <div class="modal-content bg-dark">
+                <form wire:submit.prevent="expenseExport">
+                    <div class="modal-body">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createExpenseReportModal" style="color: #f31900">{{__('Expense Report')}}</h5>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
+                                <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                            </button>
+                        </div>
+                        <h5 class="mt-4 mb-1"><b>{{__('Filter Information')}}<br><small class="text-info">{{__('Optional')}}</small></b></h5>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label for="date">{{__('Start Date:')}}</label>
+                                    <input type="date" name="date" wire:model="startDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label for="date">{{__('End Date:')}}</label>
+                                    <input type="date" name="date" wire:model="endDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label>{{__('Other Options')}}</label>
+                                    <select wire:model="option" name="option" id="option" class="form-control">
+                                        <option value="none">{{__('Options')}}</option>
+                                        <option value="0">{{__('Bill')}}</option>
+                                        <option value="1">{{__('Salary')}}</option>
+                                        <option value="2">{{__('Other')}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" wire:click="closeModal" data-dismiss="modal">{{__('Close')}}</button>
+                        <button type="submit" class="btn btn-success submitJs">{{__('Export')}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div wire:ignore.self class="modal fade overflow-auto" id="createCashReportModal" tabindex="-1" aria-labelledby="createCashReportModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-xl text-white mx-1 mx-lg-auto" style="max-width: 1140px;">
+            <div class="modal-content bg-dark">
+                <form wire:submit.prevent="cashExport">
+                    <div class="modal-body">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createCashReportModal" style="color: #f31900">{{__('Cash Report')}}</h5>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
+                                <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                            </button>
+                        </div>
+                        <h5 class="mt-4 mb-1"><b>{{__('Filter Information')}}<br><small class="text-info">{{__('Optional')}}</small></b></h5>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label for="date">{{__('Start Date:')}}</label>
+                                    <input type="date" name="date" wire:model="startDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label for="date">{{__('End Date:')}}</label>
+                                    <input type="date" name="date" wire:model="endDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label>{{__('Invoice ID')}}</label>
+                                    <select wire:model="cashId" wire:change="prepareSelectedCashId" name="cashId" id="cashId" class="form-control" >
+                                        <option value="none">{{__('Select The CASH ID')}}</option>
+                                        @if($getCashIds)
+                                        @foreach ($getCashIds as $cash_id)
+                                            <option value="{{$cash_id}}">#CR-{{$cash_id}}</option>
+                                        @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            {{-- <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label>{{__('Company Name')}}</label>
+                                    <select wire:model="companyName" name="companyName" id="companyName" wire:change="prepareSelectedCashCompanyName" class="form-control">
+                                        <option value="none">{{__('Select The Client Name')}}</option>
+                                        @if($getCompanyNames && !empty($getCompanyNames))
+                                            @foreach ($getCompanyNames as $company_data)
+                                                <option value="{{$company_data['id']}}">{{$company_data['company_name'] ?? 'N/A'}}</option>
+                                            @endforeach
+                                        @else
+                                            <option value="none">{{__('NO COMPANIES DATA FOUND')}}</option>
+                                        @endif
+                                    </select>
+                                </div>
+                            </div> --}}
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label>{{__('Client Name')}}</label>
+                                    <select wire:model="clientName" name="clientName" id="clientName" wire:change="prepareSelectedCashClientName" class="form-control">
+                                        <option value="none">{{__('Select The Client Name')}}</option>
+                                
+                                        @if($getClientNames && !empty($getClientNames))
+                                            @foreach ($getClientNames as $client_data)
+                                                <option value="{{$client_data['id']}}">{{$client_data['client_name']}}</option>
+                                            @endforeach
+                                        @else
+                                            <option value="">{{__('NO CLIENTS DATA FOUND')}}</option>
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label>{{__('Other Options')}}</label>
+                                    <select wire:model="option" name="option" id="option" class="form-control">
+                                        <option value="0">{{__('Options')}}</option>
+                                        <option value="0">{{__('No Due & Due')}}</option>
+                                        <option value="1">{{__('No Due')}}</option>
+                                        <option value="2">{{__('Due')}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" wire:click="closeModal" data-dismiss="modal">{{__('Close')}}</button>
+                        <button type="submit" class="btn btn-success submitJs">{{__('Export')}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{{-- 
     <!-- Insert Modal - Employee -->
     <div wire:ignore.self class="modal fade overflow-auto" id="createEmployeeModal" tabindex="-1" aria-labelledby="createEmployeeModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl text-white mx-1 mx-lg-auto" style="max-width: 1140px;">
@@ -113,7 +272,7 @@
                 <form wire:submit.prevent="addEmpExpense">
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="createEmployeeModal" style="color: #31fbe2">{{__('Add Employee Salary')}}</h5>
+                            <h5 class="modal-title" id="createEmployeeModal" style="color: #f31900">{{__('Add Employee Salary')}}</h5>
                             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span>
                             </button>
@@ -135,12 +294,6 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="date">{{__('Date:')}}</label>
-                                        <input type="date" name="date" wire:model="billDate" class="form-control" id="date" required>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-6">
-                                    <div class="mb-3">
                                         <label for="cost_dollar">{{__('Cost in ($):')}}</label>
                                         <input type="number" name="cost_dollar" wire:model="cost_dollar" class="form-control" id="cost_dollar" required>
                                     </div>
@@ -149,6 +302,12 @@
                                 <div class="mb-3">
                                     <label for="cost_iraqi">{{__('Cost in (IQD):')}}</label>
                                     <input type="number" name="cost_iraqi" wire:model="cost_iraqi" class="form-control" id="cost_iraqi" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="mb-3">
+                                    <label for="date">{{__('Date:')}}</label>
+                                    <input type="date" name="date" wire:model="billDate" class="form-control" id="date" required>
                                 </div>
                             </div>
                             <div class="col-12 col-sm-6">
@@ -183,7 +342,7 @@
                 <form wire:submit.prevent="addOtherExpense">
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="createExpenseBillModal" style="color: #31fbe2">{{__('Add Bill Expense')}}</h5>
+                            <h5 class="modal-title" id="createExpenseBillModal" style="color: #f31900">{{__('Add Bill Expense')}}</h5>
                             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span>
                             </button>
@@ -246,7 +405,7 @@
                 <form wire:submit.prevent="updateExpenseBillModalStartup">
                     <div class="modal-body">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="editExpenseModal" style="color: #31fbe2">{{__('Update Expense')}}</h5>
+                            <h5 class="modal-title" id="editExpenseModal" style="color: #f31900">{{__('Update Expense')}}</h5>
                             <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" wire:click="closeModal">
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span>
                             </button>
@@ -319,6 +478,6 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 </div>

@@ -170,6 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         // Mccarlosen\LaravelMpdf\LaravelMpdfServiceProvider::class,
         // Barryvdh\DomPDF\ServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
         // Livewire\Providers\LivewireServiceProvider::class,
     ])->toArray(),
@@ -186,6 +187,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         // 'LaravelMpdf' => Mccarlosen\LaravelMpdf\Facades\LaravelMpdf::class
         // 'PDF' => Mccarlosen\LaravelMpdf\Facades\LaravelMpdf::class
         // 'Example' => App\Facades\Example::class,

@@ -1,4 +1,4 @@
-@extends('dashboard.fin.layout.master')
+@extends('dashboard.edt.layout.master')
 @section('tail','My Tasks')
 @section('dash_content')
 <div>

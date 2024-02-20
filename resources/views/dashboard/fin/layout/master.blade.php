@@ -454,7 +454,7 @@
     @livewireScripts
     @stack('cropper')
     @stack('drag')
-    @stack('color');
+    @stack('color')
     @yield('form_script')
     @stack('dash_script')
     @yield('dash_script')

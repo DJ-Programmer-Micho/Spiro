@@ -12,8 +12,12 @@ use App\Models\Expense;
 use App\Models\Invoice;
 use Livewire\Component;
 use App\Models\Quotation;
+use App\Exports\CashExport;
 use Illuminate\Support\Str;
+use App\Exports\ExpenseExport;
+use App\Exports\ContractExport;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardLivewire extends Component
 {
@@ -611,4 +615,312 @@ class DashboardLivewire extends Component
             'groupedTasksByUser' => $groupedTasksByUser
         ]);
     } // END FUNCTION OF RENDER
+
+    //EXCEL FORM GET VALUES
+    public $getInvoiceIds = [];
+    public $getClientNames = [];
+    // public $getCompanyNames = [];
+    // public $companyName = null;
+    public $option = null;
+    public $startDate;
+    public $endDate;
+    public $clientName = null;
+    public $invoiceId = 'none';
+    public $cashId = 'none';
+
+    public function prepareExpenseReport(){
+        //do nothing
+        return;
+    }
+
+    // START CONTRACT EXPORT
+    public function contractExport(){
+        $startDate = $this->startDate;
+        $endDate = $this->endDate;
+        $cashId = $this->cashId;
+        $companyName = $this->companyName ?? '';
+        $option = $this->option;
+        $clientName = $this->clientName;
+        // dd($startDate, $endDate, $invoiceId, $companyName, $option, $clientName);
+        return Excel::download(new ContractExport($startDate, $endDate, $cashId, $companyName, $option, $clientName), 'contractReport_'.now()->format('Y-m-d').'_.xlsx');
+    }
+    // END CONTRACT EXPORT
+
+    // START CONTRACT EXPORT
+    public function cashExport(){
+        $startDate = $this->startDate;
+        $endDate = $this->endDate;
+        $invoiceId = $this->invoiceId;
+        $companyName = $this->companyName ?? '';
+        $option = $this->option;
+        $clientName = $this->clientName;
+        // dd($startDate, $endDate, $invoiceId, $companyName, $option, $clientName);
+        return Excel::download(new CashExport($startDate, $endDate, $invoiceId, $companyName, $option, $clientName), 'cashReport_'.now()->format('Y-m-d').'_.xlsx');
+    }
+    // END CONTRACT EXPORT
+
+    public function expenseExport(){
+        $startDate = $this->startDate;
+        $endDate = $this->endDate;
+        $option = $this->option;
+        return Excel::download(new ExpenseExport($startDate, $endDate, $option), 'expenseReport_'.now()->format('Y-m-d').'_.xlsx');
+    }
+
+    public function prepareCashesReport(){
+        $this->prepareCashesIdReport();
+        $this->prepareClientReport();
+        // $this->prepareComapnyReport();
+    }
+
+    public $getCashIds;
+    private function prepareCashesIdReport(){
+        $cashes = Cash::all();
+        if ($cashes->count() > 0) {
+            $this->getCashIds = $cashes->pluck('id');
+        } else {
+            $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => __('No invoices IDs found.')]);
+        }
+    }
+
+    
+    // START SELECTED CASH ID PREPARE CONTRACT REPORT
+    public function prepareSelectedCashId(){
+        if ($this->cashId != 'none') {
+            $cash = Cash::with('invoice.client')->where('id', $this->cashId)->first();
+            // $cash = Cash::with('invoice.client.company')->where('id', $this->cashId)->first(); OLD
+            // dd($cash);
+            if ($cash) {
+                $this->getClientNames = [$cash->invoice->client->toArray()];
+                // $this->getCompanyNames = [$cash->invoice->client->company->toArray()];
+                if ($this->getClientNames && !empty($this->getClientNames)) {
+                    $this->clientName = $this->getClientNames[0]['id'];
+                    // $this->companyName = $this->getClientNames[0]['company_id'];
+                } else {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('No client found for the selected invoice.')]);
+                }
+            } else {
+                $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('No invoice found with the selected ID.')]);
+            }
+        } else {
+            $this->prepareClientReport();
+            // $this->prepareComapnyReport();
+            // $this->prepareComapnyReport();
+            $this->clientName = '';
+            // $this->companyName = '';
+        }
+    }
+    // END SELECTED CASH ID PREPARE CONTRACT REPORT
+
+    // START SELECTED CLIENT ID PREPARE CONTRACT REPORT
+    public function prepareSelectedCashClientName()
+    {
+        if ($this->cashId == 'none') {
+            // User selected client first, load all invoices for this client
+            if ($this->clientName != 'none') {
+                $client = Client::with('invoice.cashes')->find($this->clientName);
+                // $client = Client::with('company','invoice.cashes')->find($this->clientName); OLD
+                if ($client) {
+
+                    $this->getCashIds = $client->invoice->flatMap(function ($invoice) {
+                        // dd($invoice->cashes->pluck('id')->toArray());
+                        return $invoice->cashes->pluck('id')->toArray();
+                    })->toArray();
+                    // if($client->company == null) {
+                    //     $this->getCompanyNames = [];
+                    // } else {
+                    //     $this->getCompanyNames = [$client->company->toArray()];
+                    // }
+                    // $this->companyName = $this->getCompanyNames[0]['id'] ?? 'none';
+                } else {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('No client found for the selected ID.')]);
+                }
+            } else {
+                $this->prepareClientReport();
+                $this->prepareCashesIdReport();
+                // $this->prepareComapnyReport();
+                $this->invoiceId = 'none';
+                // $this->companyName = 'none';
+            }
+        } else {
+            $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('Please Clean Up.')]);
+        }
+    }
+    // END SELECTED CLIENT ID PREPARE CONTRACT REPORT
+
+    // START SELECTED COMPANY ID PREPARE CASH REPORT
+    // public function prepareSelectedCashCompanyName()
+    // {
+    //     if ($this->invoiceId == 'none') {
+    //         // User selected client first, load all invoices for this client
+    //         if ($this->companyName != 'none') {
+    //             $company = Company::with('clients.invoice.cashes')->find($this->companyName);
+
+    //             if ($company) {
+    //                 $this->getCashIds = $company->clients->flatMap(function ($client) {
+    //                     return $client->invoice->flatMap(function ($invoice) {
+    //                         return $invoice->cashes->pluck('id')->toArray();
+    //                     });
+    //                 })->toArray();
+
+    //             } else {
+    //                 $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('No company found for the selected ID.')]);
+    //             }
+    //         } else {
+    //             $this->prepareClientReport();
+    //             $this->prepareCashesIdReport();
+    //             // $this->prepareComapnyReport();
+    //             $this->invoiceId = 'none';
+    //             $this->clientName = 'none';
+    //         }
+    //     } else {
+    //         $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('Please Clean Up.')]);
+    //     }
+    // }
+    // END SELECTED COMPANY ID PREPARE CASH REPORT
+
+    public function prepareContractReport(){
+        $this->prepareInvoiceIdsReport();
+        $this->prepareClientReport();
+        // $this->prepareComapnyReport();
+    }
+
+    // START PREPARE CONTRACT REPORT
+    private function prepareInvoiceIdsReport(){
+        $invoices = Invoice::all();
+        if ($invoices->count() > 0) {
+            $this->getInvoiceIds = $invoices->pluck('id');
+        } else {
+            $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => __('No invoices IDs found.')]);
+        }
+    }
+    // END PREPARE CONTRACT REPORT
+
+    // START SELECTED INVOICE ID PREPARE CONTRACT REPORT
+    // private function prepareComapnyReport(){
+    //     $companies = Company::all();
+    //     if ($companies->count() > 0) {
+    //         $this->getCompanyNames = $companies;
+    //     } else {
+    //         $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => __('No invoices IDs found.')]);
+    //     }
+    // }
+    // START SELECTED INVOICE ID PREPARE CONTRACT REPORT
+
+    // START SELECTED INVOICE ID PREPARE CONTRACT REPORT
+    private function prepareClientReport(){
+        $clients = Client::orderBy('client_name', 'ASC')->get();
+        if ($clients->count() > 0) {
+            $this->getClientNames = $clients;
+            // dd($this->getClientNames);
+        } else {
+            $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => __('No invoices IDs found.')]);
+        }
+    }
+    // START SELECTED INVOICE ID PREPARE CONTRACT REPORT
+
+    // START SELECTED INVOICE ID PREPARE CONTRACT REPORT
+    public function prepareSelectedInvoiceId(){
+        if ($this->invoiceId != 'none') {
+            $invoice = Invoice::with('client')->where('id', $this->invoiceId)->first();
+            if ($invoice) {
+                $this->getClientNames = [$invoice->client->toArray()];
+                // $this->getCompanyNames = [$invoice->client->company->toArray()];
+                if ($this->getClientNames && !empty($this->getClientNames)) {
+                    $this->clientName = $this->getClientNames[0]['id'];
+                    // $this->companyName = $this->getClientNames[0]['company_id'];
+                } else {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('No client found for the selected invoice.')]);
+                }
+            } else {
+                $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('No invoice found with the selected ID.')]);
+            }
+        } else {
+            $this->prepareClientReport();
+            // $this->prepareComapnyReport();
+            // $this->prepareComapnyReport();
+            $this->clientName = '';
+            // $this->companyName = '';
+        }
+    }
+    // END SELECTED INVOICE ID PREPARE CONTRACT REPORT
+
+    // START SELECTED CLIENT ID PREPARE CONTRACT REPORT
+    public function prepareSelectedClientName()
+    {
+        if ($this->invoiceId == 'none') {
+            // User selected client first, load all invoices for this client
+            if ($this->clientName != 'none') {
+                $client = Client::find($this->clientName);
+                // $client = Client::with('company')->find($this->clientName); OLD
+                if ($client) {
+                    $this->getInvoiceIds = $client->invoice->pluck('id');
+                    // if($client->company == null) {
+                    //     $this->getCompanyNames = [];
+                    // } else {
+                    //     $this->getCompanyNames = [$client->company->toArray()];
+                    // }
+                    // $this->companyName = $this->getCompanyNames[0]['id'] ?? 'none';
+                } else {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('No client found for the selected ID.')]);
+                }
+            } else {
+                $this->prepareClientReport();
+                $this->prepareInvoiceIdsReport();
+                // $this->prepareComapnyReport();
+                $this->invoiceId = 'none';
+                // $this->companyName = 'none';
+            }
+        } else {
+            // $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('Please Clean Up.')]);
+        }
+    }
+    // END SELECTED CLIENT ID PREPARE CONTRACT REPORT
+
+    // public function prepareSelectedCompanyName()
+    // {
+    //     if ($this->invoiceId == 'none') {
+    //         // User selected client first, load all invoices for this client
+    //         if ($this->companyName != 'none') {
+    //             $company = Company::with('clients.invoice')->find($this->companyName);
+
+    //             if ($company) {
+    //                 $this->getInvoiceIds = $company->clients->flatMap(function ($client) {
+    //                     // dd();
+    //                     return $client->invoice->pluck('id')->toArray();
+    //                 })->toArray();
+
+    //                 $this->getClientNames = $company->clients->toArray();
+    //             } else {
+    //                 $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('No company found for the selected ID.')]);
+    //             }
+    //         } else {
+    //             $this->prepareClientReport();
+    //             $this->prepareInvoiceIdsReport();
+    //             $this->prepareComapnyReport();
+    //             $this->invoiceId = 'none';
+    //             $this->clientName = 'none';
+    //         }
+    //     } else {
+    //         $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('Please Clean Up.')]);
+    //     }
+    // }
+    // END SELECTED COMPANY ID PREPARE CONTRACT REPORT
+
+    public function closeModal() {
+        $this->resetModal();
+    } // END FUNCTION OF CLOSE MODAL
+
+    
+    private function resetModal(){
+        $this->invoiceId = 'none';
+        $this->cashId = 'none';
+        $this->startDate = null;
+        $this->endDate = null;
+        // $this->companyName = null;
+        $this->option = null;
+        $this->clientName = null;
+    } // END FUNCTION OF RESET VARIABLES
+
 }
+
+

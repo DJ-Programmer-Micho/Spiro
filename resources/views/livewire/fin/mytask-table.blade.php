@@ -40,7 +40,7 @@
                 <h2 class="mb-0">
                   <button class="btn btn-info btn-block d-flex justify-content-between" style="color: #000; font-weight: bold" type="button" data-toggle="collapse" data-target="#collapse{{$id_index}}" aria-expanded="true" aria-controls="collapse{{$id_index}}">
                     <div>
-                        #INV - {{$taskData->invoice->id}} | {{$taskData->invoice->description}}
+                        #INV - {{$taskData->invoice->id}} | {{$taskData->invoice->client->client_name}} | {{$taskData->invoice->description}} | {{json_decode($taskData->invoice->services)['0']->actionDate}}
                     </div>
                     <div>
                         {{-- @php

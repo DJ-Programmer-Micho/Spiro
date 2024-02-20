@@ -430,8 +430,37 @@ class DashboardLivewire extends Component
             }
         }
 
+        $groupedTasksByUser = [];
+
+        foreach (User::where('role', '!=', '1')->get() as $user) {
+            $userId =  $user->id;
+            $groupedTasks = EmpTask::where('approved', 0)->get()
+                ->map(function ($empTask) use ($userId) {
+                    $decodedTasks = json_decode($empTask->tasks, true);
+        
+                    return [
+                        'id' => $empTask->id,
+                        'invoice_id' => $empTask->invoice_id,
+                        'tasks' => array_filter($decodedTasks, function ($task) use ($userId) {
+                            return $task['name'] == $userId;
+                        })
+                    ];
+                })
+                ->filter(function ($empTask) {
+                    return !empty($empTask['tasks']);
+                })
+                ->groupBy('id')
+                ->map(function ($group) {
+                    return collect($group)->pluck('tasks')->toArray();
+                });
+        
+            $groupedTasksByUser[$userId] = $groupedTasks;
+        }
+
         return view('livewire.fin.dashboard',[
-            'events' => $events
+            'events' => $events,
+            'groupedTasksByUser' => $groupedTasksByUser
+
         ]);
     } // END FUNCTION OF RENDER
 }

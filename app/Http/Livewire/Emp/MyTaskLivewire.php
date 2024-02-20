@@ -70,7 +70,7 @@ class MyTaskLivewire extends Component
 
     public function updateTask($id_index, $sub_index)
     {
-        // try {
+        try {
             $empTask = EmpTask::find($id_index);
             $tasks = json_decode($empTask->tasks, true);
 
@@ -79,7 +79,7 @@ class MyTaskLivewire extends Component
 
             $tasks[$sub_index]['progress'] = $this->progress_[$id_index . '_' . $sub_index];
             if($this->telegram_channel_status == 1){
-                // try{Edashboard
+                try{
                     Notification::route('toTelegram', null)
                     ->notify(new TelegramMyTaskShort(
                         auth()->user()->name,
@@ -91,9 +91,9 @@ class MyTaskLivewire extends Component
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                // }  catch (\Exception $e) {
+                }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('An error occurred while sending Notification.')]);
-                // }
+                }
             }
 
             $empTask->tasks = json_encode($tasks);
@@ -119,9 +119,9 @@ class MyTaskLivewire extends Component
             $empTask->save();
             $this->initializeFilteredTasks();
             $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => __('Task Progress Updated.')]);
-        // }  catch (\Exception $e) {
+        }  catch (\Exception $e) {
             $this->dispatchBrowserEvent('alert', ['type' => 'error', 'message' => __('Task Progress Did Not Update.')]);
-    // }
+    }
 
     }
     

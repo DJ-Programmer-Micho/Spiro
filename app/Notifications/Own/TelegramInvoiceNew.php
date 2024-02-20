@@ -178,12 +178,12 @@ class TelegramInvoiceNew extends Notification
         . "*" .'--'."*\n"
         . "*" .'Grand Total ($): $'. number_format($this->grandTotalDollar). "*\n"
         . "*" .'Grand Total (IQD): '. number_format($this->grandTotalIraqi) . ' IQD' . "*\n"
-        . "*" .'--'."*\n"
-        . "*" .'First Pay ($): $'. number_format($this->fisrtpayDollar). "*\n"
-        . "*" .'First Pay (IQD): '. number_format($this->fisrtpayIraqi) . ' IQD' . "*\n"
-        . "*" .'--'."*\n"
-        . "*" .'Due ($): $'. number_format($this->dueDollar). "*\n"
-        . "*" .'Due (IQD): '. number_format($this->dueIraqi) . ' IQD' . "*\n"
+        // . "*" .'--'."*\n"
+        // . "*" .'First Pay ($): $'. number_format($this->fisrtpayDollar). "*\n"
+        // . "*" .'First Pay (IQD): '. number_format($this->fisrtpayIraqi) . ' IQD' . "*\n"
+        // . "*" .'--'."*\n"
+        // . "*" .'Due ($): $'. number_format($this->dueDollar). "*\n"
+        // . "*" .'Due (IQD): '. number_format($this->dueIraqi) . ' IQD' . "*\n"
         . "*" .'------- Table -------'."*\n"
         . $this->tableHeader . $this->tableBody;
 

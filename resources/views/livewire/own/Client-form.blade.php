@@ -11,7 +11,7 @@
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span></button>
                         </div>
                         <div class="row mt-5">
-                            <h5 class="mb-4"><b>{{__('Initialize Information')}}</b></h5>
+                            <h5 class="m-4"><b>{{__('Initialize Information')}}</b></h5>
                             <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
@@ -21,28 +21,29 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="country">{{__('Country:')}}</label>
-                                        <input type="text" name="country" wire:model="country" class="form-control" id="country">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
-                                <div class="col-12 col-sm-6">
-                                    <div class="mb-3">
-                                        <label for="city">{{__('City:')}}</label>
-                                        <input type="text" name="city" wire:model="city" class="form-control" id="city">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-6">
-                                    <div class="mb-3">
                                         <label for="address">{{__('Address:')}}</label>
                                         <input type="text" name="address" wire:model="address" class="form-control" id="address">
                                     </div>
                                 </div>
+                                {{-- <div class="col-12 col-sm-6">
+                                    <div class="mb-3">
+                                        <label for="country">{{__('Country:')}}</label>
+                                        <input type="text" name="country" wire:model="country" class="form-control" id="country">
+                                    </div>
+                                </div> --}}
                             </div>
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12"> --}}
+                                {{-- <div class="col-12 col-sm-6">
+                                    <div class="mb-3">
+                                        <label for="city">{{__('City:')}}</label>
+                                        <input type="text" name="city" wire:model="city" class="form-control" id="city">
+                                    </div>
+                                </div> --}}
+
+                            {{-- </div> --}}
                         </div>
                         <div class="row mt-5">
-                            <h5 class="mb-4"><b>{{__('Secondary Information')}}</b></h5>
+                            <h5 class="m-4"><b>{{__('Secondary Information')}}</b></h5>
                             <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
@@ -57,14 +58,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="email">{{__('Email Address:')}}</label>
                                         <input type="email" name="email" wire:model="email" class="form-control" id="email">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -90,7 +91,7 @@
                                 <span aria-hidden="true"><i class="fas fa-times"></i></span></button>
                         </div>
                         <div class="row mt-5">
-                            <h5 class="mb-4 text-center"><b>{{__('Initialize Information')}}</b></h5>
+                            <h5 class="m-4 text-center"><b>{{__('Initialize Information')}}</b></h5>
                             <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
@@ -100,28 +101,29 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
+                                        <label for="address">{{__('Address:')}}</label>
+                                        <input type="text" name="address" wire:model="address" class="form-control" id="address" required>
+                                    </div>
+                                </div>
+                                {{-- <div class="col-12 col-sm-6">
+                                    <div class="mb-3">
                                         <label for="country">{{__('Country:')}}</label>
                                         <input type="text" name="country" wire:model="country" class="form-control" id="country" required>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="city">{{__('City:')}}</label>
                                         <input type="text" name="city" wire:model="city" class="form-control" id="city" required>
                                     </div>
                                 </div>
-                                <div class="col-12 col-sm-6">
-                                    <div class="mb-3">
-                                        <label for="address">{{__('Address:')}}</label>
-                                        <input type="text" name="address" wire:model="address" class="form-control" id="address" required>
-                                    </div>
-                                </div>
-                            </div>
+
+                            </div> --}}
                         </div>
                         <div class="row mt-5">
-                            <h5 class="mb-4 text-center"><b>{{__('Secondary Information')}}</b></h5>
+                            <h5 class="m-4 text-center"><b>{{__('Secondary Information')}}</b></h5>
                             <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
@@ -136,14 +138,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="email">{{__('Email Address:')}}</label>
                                         <input type="email" name="email" wire:model="email" class="form-control" id="email">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer">

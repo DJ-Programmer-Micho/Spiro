@@ -54,8 +54,8 @@
                                 wire:click="editBill({{ $item->id }})" class="btn btn-primary m-1">
                                 <i class="far fa-edit"></i>
                             </button>
-                            <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon">
-                                <i class="far {{ $item->status == 1 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
+                            <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 0 ? 'btn-danger' : 'btn-success' }} btn-icon">
+                                <i class="far {{ $item->status == 0 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
                                 </button>
                             <button type="button" data-toggle="modal" data-target="#deleteBillModal"
                                 wire:click="deleteBill({{ $item->id }})" class="btn btn-danger m-1">

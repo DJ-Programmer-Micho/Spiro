@@ -6,6 +6,8 @@
         <h2 class="text-lg font-medium mr-auto">
             <b style="color: #31fbe2">{{__('EXPENSE TABLE')}}</b>
         </h2>
+        <p class="text-danger">$ {{number_format($dolTotal)}}</p>
+        <p class="text-danger">{{number_format($iqdTotal)}} {{__('IQD')}}</p>
         <div class="row d-flex justify-content-between m-0">
             <div class="d-flex">
                 <div id="reportrange" class="form-control mr-3" style="cursor: pointer; padding: 5px 10px; border: 1px solid #333; width: 100%">
@@ -74,8 +76,8 @@
                         </td>
                         @endforeach
                         <td class="align-middle">
-                            <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }} btn-icon">
-                                <i class="far {{ $item->status == 1 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
+                            <button type="button" wire:click="updateStatus({{ $item->id }})" class="btn {{ $item->status == 0 ? 'btn-danger' : 'btn-success' }} btn-icon">
+                                <i class="far {{ $item->status == 0 ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
                                 </button>
                                 <button type="button" wire:click="deleteMessage" class="btn btn-danger m-1" disabled>
                                     <i class="far fa-trash-alt"></i>

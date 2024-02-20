@@ -64,6 +64,12 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
+                                        <label for="date">{{__('Date:')}}</label>
+                                        <input type="date" name="date" wire:model="billDate" class="form-control" id="date" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="mb-3">
                                         <label for="cost_dollar">{{__('Cost in ($):')}}</label>
                                         <input type="number" name="cost_dollar" wire:model="cost_dollar" class="form-control" id="cost_dollar" required>
                                     </div>
@@ -72,12 +78,6 @@
                                 <div class="mb-3">
                                     <label for="cost_iraqi">{{__('Cost in (IQD):')}}</label>
                                     <input type="number" name="cost_iraqi" wire:model="cost_iraqi" class="form-control" id="cost_iraqi" required>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="mb-3">
-                                    <label for="date">{{__('Date:')}}</label>
-                                    <input type="date" name="date" wire:model="billDate" class="form-control" id="date" required>
                                 </div>
                             </div>
                             <div class="col-12 col-sm-6">
@@ -134,6 +134,12 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
+                                        <label for="date">{{__('Date:')}}</label>
+                                        <input type="date" name="date" wire:model="billDate" class="form-control" id="date" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="mb-3">
                                         <label for="cost_dollar">{{__('Cost in ($):')}}</label>
                                         <input type="number" name="cost_dollar" wire:model="cost_dollar" class="form-control" id="cost_dollar" required>
                                     </div>
@@ -142,12 +148,6 @@
                                 <div class="mb-3">
                                     <label for="cost_iraqi">{{__('Cost in (IQD):')}}</label>
                                     <input type="number" name="cost_iraqi" wire:model="cost_iraqi" class="form-control" id="cost_iraqi" required>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="mb-3">
-                                    <label for="date">{{__('Date:')}}</label>
-                                    <input type="date" name="date" wire:model="billDate" class="form-control" id="date" required>
                                 </div>
                             </div>
                             <div class="col-12 col-sm-6">

@@ -21,12 +21,13 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="country">{{__('Country:')}}</label>
-                                        <input type="text" name="country" wire:model="country" class="form-control" id="country">
+                                        <label for="address">{{__('Address:')}}</label>
+                                        <input type="text" name="address" wire:model="address" class="form-control" id="address">
                                     </div>
                                 </div>
+
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="city">{{__('City:')}}</label>
@@ -35,11 +36,11 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="address">{{__('Address:')}}</label>
-                                        <input type="text" name="address" wire:model="address" class="form-control" id="address">
+                                        <label for="country">{{__('Country:')}}</label>
+                                        <input type="text" name="country" wire:model="country" class="form-control" id="country">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row mt-5">
                             <h5 class="mb-4"><b>{{__('Secondary Information')}}</b></h5>
@@ -57,14 +58,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="email">{{__('Email Address:')}}</label>
                                         <input type="email" name="email" wire:model="email" class="form-control" id="email">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -100,12 +101,12 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="country">{{__('Country:')}}</label>
-                                        <input type="text" name="country" wire:model="country" class="form-control" id="country" required>
+                                        <label for="address">{{__('Address:')}}</label>
+                                        <input type="text" name="address" wire:model="address" class="form-control" id="address" required>
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="city">{{__('City:')}}</label>
@@ -114,11 +115,11 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="address">{{__('Address:')}}</label>
-                                        <input type="text" name="address" wire:model="address" class="form-control" id="address" required>
+                                        <label for="country">{{__('Country:')}}</label>
+                                        <input type="text" name="country" wire:model="country" class="form-control" id="country" required>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row mt-5">
                             <h5 class="mb-4 text-center"><b>{{__('Secondary Information')}}</b></h5>
@@ -136,20 +137,20 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex justidy-content-between mb-4 col-12">
+                            {{-- <div class="d-flex justidy-content-between mb-4 col-12">
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
                                         <label for="email">{{__('Email Address:')}}</label>
                                         <input type="email" name="email" wire:model="email" class="form-control" id="email">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" wire:click="closeModal"
-                            data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success submitJs">Save</button>
+                            data-dismiss="modal">{{__('Close')}}</button>
+                        <button type="submit" class="btn btn-success submitJs">{{__('Save')}}</button>
                     </div>
                 </form>
             </div>

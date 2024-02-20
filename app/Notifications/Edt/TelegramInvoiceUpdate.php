@@ -144,21 +144,21 @@ class TelegramInvoiceUpdate extends Notification
             . "*" .'-----------------'."*\n";
         }
 
-        if ($this->fisrtpayDollar !== $this->old_invoice_data['fisrtPayDollar']) {
-            $content .= "*" . 'First Pay Changed: $'. number_format($this->old_invoice_data['fisrtPayDollar']) . ' ➡️ $' . number_format($this->fisrtpayDollar) . "*\n";
-        }
-        if (strval($this->fisrtpayIraqi) !== $this->old_invoice_data['fisrtPayIraqi']) {
-            $content .= "*" . 'First Pay Changed: (IQD)'. number_format($this->old_invoice_data['fisrtPayIraqi']) . 'IQD ➡️ ' . number_format($this->fisrtpayIraqi) . 'IQD' . "*\n"
-            . "*" .'-----------------'."*\n";
-        }
+        // if ($this->fisrtpayDollar !== $this->old_invoice_data['fisrtPayDollar']) {
+        //     $content .= "*" . 'First Pay Changed: $'. number_format($this->old_invoice_data['fisrtPayDollar']) . ' ➡️ $' . number_format($this->fisrtpayDollar) . "*\n";
+        // }
+        // if (strval($this->fisrtpayIraqi) !== $this->old_invoice_data['fisrtPayIraqi']) {
+        //     $content .= "*" . 'First Pay Changed: (IQD)'. number_format($this->old_invoice_data['fisrtPayIraqi']) . 'IQD ➡️ ' . number_format($this->fisrtpayIraqi) . 'IQD' . "*\n"
+        //     . "*" .'-----------------'."*\n";
+        // }
 
-        if ($this->dueDollar !== $this->old_invoice_data['dueDollar']) {
-            $content .= "*" . 'Due Changed: $'. number_format($this->old_invoice_data['dueDollar']) . ' ➡️ $' . number_format($this->dueDollar) . "*\n";
-        }
-        if ($this->dueIraqi !== $this->old_invoice_data['dueIraqi']) {
-            $content .= "*" . 'Due Changed: '. number_format($this->old_invoice_data['dueIraqi']) . 'IQD ➡️ ' . number_format($this->dueIraqi) . 'IQD' . "*\n"
-            . "*" .'-----------------'."*\n";
-        }
+        // if ($this->dueDollar !== $this->old_invoice_data['dueDollar']) {
+        //     $content .= "*" . 'Due Changed: $'. number_format($this->old_invoice_data['dueDollar']) . ' ➡️ $' . number_format($this->dueDollar) . "*\n";
+        // }
+        // if ($this->dueIraqi !== $this->old_invoice_data['dueIraqi']) {
+        //     $content .= "*" . 'Due Changed: '. number_format($this->old_invoice_data['dueIraqi']) . 'IQD ➡️ ' . number_format($this->dueIraqi) . 'IQD' . "*\n"
+        //     . "*" .'-----------------'."*\n";
+        // }
 
         if ($this->totalDollar !== $this->old_invoice_data['grandTotalDollar']) {
             $content .= "*" . 'Grand Total Changed: $'. number_format($this->old_invoice_data['grandTotalDollar']) . ' ➡️ $' . number_format($this->totalDollar)  . "*\n";
@@ -168,8 +168,8 @@ class TelegramInvoiceUpdate extends Notification
             . "*" .'-----------------'."*\n";
         }
 
-        if ($this->date !== $this->old_invoice_data['note']) {
-            $content .= "*" . 'Notes Changed: ' . "\n" . json_decode($this->old_invoice_data['note'], true) .  "\n" .'         ↓'. "\n" . json_decode($this->notes, true) . "*\n";
+        if ($this->notes !== $this->old_invoice_data['note']) {
+            $content .= "*" . 'Notes Changed: ' . "\n" . $this->old_invoice_data['note'] .  "\n" .'         ↓'. "\n" . $this->notes . "*\n";
         }
 
         function compareServices($oldService, $newService) {

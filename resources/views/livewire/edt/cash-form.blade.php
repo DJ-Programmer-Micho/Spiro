@@ -31,7 +31,7 @@
                                     <option value="">{{__('Choose Status')}}</option>
                                     @if($this->notAttached)
                                     @foreach ($this->notAttached as $i_data)
-                                    <option value="{{$i_data->id}}">{{$i_data->id}} | {{$i_data->client->client_name}} | {{$i_data->description}} | $ {{number_format($i_data->grand_total_dollar)}} | {{number_format($i_data->grand_total_iraqi)}} IQD</option>
+                                    <option value="{{$i_data->id}}">#INV-{{$i_data->id}} | {{$i_data->client->client_name}} | {{$i_data->description}} | {{json_decode($i_data->services)['0']->actionDate}}</option>
                                     @endforeach
                                     @endif
                                 </select>

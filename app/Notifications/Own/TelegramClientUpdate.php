@@ -55,13 +55,13 @@ class TelegramClientUpdate extends Notification
             $content .= "*" . 'Client Name Changed: '. $this->old_client_data['clientName'] . ' ➡️ ' . $this->clientName . "*\n";
         }
         
-        if ($this->email !== $this->old_client_data['email']) {
-            $content .= "*" . 'Email Address Changed: '. $this->old_client_data['email'] . ' ➡️ ' . $this->email . "*\n";
-        }
+        // if ($this->email !== $this->old_client_data['email']) {
+        //     $content .= "*" . 'Email Address Changed: '. $this->old_client_data['email'] . ' ➡️ ' . $this->email . "*\n";
+        // }
         
-        if ($this->city !== $this->old_client_data['city']) {
-            $content .= "*" . 'City Changed: '. $this->old_client_data['city'] . ' ➡️ ' . $this->city . "*\n";
-        }
+        // if ($this->city !== $this->old_client_data['city']) {
+        //     $content .= "*" . 'City Changed: '. $this->old_client_data['city'] . ' ➡️ ' . $this->city . "*\n";
+        // }
         
         if ($this->address !== $this->old_client_data['address']) {
             $content .= "*" . 'Address Changed: '. $this->old_client_data['address'] . ' ➡️ ' . $this->address . "*\n";

@@ -31,9 +31,9 @@ class QuotationLivewire extends Component
     public $client_data;
     public $select_client_data;
     public $clientName;
-    public $clientEmail;
-    public $clientCountry;
-    public $clientCity;
+    // public $clientEmail;
+    // public $clientCountry;
+    // public $clientCity;
     public $clientAddress;
     public $clientPhoneOne;
     public $clientPhoneTwo;
@@ -82,10 +82,10 @@ class QuotationLivewire extends Component
 
     // Direct Forms Variables
     public $dClientName;
-    public $country;
-    public $city;
+    // public $country;
+    // public $city;
     public $address;
-    public $email;
+    // public $email;
     public $phoneOne;
     public $phoneTwo;
 
@@ -95,7 +95,7 @@ class QuotationLivewire extends Component
         $this->formDate = now()->format('Y-m-d');
         $this->telegram_channel_status = 1;
         $this->tele_id = env('TELEGRAM_GROUP_ID');
-        $this->client_data = Client::get();
+        $this->client_data = Client::orderBy('client_name', 'ASC')->get();
         $this->payment_data = Payment::get();
         $this->service_data = Service::get();
         $this->quotation_status = 'Sent';
@@ -251,9 +251,9 @@ class QuotationLivewire extends Component
     public function selectClientStartup(){
         $client_selected = Client::where('id', $this->select_client_data)->first();
         $this->clientName = $client_selected->client_name;
-        $this->clientEmail = $client_selected->email;
-        $this->clientCountry = $client_selected->country;
-        $this->clientCity = $client_selected->city;
+        // $this->clientEmail = $client_selected->email;
+        // $this->clientCountry = $client_selected->country;
+        // $this->clientCity = $client_selected->city;
         $this->clientAddress = $client_selected->address;
         $this->clientPhoneOne = $client_selected->phone_one;
         $this->clientPhoneTwo = $client_selected->phone_two;
@@ -294,9 +294,9 @@ class QuotationLivewire extends Component
 
             $client = Client::create([
                 'client_name' => $this->dClientName,
-                'email' => $this->email,
-                'address' => $this->address,
-                'city' => $this->city,
+                // 'email' => $this->email,
+                // 'address' => $this->address,
+                // 'city' => $this->city,
                 'country' => $this->country,
                 'phone_one' => $this->phoneOne,
                 'phone_two' => $this->phoneTwo,
@@ -308,7 +308,7 @@ class QuotationLivewire extends Component
                     ->notify(new TelegramClientNew(
                         $client->id,
                         $this->dClientName,
-                        $this->email,
+                        $this->email ?? "N/A",
                         $this->address,
                         $this->phoneOne,
                         $this->tele_id
@@ -322,7 +322,7 @@ class QuotationLivewire extends Component
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Client Added Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal-direct');
-            $this->client_data = Client::get();
+            $this->client_data = Client::orderBy('client_name', 'ASC')->get();
         } catch (\Exception $e){
             $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong')]);
         }
@@ -425,9 +425,9 @@ class QuotationLivewire extends Component
                 // Client Information
                 $this->select_client_data =  $quotationEdit->client_id;
                 $this->clientName = $clientInfo->client_name;
-                $this->clientEmail = $clientInfo->country;
-                $this->clientCountry = $clientInfo->city;
-                $this->clientCity = $clientInfo->address;
+                // $this->clientEmail = $clientInfo->country;
+                // $this->clientCountry = $clientInfo->city;
+                // $this->clientCity = $clientInfo->address;
                 $this->clientAddress = $clientInfo->email;
                 $this->clientPhoneOne = $clientInfo->phone_one;
                 $this->clientPhoneTwo = $clientInfo->phone_two;
@@ -653,9 +653,9 @@ class QuotationLivewire extends Component
         $this->client_data = '';
         $this->select_client_data = '';
         $this->clientName = '';
-        $this->clientEmail = '';
-        $this->clientCountry = '';
-        $this->clientCity = '';
+        // $this->clientEmail = '';
+        // $this->clientCountry = '';
+        // $this->clientCity = '';
         $this->clientAddress = '';
         $this->clientPhoneOne = '';
         $this->clientPhoneTwo = '';
@@ -681,7 +681,7 @@ class QuotationLivewire extends Component
         $this->dueIraqi = 0;
         $this->grandTotalIraqi = 0;
 
-        $this->client_data = Client::get();
+        $this->client_data = Client::orderBy('client_name', 'ASC')->get();
         $this->payment_data = Payment::get();
         $this->service_data = Service::get();
 
@@ -739,7 +739,7 @@ class QuotationLivewire extends Component
 
     public function approved(int $quotation_Id) {
         //ADD NEW INVOICE
-        // try {
+        try {
             $itemState = Quotation::find($quotation_Id);
 
             $invoice = Invoice::create([
@@ -773,7 +773,7 @@ class QuotationLivewire extends Component
             $itemState->quotation_status = 'Approved';
     
             if($this->telegram_channel_status == 1){
-                // try{
+                try{
                     if ( $itemState->client_id) {
                         $client = Client::find($itemState->client_id);
             
@@ -798,16 +798,16 @@ class QuotationLivewire extends Component
                         $this->tele_id,
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                // }  catch (\Exception $e) {
+                }  catch (\Exception $e) {
                     $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
-                // }
+                }
             }
     
             $itemState->save();
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Quotation Status Updated Successfully')]);
 
             if($this->telegram_channel_status == 1){
-                // try{
+                try{
                     Notification::route('toTelegram', null)
                     ->notify(new TelegramInvoiceNew(
                         $invoice->id,
@@ -834,16 +834,16 @@ class QuotationLivewire extends Component
                         $this->tele_id
                     ));
                     $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Notification Send Successfully')]);
-                // }  catch (\Exception $e) {
-                    // $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
-                // }
+                }  catch (\Exception $e) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'warning', 'message' => __('An error occurred while sending Notification.')]);
+                }
             }
             $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => __('Added To Invoice Successfully')]);
             $this->resetModal();
             $this->dispatchBrowserEvent('close-modal');
-        // } catch (\Exception $e){
-            // $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong OR Duplicated Quotation ID')]);
-        // }
+        } catch (\Exception $e){
+            $this->dispatchBrowserEvent('alert', ['type' => 'error',  'message' => __('Something Went Wrong OR Duplicated Quotation ID')]);
+        }
     } // END FUNCTION OF UPDATING QUOTATION STATUS
 
     public function rejected(int $quotation_Id) {
@@ -919,7 +919,6 @@ class QuotationLivewire extends Component
 
         $this->rangeViewValue = $this->startDate . ' - ' . $this->endDate . ' ';
 
-
         $colspan = 6;
         $cols_th = ['#','Client Name', 'Payment Type', 'Title', 'Grand Total ($)', 'Grand Total (IQD)', 'Quotation', 'Status','Created Date', 'Actions'];
         $cols_td = ['id','client.client_name','payment.payment_type','description','grand_total_dollar','grand_total_iraqi','quotation_status','status','created_at'];
@@ -932,6 +931,7 @@ class QuotationLivewire extends Component
             ->orWhereHas('payment', function ($subQuery) {
                 $subQuery->where('payment_type', 'like', '%' . $this->search . '%');
             })
+            ->orWhere('id', 'like', '%' . $this->search . '%')
             ->orWhere('description', 'like', '%' . $this->search . '%')
             ->orWhere('status', 'like', '%' . $this->search . '%');
         })
@@ -953,7 +953,7 @@ class QuotationLivewire extends Component
         // ->when($this->quotationStatusFilter === '', function ($query) {
         //     $query->orWhereNotNull('quotation_status');
         // })
-        ->orderBy('qoutation_date', 'DESC')
+        ->orderBy('id', 'DESC')
         ->paginate(15);
         
         return view('livewire.own.quotation-table',[

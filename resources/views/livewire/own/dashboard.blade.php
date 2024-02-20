@@ -1,7 +1,11 @@
 <div>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
+    @include('livewire.own.report-select')
 
+    <div class="mt-3 row d-flex justify-content-end">
+        <button class="btn btn-info" data-toggle="modal" data-target="#selectReportModal" data-dismiss="modal" aria-label="Close" >Report</button>
+    </div>
     <div class="row profile-box mt-5 p-0">
         <div class="row col-xl-4 col-12">
             <div class="col-xl-12 mb-4">
@@ -414,7 +418,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-md font-weight-bold text-uppercase mb-1" style="text-shadow:none; color: #7190eb;">
-                                #TS - {{$index}} | #INV - {{$taskSubData->invoice->id}}: {{$taskSubData->invoice->description}}
+                                #TS - {{$index}} | #INV - {{$taskSubData->invoice->id}}: {{$taskSubData->invoice->client->client_name}} | {{json_decode($taskSubData->invoice->services)['0']->actionDate}}
                             </div>
                     @foreach ($task as $per_task)
                         @foreach ($per_task as $item)
@@ -442,16 +446,7 @@
         </div>
         @endforeach
 
-        </div>
-
-
-
-
-
-
-
-
-
+    </div>
 
 
     <div wire:ignore.self class="modal fade overflow-auto" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
