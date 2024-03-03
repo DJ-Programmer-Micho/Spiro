@@ -66,9 +66,10 @@ Route::middleware([Localization::class])->group(function () {
         Route::get('/cash', [OwnController::class, 'cash'])->name('own.cash');
         Route::get('/createTask', [OwnController::class, 'createTask'])->name('own.createTask');
         Route::get('/addTask', [OwnController::class, 'addTask'])->name('own.addTask');
-        Route::get('/plan/guestplanview', [OwnController::class, 'guestPlanView'])->name('guestPlanView');
-        Route::get('/plan/plansetting', [OwnController::class, 'planSetting'])->name('planSetting');
-        Route::get('/top8', [OwnController::class, 'topEight'])->name('topEight');
+        Route::get('/attend', [OwnController::class, 'attend'])->name('own.attend');
+        // Route::get('/plan/guestplanview', [OwnController::class, 'guestPlanView'])->name('guestPlanView');
+        // Route::get('/plan/plansetting', [OwnController::class, 'planSetting'])->name('planSetting');
+        // Route::get('/top8', [OwnController::class, 'topEight'])->name('topEight');
 
 
     });
@@ -85,6 +86,8 @@ Route::middleware([Localization::class])->group(function () {
         Route::get('/invoice', [FinController::class, 'invoice'])->name('fin.invoice');
         Route::get('/cash', [FinController::class, 'cash'])->name('fin.cash');
         Route::get('/mytask', [FinController::class, 'myTask'])->name('fin.mytask'); 
+        Route::get('/attend', [FinController::class, 'attend'])->name('fin.attend');
+
     });
 
     Route::prefix('/edt')->middleware(['CheckUserStatus', 'Edt','CheckUserStatus'])->group(function () {
@@ -94,6 +97,8 @@ Route::middleware([Localization::class])->group(function () {
         Route::get('/invoice', [EdtController::class, 'invoice'])->name('edt.invoice');
         Route::get('/cash', [EdtController::class, 'cash'])->name('edt.cash');
         Route::get('/mytask', [EdtController::class, 'myTask'])->name('edt.mytask'); 
+        Route::get('/attend', [EdtController::class, 'attend'])->name('edt.attend');
+
     });
 
 

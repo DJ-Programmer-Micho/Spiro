@@ -118,17 +118,7 @@
                 </lord-icon>
                     <span>{{__('Users')}}</span></a>
             </li>
-            <!-- Nav Item  -->
-            <li class="nav-item {{(request()->path() == 'own/client') ? 'active' : ''}}">
-                <a class="nav-link"  href="{{route('own.client')}}">
-                    <lord-icon
-                    src="https://cdn.lordicon.com/kndkiwmf.json"
-                    trigger="hover"
-                    colors="primary:#cc0022,secondary:#eee"
-                    style="width:48px;height:48px">
-                    </lord-icon>
-                    <span>{{__('Clients')}}</span></a>
-            </li>
+
             <!-- Nav Item - Service -->
             <li class="nav-item  {{(request()->path() == 'own/service') ? 'active' : ''}}">
                 <a class="nav-link" href="{{route('own.service')}}">
@@ -201,6 +191,23 @@
             <hr class="sidebar-divider my-1">
             <!-- Heading -->
             <div class="sidebar-heading">
+                {{__('Customers')}}
+            </div>
+            <!-- Nav Item  -->
+            <li class="nav-item {{(request()->path() == 'own/client') ? 'active' : ''}}">
+                <a class="nav-link"  href="{{route('own.client')}}">
+                    <lord-icon
+                    src="https://cdn.lordicon.com/kndkiwmf.json"
+                    trigger="hover"
+                    colors="primary:#cc0022,secondary:#eee"
+                    style="width:48px;height:48px">
+                    </lord-icon>
+                    <span>{{__('Clients')}}</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-1">
+            <!-- Heading -->
+            <div class="sidebar-heading">
                 {{__('Q.I.R.D')}}
             </div>
             <li class="nav-item  {{(request()->path() == 'own/quotation') ? 'active' : ''}}">
@@ -240,6 +247,24 @@
                     <span>{{__('Cash Receipt')}}</span></a>
             </li>
 
+            <!-- Divider -->
+            <hr class="sidebar-divider my-1">
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                {{__('Attendence')}}
+            </div>
+            <li class="nav-item  {{(request()->path() == 'own/attend') ? 'active' : ''}}">
+                <a class="nav-link" href="{{route('own.attend')}}">
+                    <lord-icon
+                    src="https://cdn.lordicon.com/qvyppzqz.json"
+                    trigger="loop"
+                    delay="2000"
+                    state="loop-oscillate"
+                    colors="primary:#cc0022,secondary:#ffffff"
+                    style="width:48px;height:48px">
+                    </lord-icon>
+                    <span>{{__('Attendence')}}</span></a>
+            </li>
             <!-- Divider -->
             <hr class="sidebar-divider my-1">
             <!-- Heading -->

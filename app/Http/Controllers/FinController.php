@@ -49,4 +49,8 @@ class FinController extends Controller
     public function myTask(){
         return view('dashboard.fin.mytask.index');
     } // END FUNCTION (DASHBOARD)
+    
+    public function attend(){
+        return view('dashboard.fin.attendance.index');
+    } // END FUNCTION (DASHBOARD)
 }

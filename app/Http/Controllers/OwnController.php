@@ -53,4 +53,8 @@ class OwnController extends Controller
     public function addTask(){
         return view('dashboard.own.task.index');
     } // END FUNCTION (DASHBOARD)
+
+    public function attend(){
+        return view('dashboard.own.attendance.index');
+    } // END FUNCTION (DASHBOARD)
 }

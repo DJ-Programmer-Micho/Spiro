@@ -321,5 +321,20 @@
     "Task Deleted Successfully": "تم حذف المهمة بنجاح",
     "Task Progress Updated.": "تم تحديث تقدم المهمة.",
     "Task Progress Did Not Update.": "لم يتم تحديث تقدم المهمة.",
-    "NO TASKS YOU ARE FREE": "لا مهام، أنت حر"
+    "NO TASKS YOU ARE FREE": "لا مهام، أنت حر",
+    "**************":"**********************",
+    "Attendence": "جدول الحضور",
+    "ATTENDANCE TABLE": "جدول الحضور",
+    "Report": "تقرير",
+    "Add New Attend": "إضافة حضور جديد",
+    "Employee Name": "اسم الموظف",
+    "Start Time": "وقت البدء",
+    "End Time": "وقت الانتهاء",
+    "Duration": "المدة",
+    "Time Entry": "إدخال الوقت",
+    "Duration (hr):": "المدة (ساعة):",
+    "End Time:": "وقت الانتهاء:",
+    "Start Time:": "وقت البدء:",
+    "Are you sure you want to delete this Attend?": "هل أنت متأكد أنك تريد حذف هذا الحضور؟",
+    "Employee Name:": "اسم الموظف:"
 }

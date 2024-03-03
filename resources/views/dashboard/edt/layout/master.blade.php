@@ -157,7 +157,23 @@
                 </lord-icon>
                     <span>{{__('Cash Receipt')}}</span></a>
             </li>
-
+            <hr class="sidebar-divider my-1">
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                {{__('Attendence')}}
+            </div>
+            <li class="nav-item  {{(request()->path() == 'edt/attend') ? 'active' : ''}}">
+                <a class="nav-link" href="{{route('edt.attend')}}">
+                    <lord-icon
+                    src="https://cdn.lordicon.com/qvyppzqz.json"
+                    trigger="loop"
+                    delay="2000"
+                    state="loop-oscillate"
+                    colors="primary:#cc0022,secondary:#ffffff"
+                    style="width:48px;height:48px">
+                    </lord-icon>
+                    <span>{{__('Attendence')}}</span></a>
+            </li>
             <!-- Divider -->
             <hr class="sidebar-divider my-1">
             <!-- Heading -->

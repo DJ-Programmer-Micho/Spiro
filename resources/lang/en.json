@@ -318,5 +318,20 @@
     "Task Deleted Successfully":"Task Deleted Successfully",
     "Task Progress Updated.":"Task Progress Updated.",
     "Task Progress Did Not Update.":"Task Progress Did Not Update.",
-    "NO TASKS YOU ARE FREE":"NO TASKS YOU ARE FREE"
+    "NO TASKS YOU ARE FREE":"NO TASKS YOU ARE FREE",
+    "***************":"***************",
+    "ATTENDANCE TABLE":"ATTENDANCE TABLE",
+    "Report":"Report",
+    "Add New Attend":"Add New Attend",
+    "Employee Name":"Employee Name",
+    "Start Time":"Start Time",
+    "End Time":"End Time",
+    "Duration":"Duration",
+    "Time Entry":"Time Entry",
+    "Duration (hr):":"'Duration (hr):",
+    "End Time:":"End Time:",
+    "Start Time:":"Start Time:",
+    "Are you sure you want to delete this Attend?":"Are you sure you want to delete this Attend?",
+    "Employee Name:":"Employee Name:",
+    "":""
 }

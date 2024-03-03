@@ -29,4 +29,8 @@ class EdtController extends Controller
     public function myTask(){
         return view('dashboard.edt.mytask.index');
     } // END FUNCTION (DASHBOARD)
+    
+    public function attend(){
+        return view('dashboard.edt.attendance.index');
+    } // END FUNCTION (DASHBOARD)
 }
