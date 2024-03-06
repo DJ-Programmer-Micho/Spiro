@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="phoneTwo">{{__('Phone Number 2')}}</label>
+                                        <label for="phoneTwo">{{__('Phone Number 2:')}}</label>
                                         <input type="text" name="phoneTwo" wire:model="phoneTwo" class="form-control" id="phoneTwo">
                                     </div>
                                 </div>
@@ -133,7 +133,7 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="mb-3">
-                                        <label for="phoneTwo">{{__('Phone Number 2')}}</label>
+                                        <label for="phoneTwo">{{__('Phone Number 2:')}}</label>
                                         <input type="text" name="phoneTwo" wire:model="phoneTwo" class="form-control" id="phoneTwo">
                                     </div>
                                 </div>
